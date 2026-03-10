@@ -60,7 +60,7 @@
       <div class="page-title">Mes projets</div>
       <div class="project-count"><%= pluralize(@projects.size, "projet") %></div>
     </div>
-    <%= link_to wizard_step1_path, class: "btn btn-primary-dark" do %>
+    <%= link_to wizard_choose_path, class: "btn btn-primary-dark" do %>
       + Nouveau projet
     <% end %>
   </div>
@@ -123,7 +123,7 @@
       <p class="text-center mb-4" style="color: #9B9588; max-width: 360px;">
         Créez votre première estimation de travaux en quelques clics.
       </p>
-      <%= link_to "+ Nouveau projet", wizard_step1_path, class: "btn btn-primary-dark" %>
+      <%= link_to "+ Nouveau projet", wizard_choose_path, class: "btn btn-primary-dark" %>
     </div>
   <% end %>
 </div>

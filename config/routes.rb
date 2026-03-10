@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   devise_for :users
   root to: "pages#home"
 
-  # Project wizard (4-step creation flow)
+  # Project wizard (creation flow)
+  get  "projects/wizard/choose",   to: "projects/wizard#choose",     as: :wizard_choose
+  post "projects/wizard/choose",   to: "projects/wizard#save_choose", as: :wizard_save_choose
   get  "projects/wizard/step1",    to: "projects/wizard#step1",      as: :wizard_step1
   post "projects/wizard/step1",    to: "projects/wizard#save_step1"
   get  "projects/wizard/step2",    to: "projects/wizard#step2",      as: :wizard_step2

@@ -53,13 +53,13 @@ category_icons = {
 %>
 
 <div class="container py-4" style="max-width: 720px;">
-  <%= render "stepper", current_step: 3 %>
+  <%= render "stepper", current_step: 3, project_type: @project_type %>
 
   <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Travaux souhaités</h2>
   <p class="mb-4" style="color: #9B9588;">Sélectionnez les catégories de travaux à inclure dans l'estimation.</p>
 
-  <% if @renovation_type.in?(%w[extension construction]) %>
-    <%# Free-text fallback for extension/construction %>
+  <% if @renovation_type.in?(%w[construction extension]) %>
+    <%# Free-text fallback for construction %>
     <%= form_with url: wizard_step3_path, method: :post do |f| %>
       <div class="field-section" style="border: 1px solid #E8E4DC; border-radius: 10px; padding: 1.5rem; background: #fff;">
         <p style="color: #9B9588; font-size: 0.9rem;">
@@ -75,7 +75,7 @@ category_icons = {
         <% end %>
       </div>
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
+        <%= link_to "← Retour", @project_type.in?(%w[construction extension]) ? wizard_step1_path : wizard_step2_path, class: "btn btn-ghost-od" %>
         <button type="submit" class="btn btn-dark-od">Suivant →</button>
       </div>
     <% end %>
@@ -99,7 +99,7 @@ category_icons = {
       <% end %>
 
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
+        <%= link_to "← Retour", @project_type.in?(%w[construction extension]) ? wizard_step1_path : wizard_step2_path, class: "btn btn-ghost-od" %>
         <button type="submit" class="btn btn-dark-od">Suivant →</button>
       </div>
     <% end %>

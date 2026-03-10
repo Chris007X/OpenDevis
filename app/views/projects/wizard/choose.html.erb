@@ -1,0 +1,148 @@
+<% content_for :head do %>
+<style>
+  body { background-color: #FAFAF7; }
+
+  .choose-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+    border: 2px solid #E8E4DC;
+    border-radius: 12px;
+    background: #fff;
+    padding: 1.5rem 1.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s;
+    text-align: left;
+  }
+  .choose-card:hover {
+    border-color: #2C2A25;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44,42,37,0.08);
+  }
+  .choose-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    width: 3.5rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .choose-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #2C2A25;
+    margin-bottom: 0.25rem;
+  }
+  .choose-desc {
+    font-size: 0.88rem;
+    color: #9B9588;
+    line-height: 1.4;
+  }
+
+  .sub-choose-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 10px;
+    background: #FAFAF7;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    font-size: 0.92rem;
+  }
+  .sub-choose-card:hover {
+    border-color: #2C2A25;
+    background: #F0EDE8;
+  }
+  .sub-choose-icon {
+    font-size: 1.5rem;
+    width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .sub-choose-title {
+    font-weight: 600;
+    color: #2C2A25;
+  }
+  .sub-choose-desc {
+    font-size: 0.82rem;
+    color: #9B9588;
+  }
+
+  .construction-sub {
+    border: 2px solid #E8E4DC;
+    border-radius: 12px;
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+  }
+  .construction-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+</style>
+<% end %>
+
+<div class="container py-5" style="max-width: 580px;">
+  <div class="text-center mb-4">
+    <h2 style="color: #2C2A25; font-weight: 700; font-size: 1.6rem;">Nouveau projet</h2>
+    <p style="color: #9B9588;">Quel type de projet souhaitez-vous estimer ?</p>
+  </div>
+
+  <div class="d-flex flex-column gap-3">
+    <%# Rénovation %>
+    <%= form_with url: wizard_save_choose_path, method: :post do %>
+      <input type="hidden" name="project_type" value="renovation">
+      <button type="submit" class="choose-card">
+        <div class="choose-icon">🔧</div>
+        <div>
+          <div class="choose-title">Rénovation</div>
+          <div class="choose-desc">Home staging, rénovation partielle ou complète, rénovation énergétique</div>
+        </div>
+      </button>
+    <% end %>
+
+    <%# Construction — with sub-choices %>
+    <div class="construction-sub">
+      <div class="construction-sub-header">
+        <div class="choose-icon">🏗️</div>
+        <div>
+          <div class="choose-title">Construction</div>
+          <div class="choose-desc">Construction neuve ou extension de votre bien</div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+        <%= form_with url: wizard_save_choose_path, method: :post do %>
+          <input type="hidden" name="project_type" value="construction">
+          <button type="submit" class="sub-choose-card">
+            <div class="sub-choose-icon">🏠</div>
+            <div>
+              <div class="sub-choose-title">Construction neuve</div>
+              <div class="sub-choose-desc">Construction complète d'un bien immobilier</div>
+            </div>
+          </button>
+        <% end %>
+
+        <%= form_with url: wizard_save_choose_path, method: :post do %>
+          <input type="hidden" name="project_type" value="extension">
+          <button type="submit" class="sub-choose-card">
+            <div class="sub-choose-icon">📐</div>
+            <div>
+              <div class="sub-choose-title">Extension / Surélévation</div>
+              <div class="sub-choose-desc">Ajout de surface habitable</div>
+            </div>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <%= link_to "← Retour aux projets", projects_path, style: "color: #9B9588; font-size: 0.9rem;" %>
+  </div>
+</div>
