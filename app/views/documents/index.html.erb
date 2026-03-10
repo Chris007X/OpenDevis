@@ -1,0 +1,36 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <%= link_to "← Projet", @project, class: "btn btn-outline-secondary btn-sm" %>
+    <h2 class="mb-0">Documents — <%= @project.location_zip.presence || "Projet" %></h2>
+    <%= link_to "Ajouter un document", new_project_document_path(@project), class: "btn btn-primary btn-sm" %>
+  </div>
+
+  <% if @documents.any? %>
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Nom du fichier</th>
+          <th>Type</th>
+          <th>Déposé le</th>
+          <th>Lien</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @documents.each do |doc| %>
+          <tr>
+            <td><%= doc.file_name %></td>
+            <td><%= doc.file_type %></td>
+            <td><%= doc.uploaded_at&.strftime("%d/%m/%Y") %></td>
+            <td><%= link_to "Ouvrir", doc.file_url, target: "_blank" if doc.file_url.present? %></td>
+            <td class="text-end">
+              <%= button_to "Supprimer", doc, method: :delete, data: { turbo_confirm: "Supprimer ce document ?" }, class: "btn btn-sm btn-outline-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted">Aucun document. <%= link_to "Ajouter le premier", new_project_document_path(@project) %>.</p>
+  <% end %>
+</div>

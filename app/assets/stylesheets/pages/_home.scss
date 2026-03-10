@@ -1,1 +1,70 @@
-// Specific CSS for your home-page
+// ── Landing page ────────────────────────────────────────────────────────────
+
+.py-6 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+// Hero section
+.hero {
+  background: linear-gradient(135deg, #f8faff 0%, $light-gray 100%);
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+// Stacked card mock-up
+.hero-card-stack {
+  position: relative;
+  height: 280px;
+
+  .hero-card-back {
+    position: absolute;
+    width: 90%;
+    top: 0;
+    right: 0;
+    transform: rotate(3deg);
+    opacity: 0.7;
+  }
+
+  .hero-card-front {
+    position: absolute;
+    width: 90%;
+    bottom: 0;
+    left: 0;
+    transform: rotate(-1deg);
+  }
+}
+
+// Feature cards
+.feature-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-3px);
+  }
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+// Step numbers
+.step-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: $blue;
+  color: #fff;
+  font-family: $headers-font;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,61 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <%= link_to "← #{@room.project.location_zip.presence || "Projet"}", @room.project, class: "btn btn-outline-secondary btn-sm" %>
+    <div class="d-flex gap-2">
+      <%= link_to "Modifier la pièce", edit_room_path(@room), class: "btn btn-outline-secondary btn-sm" %>
+      <%= button_to "Supprimer la pièce", @room, method: :delete, data: { turbo_confirm: "Supprimer cette pièce et tous ses postes de travaux ?" }, class: "btn btn-outline-danger btn-sm" %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2><%= @room.name %></h2>
+      <div class="text-muted small">
+        <%= [@room.surface_sqm&.then { |v| "#{v} m²" }, @room.perimeter_lm&.then { |v| "périmètre #{v} ml" }, @room.wall_height_m&.then { |v| "hauteur #{v} m" }].compact.join(" · ").presence || "Aucune dimension renseignée" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Postes de travaux</h3>
+    <%= link_to "Ajouter un poste", new_room_work_item_path(@room), class: "btn btn-primary btn-sm" %>
+  </div>
+
+  <% if @work_items.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Désignation</th>
+            <th>Catégorie</th>
+            <th>Matériau</th>
+            <th>Qté</th>
+            <th>Unité</th>
+            <th>Prix unitaire HT</th>
+            <th>TVA %</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @work_items.each do |item| %>
+            <tr>
+              <td><%= item.label %></td>
+              <td><%= item.work_category&.name %></td>
+              <td><%= [item.material&.brand, item.material&.reference].compact.join(" ") %></td>
+              <td><%= item.quantity %></td>
+              <td><%= item.unit %></td>
+              <td><%= number_to_currency(item.unit_price_exVAT, unit: "€", separator: ",", delimiter: " ") if item.unit_price_exVAT %></td>
+              <td><%= item.vat_rate&.then { |v| "#{v} %" } %></td>
+              <td class="text-end">
+                <%= link_to "Modifier", edit_work_item_path(item), class: "btn btn-sm btn-outline-secondary" %>
+                <%= button_to "Supprimer", item, method: :delete, data: { turbo_confirm: "Supprimer ce poste ?" }, class: "btn btn-sm btn-outline-danger" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">Aucun poste de travaux. <%= link_to "Ajouter le premier", new_room_work_item_path(@room) %>.</p>
+  <% end %>
+</div>
