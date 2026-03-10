@@ -1,15 +1,27 @@
-<% steps = [
-  [1, "Bien immobilier"],
-  [2, "Rénovation"],
-  [3, "Travaux"],
-  [4, "Récapitulatif"]
-] %>
+<%
+project_type = local_assigns[:project_type] || "renovation"
+
+if project_type.in?(%w[construction extension])
+  steps = [
+    [1, "Bien immobilier"],
+    [3, "Travaux"],
+    [4, "Récapitulatif"]
+  ]
+else
+  steps = [
+    [1, "Bien immobilier"],
+    [2, "Rénovation"],
+    [3, "Travaux"],
+    [4, "Récapitulatif"]
+  ]
+end
+%>
 
 <div class="d-flex justify-content-center align-items-center mb-5 wizard-stepper">
   <% steps.each_with_index do |(num, label), idx| %>
     <div class="wizard-step <%= num == current_step ? 'active' : (num < current_step ? 'done' : 'pending') %>">
       <div class="step-circle">
-        <% if num < current_step %>✓<% else %><%= num %><% end %>
+        <% if num < current_step %>✓<% else %><%= idx + 1 %><% end %>
       </div>
       <div class="step-label d-none d-sm-block"><%= label %></div>
     </div>

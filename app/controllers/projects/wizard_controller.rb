@@ -13,8 +13,24 @@ module Projects
 
     PRESET_ROOMS = %w[Salon Cuisine Chambre SDB WC Entrée Bureau Cave Garage].freeze
 
+    # ── Choose – Rénovation or Construction ──────────────────────────────────
+    def choose
+      # Clear previous wizard state when starting fresh
+      %i[wizard_project_id wizard_project_type wizard_renovation_type wizard_categories wizard_rooms].each do |k|
+        session.delete(k)
+      end
+    end
+
+    def save_choose
+      session[:wizard_project_type] = params[:project_type].in?(%w[renovation construction extension]) ? params[:project_type] : "renovation"
+      redirect_to wizard_step1_path
+    end
+
     # ── Step 1 – Property info ────────────────────────────────────────────────
     def step1
+      redirect_to(wizard_choose_path) && return unless session[:wizard_project_type]
+
+      @project_type = session[:wizard_project_type]
       if (id = session[:wizard_project_id])
         @project = current_user.projects.find_by(id: id) || Project.new
       else
@@ -33,7 +49,12 @@ module Projects
 
       if @project.save
         session[:wizard_project_id] = @project.id
-        redirect_to wizard_step2_path
+        if session[:wizard_project_type].in?(%w[construction extension])
+          session[:wizard_renovation_type] = session[:wizard_project_type]
+          redirect_to wizard_step3_path
+        else
+          redirect_to wizard_step2_path
+        end
       else
         render :step1, status: :unprocessable_entity
       end
@@ -56,6 +77,7 @@ module Projects
     # ── Step 3 – Work categories ──────────────────────────────────────────────
     def step3
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      @project_type        = session[:wizard_project_type]
       @renovation_type     = session[:wizard_renovation_type]
       @selected_categories = session[:wizard_categories] || []
       @category_groups     = build_category_groups(@renovation_type)
@@ -70,6 +92,7 @@ module Projects
     # ── Step 4 – Recap + generate ─────────────────────────────────────────────
     def step4
       @project          = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      @project_type     = session[:wizard_project_type]
       @renovation_type  = session[:wizard_renovation_type]
       @selected_rooms   = session[:wizard_rooms] || []
       @selected_cats    = load_selected_categories
@@ -95,7 +118,7 @@ module Projects
       @project.recompute_totals!
 
       # Clear wizard session state
-      %i[wizard_project_id wizard_renovation_type wizard_categories wizard_rooms].each do |k|
+      %i[wizard_project_id wizard_project_type wizard_renovation_type wizard_categories wizard_rooms].each do |k|
         session.delete(k)
       end
 

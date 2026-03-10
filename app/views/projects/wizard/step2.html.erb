@@ -47,13 +47,11 @@
 
   <%= form_with url: wizard_step2_path, method: :post, data: { controller: "renovation-type" } do |f| %>
     <% [
-      ["rafraichissement",  "🎨", "Rafraîchissement",          "Peinture, petites retouches, décoration"],
+      ["home_staging",      "🎨", "Home staging",               "Mise en valeur du bien pour la vente"],
       ["renovation_legere", "🔧", "Rénovation légère",          "Sols, peinture, petite plomberie/électricité"],
       ["par_piece",         "🚪", "Rénovation par pièce",       "Rénovation ciblée de pièces spécifiques"],
       ["renovation_complete","🏗️","Rénovation complète",        "Refonte totale de l'appartement/maison"],
-      ["energetique",       "🌿", "Rénovation énergétique",     "Isolation, fenêtres, chauffage, DPE"],
-      ["extension",         "📐", "Extension / Surélévation",  "Ajout de surface habitable"],
-      ["construction",      "🏠", "Construction neuve",         "Construction complète"]
+      ["energetique",       "🌿", "Rénovation énergétique",     "Isolation, fenêtres, chauffage, DPE"]
     ].each do |value, icon, label, desc| %>
       <label class="renovation-card">
         <input type="radio" name="renovation_type" value="<%= value %>"

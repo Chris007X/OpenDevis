@@ -44,10 +44,15 @@
 <% end %>
 
 <div class="container py-4" style="max-width: 680px;">
-  <%= render "stepper", current_step: 1 %>
+  <%= render "stepper", current_step: 1, project_type: @project_type %>
 
-  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre bien</h2>
-  <p class="mb-4" style="color: #9B9588;">Importez les infos ou remplissez manuellement.</p>
+  <% if @project_type.in?(%w[construction extension]) %>
+    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez le bien souhaité</h2>
+    <p class="mb-4" style="color: #9B9588;">Renseignez les caractéristiques de votre futur bien.</p>
+  <% else %>
+    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre bien</h2>
+    <p class="mb-4" style="color: #9B9588;">Importez les infos ou remplissez manuellement.</p>
+  <% end %>
 
   <%# Import modes %>
   <div class="mb-4" data-controller="import-mode">
@@ -83,7 +88,13 @@
     <div data-import-mode-target="panel" data-mode="pdf" hidden class="import-panel text-center py-3">
       <div style="color: #9B9588; font-size: 0.9rem;">
         📄 Déposez votre document ici<br>
-        <span style="font-size: 0.8rem;">Fonctionnalité IA à venir</span>
+        <span style="font-size: 0.8rem;">
+          <% if @project_type.in?(%w[construction extension]) %>
+            PLU, plans, etc.
+          <% else %>
+            Fonctionnalité IA à venir
+          <% end %>
+        </span>
       </div>
     </div>
 
@@ -122,7 +133,7 @@
           <%= f.text_field :location_zip, class: "form-control", placeholder: "ex. 75001" %>
         </div>
         <div class="col-md-6">
-          <div class="field-label">DPE / Classe énergétique</div>
+          <div class="field-label"><%= @project_type.in?(%w[construction extension]) ? "DPE souhaité" : "DPE / Classe énergétique" %></div>
           <%= f.select :energy_rating,
                 options_for_select(%w[A B C D E F G].map { |r| [r, r] }, @project.energy_rating),
                 { include_blank: "— Sélectionner —" },
@@ -132,7 +143,7 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", projects_path, class: "btn btn-ghost-od" %>
+      <%= link_to "← Retour", wizard_choose_path, class: "btn btn-ghost-od" %>
       <%= f.submit "Suivant →", class: "btn btn-dark-od" %>
     </div>
   <% end %>
