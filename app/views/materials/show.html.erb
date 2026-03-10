@@ -1,0 +1,24 @@
+<div class="container py-4" style="max-width: 600px;">
+  <div class="mb-4">
+    <%= link_to "← Tous les matériaux", materials_path, class: "btn btn-outline-secondary btn-sm" %>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title"><%= [@material.brand, @material.reference].compact.join(" — ") %></h2>
+      <dl class="row mt-3">
+        <dt class="col-sm-4">Catégorie</dt>
+        <dd class="col-sm-8"><%= @material.work_category&.name %></dd>
+
+        <dt class="col-sm-4">Unité</dt>
+        <dd class="col-sm-8"><%= @material.unit %></dd>
+
+        <dt class="col-sm-4">Prix HT</dt>
+        <dd class="col-sm-8"><%= number_to_currency(@material.public_price_exVAT, unit: "€", separator: ",", delimiter: " ") %></dd>
+
+        <dt class="col-sm-4">Taux de TVA</dt>
+        <dd class="col-sm-8"><%= @material.vat_rate&.then { |v| "#{v} %" } || "—" %></dd>
+      </dl>
+    </div>
+  </div>
+</div>

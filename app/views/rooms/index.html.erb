@@ -1,0 +1,32 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <%= link_to "← Projet", @project, class: "btn btn-outline-secondary btn-sm" %>
+    <h2 class="mb-0">Pièces — <%= @project.location_zip.presence || "Projet" %></h2>
+    <%= link_to "Ajouter une pièce", new_project_room_path(@project), class: "btn btn-primary btn-sm" %>
+  </div>
+
+  <% if @rooms.any? %>
+    <div class="row g-3">
+      <% @rooms.each do |room| %>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= room.name %></h5>
+              <p class="card-text text-muted small">
+                <%= [room.surface_sqm&.then { |v| "#{v} m²" }, room.perimeter_lm&.then { |v| "périmètre #{v} ml" }, room.wall_height_m&.then { |v| "hauteur #{v} m" }].compact.join(" · ") %>
+              </p>
+              <p class="card-text small"><%= pluralize(room.work_items.size, "poste", "postes") %></p>
+            </div>
+            <div class="card-footer d-flex gap-2">
+              <%= link_to "Voir", room, class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to "Modifier", edit_room_path(room), class: "btn btn-sm btn-outline-secondary" %>
+              <%= button_to "Supprimer", room, method: :delete, data: { turbo_confirm: "Supprimer cette pièce ?" }, class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">Aucune pièce. <%= link_to "Ajouter la première pièce", new_project_room_path(@project) %>.</p>
+  <% end %>
+</div>

@@ -1,2 +1,168 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<% content_for :title, "OpenDevis — Vos devis de construction en quelques minutes" %>
+
+<%# ── HERO ──────────────────────────────────────────────────────────────── %>
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <span class="badge text-bg-warning mb-3 px-3 py-2 fs-6">Gratuit & Open Source</span>
+        <h1 class="display-4 fw-bold lh-sm mb-4">
+          Des devis de chantier professionnels,<br>
+          <span class="text-primary">en quelques minutes.</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+          OpenDevis vous permet de construire des devis détaillés pièce par pièce — avec matériaux, TVA et totaux calculés automatiquement.
+          Fini les tableaux Excel. Fini les erreurs de calcul.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <% if user_signed_in? %>
+            <%= link_to "Mes projets", projects_path, class: "btn btn-primary btn-lg px-4" %>
+          <% else %>
+            <%= link_to "Commencer gratuitement", new_user_registration_path, class: "btn btn-primary btn-lg px-4" %>
+            <%= link_to "Se connecter", new_user_session_path, class: "btn btn-outline-secondary btn-lg px-4" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="hero-card-stack">
+          <div class="card shadow hero-card-back">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <div class="text-muted small mb-1">Projet</div>
+                  <h5 class="mb-0">Appartement 75012</h5>
+                </div>
+                <span class="badge text-bg-success">Accepté</span>
+              </div>
+              <div class="d-flex gap-4 text-muted small">
+                <span><i class="fa fa-door-open me-1"></i>4 pièces</span>
+                <span><i class="fa fa-ruler-combined me-1"></i>87 m²</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-lg hero-card-front">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <div class="text-muted small mb-1">Résumé du devis</div>
+                  <h5 class="mb-0">Salon — Plomberie</h5>
+                </div>
+                <span class="badge text-bg-primary">Brouillon</span>
+              </div>
+              <table class="table table-sm mb-3">
+                <tbody>
+                  <tr>
+                    <td class="text-muted">Radiateur acier</td>
+                    <td class="text-end">2 × 185,00 €</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Robinet thermostatique</td>
+                    <td class="text-end">4 × 42,50 €</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-between fw-bold">
+                <span>Total HT</span>
+                <span class="text-primary">540,00 €</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ── FONCTIONNALITÉS ─────────────────────────────────────────────────────── %>
+<section class="py-6 bg-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Tout ce qu'il faut pour chiffrer un chantier</h2>
+      <p class="text-muted">De la première pièce au devis final, OpenDevis gère la structure.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4 rounded-3 border">
+          <div class="feature-icon bg-primary-subtle text-primary mb-3">
+            <i class="fa fa-folder-open fa-lg"></i>
+          </div>
+          <h5 class="fw-bold">Projets</h5>
+          <p class="text-muted mb-0">
+            Organisez chaque chantier comme un projet. Suivez le statut (brouillon, envoyé, accepté), la surface, la classe énergétique et le lien du bien — tout au même endroit.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4 rounded-3 border">
+          <div class="feature-icon bg-warning-subtle text-warning mb-3">
+            <i class="fa fa-vector-square fa-lg"></i>
+          </div>
+          <h5 class="fw-bold">Pièces</h5>
+          <p class="text-muted mb-0">
+            Décomposez chaque projet pièce par pièce avec surface, périmètre et hauteur sous plafond. Vos devis reflètent la géométrie réelle des espaces.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="feature-card h-100 p-4 rounded-3 border">
+          <div class="feature-icon bg-success-subtle text-success mb-3">
+            <i class="fa fa-list-check fa-lg"></i>
+          </div>
+          <h5 class="fw-bold">Postes & matériaux</h5>
+          <p class="text-muted mb-0">
+            Sélectionnez les matériaux depuis un catalogue partagé, saisissez les quantités et laissez OpenDevis calculer automatiquement vos totaux HT et TTC.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ── COMMENT ÇA MARCHE ───────────────────────────────────────────────────── %>
+<section class="py-6">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Comment ça marche</h2>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-3 text-center">
+        <div class="step-number mx-auto mb-3">1</div>
+        <h6 class="fw-bold">Créez un projet</h6>
+        <p class="text-muted small">Ajoutez la localisation, la surface et la classe énergétique. Faites évoluer le statut au fil du temps.</p>
+      </div>
+      <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center text-muted">
+        <i class="fa fa-arrow-right fa-lg"></i>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="step-number mx-auto mb-3">2</div>
+        <h6 class="fw-bold">Ajoutez les pièces</h6>
+        <p class="text-muted small">Définissez les dimensions de chaque pièce. OpenDevis garde la structure claire et navigable.</p>
+      </div>
+      <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center text-muted">
+        <i class="fa fa-arrow-right fa-lg"></i>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="step-number mx-auto mb-3">3</div>
+        <h6 class="fw-bold">Construisez votre devis</h6>
+        <p class="text-muted small">Choisissez les matériaux, entrez les quantités — les totaux se mettent à jour sur l'ensemble du projet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ── APPEL À L'ACTION ────────────────────────────────────────────────────── %>
+<% unless user_signed_in? %>
+  <section class="py-6 bg-primary text-white">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-3">Prêt à créer votre premier devis ?</h2>
+      <p class="lead mb-4 opacity-75">Gratuit pour toujours. Sans carte bancaire.</p>
+      <%= link_to "Créer mon compte", new_user_registration_path, class: "btn btn-light btn-lg px-5 fw-bold text-primary" %>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,32 @@
+<%= simple_form_for @project do |f| %>
+  <%= f.error_notification %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.input :location_zip, label: "Code postal" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.input :status, as: :select,
+            collection: [["Brouillon", "draft"], ["Envoyé", "sent"], ["Accepté", "accepted"], ["Refusé", "rejected"]],
+            include_blank: false,
+            label: "Statut" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.input :total_surface_sqm, label: "Surface totale (m²)" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.input :room_count, label: "Nombre de pièces" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.input :energy_rating, as: :select, collection: %w[A B C D E F G], include_blank: "— Sélectionner —", label: "Classe énergétique" %>
+    </div>
+    <div class="col-12">
+      <%= f.input :property_url, label: "URL du bien" %>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= f.button :submit, class: "btn btn-primary" %>
+    <%= link_to "Annuler", @project.persisted? ? @project : projects_path, class: "btn btn-outline-secondary ms-2" %>
+  </div>
+<% end %>

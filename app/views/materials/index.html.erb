@@ -1,0 +1,30 @@
+<div class="container py-4">
+  <h1 class="mb-4">Catalogue de matériaux</h1>
+
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Marque</th>
+        <th>Référence</th>
+        <th>Catégorie</th>
+        <th>Unité</th>
+        <th>Prix HT</th>
+        <th>TVA %</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @materials.each do |material| %>
+        <tr>
+          <td><%= material.brand %></td>
+          <td><%= material.reference %></td>
+          <td><%= material.work_category&.name %></td>
+          <td><%= material.unit %></td>
+          <td><%= number_to_currency(material.public_price_exVAT, unit: "€", separator: ",", delimiter: " ") %></td>
+          <td><%= material.vat_rate&.then { |v| "#{v} %" } %></td>
+          <td><%= link_to "Voir", material_path(material), class: "btn btn-sm btn-outline-primary" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

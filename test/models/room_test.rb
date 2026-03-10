@@ -53,7 +53,7 @@ class RoomTest < ActiveSupport::TestCase
     @room.save!
     category = WorkCategory.create!(name: "Peinture", slug: "peinture-room-test")
     material = Material.create!(work_category: category, unit: "L", public_price_exVAT: 10, vat_rate: 10)
-    WorkItem.create!(room: @room, work_category: category, material: material, quantity: 1, unit: "L", unit_price_exVAT: 10, vat_rate: 10)
+    WorkItem.create!(room: @room, work_category: category, material: material, label: "Test item", quantity: 1, unit: "L", unit_price_exVAT: 10, vat_rate: 10)
     assert_difference "WorkItem.count", -1 do
       @room.destroy
     end

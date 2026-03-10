@@ -1,0 +1,19 @@
+<div class="container py-4">
+  <h1 class="mb-4">Catégories de travaux</h1>
+
+  <div class="row g-3">
+    <% @work_categories.each do |category| %>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= category.name %></h5>
+            <p class="card-text text-muted small"><%= pluralize(category.materials.size, "matériau", "matériaux") %></p>
+          </div>
+          <div class="card-footer">
+            <%= link_to "Voir les matériaux", work_category_path(category), class: "btn btn-sm btn-outline-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

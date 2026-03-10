@@ -1,6 +1,6 @@
 class Material < ApplicationRecord
   belongs_to :work_category
-  has_many :work_items
+  has_many :work_items, dependent: :restrict_with_error
 
   validates :public_price_exVAT, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :unit, presence: true
