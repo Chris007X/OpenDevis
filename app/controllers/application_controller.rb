@@ -3,8 +3,8 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization # <-- Cette ligne doit être présente
 
   # Optionnel au Wagon : lever une erreur si on oublie d'autoriser une action en dev
-  after_action :verify_authorized, except: :index, unless: :skip_pundit?
-  after_action :verify_policy_scoped, only: :index, unless: :skip_pundit?
+  after_action :verify_authorized, unless: -> { skip_pundit? || action_name == "index" }
+  after_action :verify_policy_scoped, unless: :skip_pundit?, if: -> { action_name == "index" }
 
   private
 

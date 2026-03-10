@@ -1,7 +1,57 @@
 require "test_helper"
 
 class WorkItemTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  def setup
+    @user     = User.create!(email: "wi@test.com", password: "password123")
+    @project  = Project.create!(user: @user, status: "draft")
+    @room     = Room.create!(project: @project, name: "Salon")
+    @category = WorkCategory.create!(name: "Peinture", slug: "peinture-wi")
+    @material = Material.create!(work_category: @category, unit: "L", public_price_exVAT: 18.50, vat_rate: 10)
+    @work_item = WorkItem.new(
+      room: @room,
+      work_category: @category,
+      material: @material,
+      label: "Peinture plafond",
+      quantity: 3,
+      unit: "L",
+      unit_price_exVAT: 18.50,
+      vat_rate: 10,
+      standing_level: 1
+    )
+  end
+
+  test "valid work_item saves successfully" do
+    assert @work_item.valid?
+    assert @work_item.save
+  end
+
+  test "belongs to room" do
+    @work_item.save!
+    assert_equal @room, @work_item.room
+  end
+
+  test "belongs to work_category" do
+    @work_item.save!
+    assert_equal @category, @work_item.work_category
+  end
+
+  test "belongs to material" do
+    @work_item.save!
+    assert_equal @material, @work_item.material
+  end
+
+  test "requires room" do
+    @work_item.room = nil
+    assert_not @work_item.valid?
+  end
+
+  test "requires work_category" do
+    @work_item.work_category = nil
+    assert_not @work_item.valid?
+  end
+
+  test "requires material" do
+    @work_item.material = nil
+    assert_not @work_item.valid?
+  end
 end

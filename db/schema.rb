@@ -10,9 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_113627) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_10_111126) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "materials", force: :cascade do |t|
+    t.string "brand"
+    t.datetime "created_at", null: false
+    t.decimal "public_price_exVAT"
+    t.string "reference"
+    t.string "unit"
+    t.datetime "updated_at", null: false
+    t.integer "vat_rate"
+    t.bigint "work_category_id", null: false
+    t.index ["work_category_id"], name: "index_materials_on_work_category_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "energy_rating"
+    t.string "location_zip"
+    t.text "property_url"
+    t.integer "room_count"
+    t.string "status"
+    t.decimal "total_exVAT"
+    t.decimal "total_incVAT"
+    t.decimal "total_surface_sqm"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.decimal "perimeter_lm"
+    t.bigint "project_id", null: false
+    t.decimal "surface_sqm"
+    t.datetime "updated_at", null: false
+    t.decimal "wall_height_m"
+    t.index ["project_id"], name: "index_rooms_on_project_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -32,4 +71,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_113627) do
     t.string "slug"
     t.datetime "updated_at", null: false
   end
+
+  create_table "work_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "label"
+    t.bigint "material_id", null: false
+    t.decimal "quantity"
+    t.bigint "room_id", null: false
+    t.integer "standing_level"
+    t.string "unit"
+    t.decimal "unit_price_exVAT"
+    t.datetime "updated_at", null: false
+    t.integer "vat_rate"
+    t.bigint "work_category_id", null: false
+    t.index ["material_id"], name: "index_work_items_on_material_id"
+    t.index ["room_id"], name: "index_work_items_on_room_id"
+    t.index ["work_category_id"], name: "index_work_items_on_work_category_id"
+  end
+
+  add_foreign_key "materials", "work_categories"
+  add_foreign_key "projects", "users"
+  add_foreign_key "rooms", "projects"
+  add_foreign_key "work_items", "materials"
+  add_foreign_key "work_items", "rooms"
+  add_foreign_key "work_items", "work_categories"
 end
