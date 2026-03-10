@@ -1,24 +1,36 @@
-<div class="container py-5" style="max-width: 480px;">
-  <h2 class="mb-4">Connexion</h2>
+<div class="container py-5" style="max-width: 440px;">
 
-  <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <div class="form-inputs">
-      <%= f.input :email,
-                  label: "Adresse e-mail",
-                  required: false,
-                  autofocus: true,
-                  input_html: { autocomplete: "email" } %>
-      <%= f.input :password,
-                  label: "Mot de passe",
-                  required: false,
-                  input_html: { autocomplete: "current-password" } %>
-      <%= f.input :remember_me, as: :boolean, label: "Se souvenir de moi" if devise_mapping.rememberable? %>
-    </div>
+  <div class="text-center mb-4">
+    <%= link_to "OpenDevis", root_path,
+          style: "font-size: 1.4rem; font-weight: 800; color: #2C2A25; text-decoration: none; letter-spacing: -0.3px;" %>
+    <div style="color: #9B9588; font-size: 0.9rem; margin-top: 4px;">Connectez-vous à votre espace</div>
+  </div>
 
-    <div class="form-actions">
-      <%= f.button :submit, "Se connecter", class: "btn btn-primary" %>
-    </div>
-  <% end %>
+  <div class="od-form-card">
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="mb-3">
+        <%= f.input :email,
+                    label: "Adresse e-mail",
+                    required: false,
+                    autofocus: true,
+                    input_html: { autocomplete: "email", placeholder: "vous@exemple.com" } %>
+      </div>
+      <div class="mb-3">
+        <%= f.input :password,
+                    label: "Mot de passe",
+                    required: false,
+                    input_html: { autocomplete: "current-password", placeholder: "••••••••" } %>
+      </div>
+      <% if devise_mapping.rememberable? %>
+        <div class="mb-3">
+          <%= f.input :remember_me, as: :boolean, label: "Se souvenir de moi" %>
+        </div>
+      <% end %>
+      <%= f.button :submit, "Se connecter", class: "btn btn-dark-od w-100 mt-2" %>
+    <% end %>
+  </div>
 
-  <%= render "devise/shared/links" %>
+  <div class="text-center mt-3" style="font-size: 0.85rem; color: #9B9588;">
+    <%= render "devise/shared/links" %>
+  </div>
 </div>

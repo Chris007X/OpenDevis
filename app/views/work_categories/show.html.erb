@@ -1,34 +1,56 @@
-<div class="container py-4">
-  <div class="mb-4">
-    <%= link_to "← Toutes les catégories", work_categories_path, class: "btn btn-outline-secondary btn-sm" %>
+<%
+category_icons = {
+  "maconnerie"  => "🏗️",
+  "plomberie"   => "🔧",
+  "electricite" => "⚡",
+  "menuiserie"  => "🚪",
+  "peinture"    => "🖌️",
+  "carrelage"   => "◻️",
+  "isolation"   => "🧱",
+  "chauffage"   => "🌡️"
+}
+%>
+
+<div class="container py-4" style="max-width: 800px;">
+  <%= link_to "← Catégories", work_categories_path, class: "od-back-link" %>
+
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <span style="font-size: 2rem; line-height: 1;"><%= category_icons[@work_category.slug] || "🔨" %></span>
+    <div class="od-page-title mb-0"><%= @work_category.name %></div>
   </div>
 
-  <h1 class="mb-4"><%= @work_category.name %></h1>
-
   <% if @materials.any? %>
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>Marque</th>
-          <th>Référence</th>
-          <th>Unité</th>
-          <th>Prix HT</th>
-          <th>TVA %</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @materials.each do |material| %>
+    <div class="od-table-wrap">
+      <table class="od-table">
+        <thead>
           <tr>
-            <td><%= material.brand %></td>
-            <td><%= material.reference %></td>
-            <td><%= material.unit %></td>
-            <td><%= number_to_currency(material.public_price_exVAT, unit: "€", separator: ",", delimiter: " ") %></td>
-            <td><%= material.vat_rate&.then { |v| "#{v} %" } %></td>
+            <th>Marque</th>
+            <th>Référence</th>
+            <th>Unité</th>
+            <th class="text-end">Prix HT</th>
+            <th class="text-end">TVA</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @materials.each do |material| %>
+            <tr>
+              <td style="font-weight: 600;"><%= material.brand %></td>
+              <td style="color: #9B9588;"><%= material.reference %></td>
+              <td><%= material.unit %></td>
+              <td class="text-end">
+                <%= number_to_currency(material.public_price_exVAT, unit: "€", format: "%n %u",
+                      separator: ",", delimiter: "\u202F") %>
+              </td>
+              <td class="text-end"><%= material.vat_rate ? "#{material.vat_rate}%" : "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% else %>
-    <p class="text-muted">Aucun matériau dans cette catégorie.</p>
+    <div class="text-center py-5"
+         style="border: 1px solid #E8E4DC; border-radius: 10px; background: #fff; color: #9B9588; font-size: 0.9rem;">
+      Aucun matériau dans cette catégorie.
+    </div>
   <% end %>
 </div>

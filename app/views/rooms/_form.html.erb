@@ -1,23 +1,23 @@
 <%= simple_form_for [@project || @room.project, @room] do |f| %>
-  <%= f.error_notification %>
+  <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
 
   <div class="row g-3">
     <div class="col-12">
-      <%= f.input :name, label: "Nom de la pièce" %>
+      <%= f.input :name, label: "Nom de la pièce", placeholder: "ex. Salon, Cuisine, Chambre..." %>
     </div>
     <div class="col-md-4">
-      <%= f.input :surface_sqm, label: "Surface (m²)" %>
+      <%= f.input :surface_sqm, label: "Surface (m²)", placeholder: "ex. 24" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :perimeter_lm, label: "Périmètre (ml)" %>
+      <%= f.input :perimeter_lm, label: "Périmètre (ml)", placeholder: "ex. 20" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :wall_height_m, label: "Hauteur sous plafond (m)" %>
+      <%= f.input :wall_height_m, label: "Hauteur sous plafond (m)", placeholder: "ex. 2.5" %>
     </div>
   </div>
 
-  <div class="mt-3">
-    <%= f.button :submit, class: "btn btn-primary" %>
-    <%= link_to "Annuler", (@project || @room.project), class: "btn btn-outline-secondary ms-2" %>
+  <div class="d-flex align-items-center gap-2 mt-4">
+    <%= f.button :submit, class: "btn btn-dark-od" %>
+    <%= link_to "Annuler", (@project || @room.project), class: "btn btn-ghost-od" %>
   </div>
 <% end %>

@@ -1,4 +1,8 @@
-<div class="container py-4" style="max-width: 720px;">
-  <h1 class="mb-4">Modifier la pièce « <%= @room.name %> »</h1>
-  <%= render "form" %>
+<div class="container py-4" style="max-width: 580px;">
+  <%= link_to "← #{@room.project.location_zip.presence || "Projet"}", @room.project, class: "od-back-link" %>
+  <div class="od-page-title">Modifier — <%= @room.name %></div>
+
+  <div class="od-form-card">
+    <%= render "form" %>
+  </div>
 </div>

@@ -1,4 +1,8 @@
-<div class="container py-4" style="max-width: 720px;">
-  <h1 class="mb-4">Modifier le projet</h1>
-  <%= render "form" %>
+<div class="container py-4" style="max-width: 680px;">
+  <%= link_to "← #{@project.location_zip.presence || "Projet"}", @project, class: "od-back-link" %>
+  <div class="od-page-title">Modifier le projet</div>
+
+  <div class="od-form-card">
+    <%= render "form" %>
+  </div>
 </div>

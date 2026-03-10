@@ -1,18 +1,33 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :set_project, only: %i[show edit update destroy]
 
   def index
-    @projects = policy_scope(Project).order(created_at: :desc)
+    @projects = policy_scope(Project).order(updated_at: :desc)
   end
 
   def show
-    @rooms = @project.rooms.includes(:work_items)
+    @standing  = (params[:standing]&.to_i || 2).clamp(1, 3)
+    @rooms     = @project.rooms.includes(:work_items)
     @documents = @project.documents.order(uploaded_at: :desc)
+
+    filtered = @project.work_items.where(standing_level: @standing).includes(:work_category)
+
+    @total_ht  = filtered.sum { |i| (i.quantity || 0) * (i.unit_price_exVAT || 0) }
+    @total_ttc = filtered.sum do |i|
+      exvat = (i.quantity || 0) * (i.unit_price_exVAT || 0)
+      exvat * (1 + ((i.vat_rate || 0) / 100.0))
+    end
+    @categories_data = filtered
+                       .group_by(&:work_category)
+                       .map do |cat, items|
+                         subtotal = items.sum { |i| (i.quantity || 0) * (i.unit_price_exVAT || 0) }
+                         { category: cat, count: items.count, total: subtotal }
+                       end
+                       .sort_by { |d| -d[:total] }
   end
 
   def new
-    @project = Project.new
-    authorize @project
+    redirect_to wizard_step1_path
   end
 
   def create
@@ -50,6 +65,7 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:status, :location_zip, :room_count, :total_surface_sqm, :energy_rating, :property_url)
+    params.require(:project).permit(:status, :location_zip, :room_count, :total_surface_sqm, :energy_rating,
+                                    :property_url)
   end
 end

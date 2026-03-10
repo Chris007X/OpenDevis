@@ -1,35 +1,76 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="container py-4" style="max-width: 580px;">
+  <%= link_to "← Mes projets", projects_path, class: "od-back-link" %>
+  <div class="od-page-title">Mon profil</div>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= f.error_notification %>
+  <div class="od-form-card mb-4">
+    <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+      <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
 
-  <div class="form-inputs">
-    <%= f.input :email, required: true, autofocus: true %>
+      <div class="mb-3 pb-3" style="border-bottom: 1px solid #E8E4DC;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem;">
+          Informations du compte
+        </div>
+        <div class="row g-3">
+          <div class="col-12">
+            <%= f.input :email,
+                        label: "Adresse e-mail",
+                        required: true,
+                        autofocus: true,
+                        input_html: { autocomplete: "email" } %>
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div style="font-size: 0.8rem; color: #9B9588; margin-top: 0.25rem;">
+                En attente de confirmation pour : <%= resource.unconfirmed_email %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
 
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
+      <div class="mb-3">
+        <div style="font-size: 0.78rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem;">
+          Changer le mot de passe <span style="font-weight: 400; text-transform: none;">(laisser vide pour ne pas modifier)</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <%= f.input :password,
+                        label: "Nouveau mot de passe",
+                        required: false,
+                        input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
+          </div>
+          <div class="col-md-6">
+            <%= f.input :password_confirmation,
+                        label: "Confirmer",
+                        required: false,
+                        input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 pt-3" style="border-top: 1px solid #E8E4DC;">
+        <%= f.input :current_password,
+                    label: "Mot de passe actuel (requis pour confirmer)",
+                    required: true,
+                    input_html: { autocomplete: "current-password", placeholder: "••••••••" } %>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mt-4">
+        <%= f.button :submit, "Enregistrer les modifications", class: "btn btn-dark-od" %>
+        <%= link_to "Annuler", projects_path, class: "btn btn-ghost-od" %>
+      </div>
     <% end %>
-
-    <%= f.input :password,
-                hint: "leave it blank if you don't want to change it",
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :current_password,
-                hint: "we need your current password to confirm your changes",
-                required: true,
-                input_html: { autocomplete: "current-password" } %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Update" %>
+  <%# Danger zone %>
+  <div style="border: 1px solid #F8D7DA; border-radius: 10px; padding: 1.25rem 1.5rem; background: #fff;">
+    <div style="font-size: 0.85rem; font-weight: 700; color: #842029; margin-bottom: 0.5rem;">Zone dangereuse</div>
+    <div style="font-size: 0.85rem; color: #9B9588; margin-bottom: 1rem;">
+      La suppression de votre compte est irréversible. Toutes vos données seront perdues.
+    </div>
+    <%= button_to "Supprimer mon compte",
+          registration_path(resource_name),
+          data: { turbo_confirm: "Supprimer définitivement votre compte ?" },
+          method: :delete,
+          class: "btn btn-ghost-od btn-sm",
+          style: "color: #842029; border-color: #F8D7DA;" %>
   </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

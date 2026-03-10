@@ -1,4 +1,8 @@
-<div class="container py-4" style="max-width: 720px;">
-  <h1 class="mb-4">Modifier le poste « <%= @work_item.label %> »</h1>
-  <%= render "form" %>
+<div class="container py-4" style="max-width: 700px;">
+  <%= link_to "← #{@work_item.room.name}", @work_item.room, class: "od-back-link" %>
+  <div class="od-page-title">Modifier le poste</div>
+
+  <div class="od-form-card">
+    <%= render "form" %>
+  </div>
 </div>

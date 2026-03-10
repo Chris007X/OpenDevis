@@ -1,35 +1,50 @@
 <%= simple_form_for [@room || @work_item.room, @work_item] do |f| %>
-  <%= f.error_notification %>
+  <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
 
   <div class="row g-3">
     <div class="col-12">
-      <%= f.input :label, label: "Désignation" %>
+      <%= f.input :label, label: "Désignation", placeholder: "ex. Pose carrelage sol" %>
     </div>
     <div class="col-md-6">
-      <%= f.association :work_category, collection: @work_categories, label_method: :name, value_method: :id, include_blank: "— Sélectionner une catégorie —", label: "Catégorie" %>
+      <%= f.association :work_category,
+            collection: @work_categories,
+            label_method: :name,
+            value_method: :id,
+            include_blank: "— Catégorie —",
+            label: "Catégorie" %>
     </div>
     <div class="col-md-6">
-      <%= f.association :material, collection: @materials, label_method: ->(m) { "#{m.brand} #{m.reference} (#{m.work_category.name})" }, value_method: :id, include_blank: "— Sélectionner un matériau —", label: "Matériau" %>
+      <%= f.association :material,
+            collection: @materials,
+            label_method: ->(m) { "#{m.brand} #{m.reference}" },
+            value_method: :id,
+            include_blank: "— Matériau —",
+            label: "Matériau" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :quantity, label: "Quantité" %>
+      <%= f.input :quantity, label: "Quantité", placeholder: "ex. 12" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :unit, label: "Unité" %>
+      <%= f.input :unit, label: "Unité", placeholder: "m², u, ml..." %>
     </div>
     <div class="col-md-4">
-      <%= f.input :unit_price_exVAT, label: "Prix unitaire HT" %>
+      <%= f.input :unit_price_exVAT, label: "Prix unitaire HT (€)", placeholder: "ex. 85.00" %>
     </div>
     <div class="col-md-6">
-      <%= f.input :vat_rate, label: "Taux TVA (%)" %>
+      <%= f.input :vat_rate, label: "Taux TVA (%)", placeholder: "ex. 10" %>
     </div>
     <div class="col-md-6">
-      <%= f.input :standing_level, label: "Niveau de gamme" %>
+      <%= f.input :standing_level, as: :select,
+            collection: [[1, "1 — Éco"], [2, "2 — Standard"], [3, "3 — Premium"]],
+            label_method: :last,
+            value_method: :first,
+            include_blank: "— Niveau —",
+            label: "Niveau de standing" %>
     </div>
   </div>
 
-  <div class="mt-3">
-    <%= f.button :submit, class: "btn btn-primary" %>
-    <%= link_to "Annuler", (@room || @work_item.room), class: "btn btn-outline-secondary ms-2" %>
+  <div class="d-flex align-items-center gap-2 mt-4">
+    <%= f.button :submit, class: "btn btn-dark-od" %>
+    <%= link_to "Annuler", (@room || @work_item.room), class: "btn btn-ghost-od" %>
   </div>
 <% end %>

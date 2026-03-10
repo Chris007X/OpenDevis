@@ -1,99 +1,237 @@
-<% status_fr = { "draft" => "Brouillon", "sent" => "Envoyé", "accepted" => "Accepté", "rejected" => "Refusé" } %>
+<% content_for :head do %>
+<style>
 
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <%= link_to "← Mes projets", projects_path, class: "btn btn-outline-secondary btn-sm" %>
-    <div class="d-flex gap-2">
-      <%= link_to "Modifier", edit_project_path(@project), class: "btn btn-outline-secondary btn-sm" %>
-      <%= button_to "Supprimer", @project, method: :delete, data: { turbo_confirm: "Supprimer ce projet ?" }, class: "btn btn-outline-danger btn-sm" %>
+
+  .summary-card {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    background: #2C2A25;
+    color: #fff;
+    height: 100%;
+  }
+  .summary-card-light {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    height: 100%;
+  }
+  .summary-label  { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.3rem; }
+  .summary-amount { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+
+  .standing-toggle-btn {
+    flex: 1;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 8px;
+    background: transparent;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #6B6560;
+    text-decoration: none;
+    text-align: center;
+    transition: border-color 0.12s, background 0.12s, color 0.12s;
+  }
+  .standing-toggle-btn.active { border-color: #2C2A25; background: #2C2A25; color: #fff; }
+  .standing-toggle-btn:hover:not(.active) { border-color: #9B9588; color: #2C2A25; }
+
+  .cat-card {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 1.25rem;
+    text-align: center;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    height: 100%;
+  }
+  .cat-card:hover {
+    border-color: #2C2A25;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44,42,37,0.08);
+  }
+  .cat-icon  { font-size: 1.8rem; margin-bottom: 0.4rem; line-height: 1; }
+  .cat-name  { font-size: 0.88rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.25rem; }
+  .cat-count { font-size: 0.78rem; color: #9B9588; margin-bottom: 0.5rem; }
+  .cat-total { font-size: 1.05rem; font-weight: 700; color: #2C2A25; }
+
+  .room-row {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+  }
+  .room-row:hover { border-color: #2C2A25; color: inherit; }
+
+  .section-title { font-size: 1rem; font-weight: 700; color: #2C2A25; margin-bottom: 1rem; }
+</style>
+<% end %>
+
+<%
+category_icons = {
+  "maconnerie"  => "🏗️",
+  "plomberie"   => "🔧",
+  "electricite" => "⚡",
+  "menuiserie"  => "🚪",
+  "peinture"    => "🖌️",
+  "carrelage"   => "◻️",
+  "isolation"   => "🧱",
+  "chauffage"   => "🌡️"
+}
+status_label, status_class = case @project.status
+  when "draft"    then ["Brouillon", "badge-brouillon"]
+  when "sent"     then ["En cours",  "badge-en-cours"]
+  when "accepted" then ["Terminé",   "badge-termine"]
+  when "rejected" then ["Refusé",    "badge-refuse"]
+  else                 ["Brouillon", "badge-brouillon"]
+  end
+%>
+
+<div class="container py-4" style="max-width: 1100px;">
+
+  <%# ── Header ─────────────────────────────────────────────────────────── %>
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <%= link_to "← Mes projets", projects_path,
+            style: "color: #9B9588; font-size: 0.85rem; text-decoration: none;" %>
+      <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+        <h1 style="font-size: 1.5rem; font-weight: 700; color: #2C2A25; margin: 0;">
+          <%= @project.location_zip.presence || "Projet sans localisation" %>
+        </h1>
+        <span class="badge <%= status_class %> fw-normal"
+              style="font-size: 0.8rem; padding: 0.35em 0.8em; border-radius: 20px;">
+          <%= status_label %>
+        </span>
+      </div>
+      <div style="color: #9B9588; font-size: 0.88rem; margin-top: 4px;">
+        <% meta = [] %>
+        <% meta << "#{@project.total_surface_sqm&.to_i} m²" if @project.total_surface_sqm.present? %>
+        <% meta << "#{@project.room_count} pièces" if @project.room_count.present? %>
+        <% meta << "DPE #{@project.energy_rating}" if @project.energy_rating.present? %>
+        <%= meta.join(" · ") %>
+      </div>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
+      <%= link_to "Modifier", edit_project_path(@project), class: "btn btn-ghost-od btn-sm" %>
+      <%= button_to "Supprimer", @project, method: :delete,
+            data: { turbo_confirm: "Supprimer ce projet ?" },
+            class: "btn btn-ghost-od btn-sm" %>
     </div>
   </div>
 
-  <div class="card mb-4">
-    <div class="card-body">
-      <h2 class="card-title"><%= @project.location_zip.presence || "Projet" %></h2>
-      <div class="row g-2 text-muted small">
-        <div class="col-auto"><strong>Statut :</strong> <%= status_fr[@project.status] || "Brouillon" %></div>
-        <div class="col-auto"><strong>Surface :</strong> <%= @project.total_surface_sqm&.then { |s| "#{s} m²" } || "—" %></div>
-        <div class="col-auto"><strong>Pièces :</strong> <%= @project.room_count || "—" %></div>
-        <div class="col-auto"><strong>Classe énergétique :</strong> <%= @project.energy_rating || "—" %></div>
-        <% if @project.property_url.present? %>
-          <div class="col-auto"><%= link_to "Lien du bien", @project.property_url, target: "_blank" %></div>
+  <%# ── Summary bar + categories (Turbo Frame) ─────────────────────────── %>
+  <%= turbo_frame_tag "project_summary" do %>
+
+    <%# Summary bar %>
+    <div class="row g-3 mb-5">
+      <div class="col-md-4">
+        <div class="summary-card">
+          <div class="summary-label">Total HT</div>
+          <div class="summary-amount">
+            <%= number_to_currency(@total_ht, unit: "€", format: "%n %u",
+                  separator: ",", delimiter: "\u202F") %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="summary-card">
+          <div class="summary-label">Total TTC</div>
+          <div class="summary-amount">
+            <%= number_to_currency(@total_ttc, unit: "€", format: "%n %u",
+                  separator: ",", delimiter: "\u202F") %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="summary-card-light">
+          <div style="font-size: 0.8rem; color: #9B9588; margin-bottom: 0.6rem;">
+            Niveau de standing
+          </div>
+          <div class="d-flex gap-2">
+            <% [[1, "Éco"], [2, "Standard"], [3, "Premium"]].each do |level, label| %>
+              <%= link_to label, project_path(@project, standing: level),
+                    class: "standing-toggle-btn #{"active" if @standing == level}",
+                    data: { turbo_frame: "project_summary" } %>
+            <% end %>
+          </div>
+          <div style="font-size: 0.75rem; color: #9B9588; margin-top: 0.5rem;">
+            <%= pluralize(@categories_data.sum { |d| d[:count] }, "poste") %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# Categories %>
+    <% if @categories_data.any? %>
+      <div class="section-title">Par catégorie de travaux</div>
+      <div class="row g-3 mb-5">
+        <% @categories_data.each do |data| %>
+          <% cat = data[:category] %>
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="cat-card">
+              <div class="cat-icon"><%= category_icons[cat&.slug] || "🔨" %></div>
+              <div class="cat-name"><%= cat&.name || "Autre" %></div>
+              <div class="cat-count"><%= pluralize(data[:count], "poste") %></div>
+              <div class="cat-total">
+                <%= number_to_currency(data[:total], unit: "€", format: "%n %u",
+                      separator: ",", delimiter: "\u202F") %>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
-      <% if @project.total_exVAT.present? %>
-        <div class="mt-2">
-          <strong>Total HT :</strong> <%= number_to_currency(@project.total_exVAT, unit: "€", separator: ",", delimiter: " ") %>
-          &nbsp;|&nbsp;
-          <strong>Total TTC :</strong> <%= number_to_currency(@project.total_incVAT, unit: "€", separator: ",", delimiter: " ") %>
+    <% else %>
+      <div class="text-center py-4 mb-4" style="border: 1px solid #E8E4DC; border-radius: 10px; background: #fff;">
+        <div style="color: #9B9588; font-size: 0.9rem;">
+          Aucun poste pour le standing
+          <strong><%= ["Éco", "Standard", "Premium"][@standing - 1] %></strong>.
+          <% if @project.work_items.any? %>
+            Essayez un autre niveau.
+          <% else %>
+            <br><%= link_to "Ajouter des pièces et des postes", new_project_room_path(@project) %>
+            pour construire votre estimation.
+          <% end %>
         </div>
-      <% end %>
-    </div>
-  </div>
+      </div>
+    <% end %>
+  <% end %>
 
+  <%# ── Rooms section ───────────────────────────────────────────────────── %>
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Pièces</h3>
-    <%= link_to "Ajouter une pièce", new_project_room_path(@project), class: "btn btn-primary btn-sm" %>
+    <div class="section-title mb-0">Par pièce</div>
+    <%= link_to @rooms.any? ? "+ Ajouter une pièce" : "+ Ajouter la première pièce",
+          new_project_room_path(@project),
+          class: "btn #{ @rooms.any? ? 'btn-ghost-od' : 'btn-dark-od' } btn-sm" %>
   </div>
 
   <% if @rooms.any? %>
-    <div class="row g-3">
-      <% @rooms.each do |room| %>
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title"><%= room.name %></h5>
-              <p class="card-text text-muted small">
-                <%= [room.surface_sqm&.then { |v| "#{v} m²" }, room.perimeter_lm&.then { |v| "périmètre #{v} ml" }, room.wall_height_m&.then { |v| "hauteur #{v} m" }].compact.join(" · ") %>
-              </p>
-              <p class="card-text small"><%= pluralize(room.work_items.size, "poste", "postes") %></p>
-            </div>
-            <div class="card-footer d-flex gap-2">
-              <%= link_to "Voir", room, class: "btn btn-sm btn-outline-primary" %>
-              <%= link_to "Modifier", edit_room_path(room), class: "btn btn-sm btn-outline-secondary" %>
-              <%= button_to "Supprimer", room, method: :delete, data: { turbo_confirm: "Supprimer cette pièce ?" }, class: "btn btn-sm btn-outline-danger" %>
-            </div>
+    <% @rooms.each do |room| %>
+      <%= link_to room, class: "room-row" do %>
+        <div>
+          <div style="font-weight: 600; color: #2C2A25;"><%= room.name %></div>
+          <div style="font-size: 0.82rem; color: #9B9588;">
+            <% rparts = [] %>
+            <% rparts << "#{room.surface_sqm&.to_i} m²" if room.surface_sqm.present? %>
+            <% rparts << pluralize(room.work_items.size, "poste") %>
+            <%= rparts.join(" · ") %>
           </div>
         </div>
+        <span style="color: #9B9588;">→</span>
       <% end %>
+    <% end %>
+  <% else %>
+    <div class="text-center py-4" style="border: 1px solid #E8E4DC; border-radius: 10px;
+         background: #fff; color: #9B9588; font-size: 0.9rem;">
+      Aucune pièce pour l'instant.
     </div>
-  <% else %>
-    <p class="text-muted">Aucune pièce. <%= link_to "Ajouter la première pièce", new_project_room_path(@project) %>.</p>
   <% end %>
 
-  <hr class="my-4">
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Documents</h3>
-    <%= link_to "Ajouter un document", new_project_document_path(@project), class: "btn btn-primary btn-sm" %>
-  </div>
-
-  <% if @documents.any? %>
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>Nom du fichier</th>
-          <th>Type</th>
-          <th>Déposé le</th>
-          <th>Lien</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @documents.each do |doc| %>
-          <tr>
-            <td><%= doc.file_name %></td>
-            <td><%= doc.file_type %></td>
-            <td><%= doc.uploaded_at&.strftime("%d/%m/%Y") %></td>
-            <td><%= link_to "Ouvrir", doc.file_url, target: "_blank" if doc.file_url.present? %></td>
-            <td class="text-end">
-              <%= button_to "Supprimer", doc, method: :delete, data: { turbo_confirm: "Supprimer ce document ?" }, class: "btn btn-sm btn-outline-danger" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p class="text-muted">Aucun document. <%= link_to "Ajouter le premier", new_project_document_path(@project) %>.</p>
-  <% end %>
 </div>

@@ -1,30 +1,42 @@
-<div class="container py-4">
-  <h1 class="mb-4">Catalogue de matériaux</h1>
+<div class="container py-4" style="max-width: 1000px;">
+  <div class="od-page-title">Catalogue de matériaux</div>
 
-  <table class="table table-hover align-middle">
-    <thead class="table-light">
-      <tr>
-        <th>Marque</th>
-        <th>Référence</th>
-        <th>Catégorie</th>
-        <th>Unité</th>
-        <th>Prix HT</th>
-        <th>TVA %</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @materials.each do |material| %>
+  <div class="od-table-wrap">
+    <table class="od-table">
+      <thead>
         <tr>
-          <td><%= material.brand %></td>
-          <td><%= material.reference %></td>
-          <td><%= material.work_category&.name %></td>
-          <td><%= material.unit %></td>
-          <td><%= number_to_currency(material.public_price_exVAT, unit: "€", separator: ",", delimiter: " ") %></td>
-          <td><%= material.vat_rate&.then { |v| "#{v} %" } %></td>
-          <td><%= link_to "Voir", material_path(material), class: "btn btn-sm btn-outline-primary" %></td>
+          <th>Marque</th>
+          <th>Référence</th>
+          <th>Catégorie</th>
+          <th>Unité</th>
+          <th class="text-end">Prix HT</th>
+          <th class="text-end">TVA</th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @materials.each do |material| %>
+          <tr>
+            <td style="font-weight: 600;"><%= material.brand %></td>
+            <td style="color: #9B9588;"><%= material.reference %></td>
+            <td>
+              <span style="background: #EDE9E0; color: #6B6560; border-radius: 20px; padding: 0.2em 0.65em; font-size: 0.78rem;">
+                <%= material.work_category&.name %>
+              </span>
+            </td>
+            <td><%= material.unit %></td>
+            <td class="text-end">
+              <%= number_to_currency(material.public_price_exVAT, unit: "€", format: "%n %u",
+                    separator: ",", delimiter: "\u202F") %>
+            </td>
+            <td class="text-end"><%= material.vat_rate ? "#{material.vat_rate}%" : "—" %></td>
+            <td class="text-end">
+              <%= link_to "Voir →", material_path(material),
+                    style: "font-size: 0.85rem; color: #2C2A25; text-decoration: none; font-weight: 500;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

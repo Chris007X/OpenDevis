@@ -1,5 +1,5 @@
 class RoomsController < ApplicationController
-  before_action :set_room, only: [:show, :edit, :update, :destroy]
+  before_action :set_room, only: %i[show edit update destroy]
 
   def index
     @project = policy_scope(Project).find(params[:project_id])
@@ -7,7 +7,8 @@ class RoomsController < ApplicationController
   end
 
   def show
-    @work_items = @room.work_items.includes(:work_category, :material)
+    @all_rooms  = @room.project.rooms.order(:name)
+    @work_items = @room.work_items.includes(:work_category, :material).order(:work_category_id)
   end
 
   def new

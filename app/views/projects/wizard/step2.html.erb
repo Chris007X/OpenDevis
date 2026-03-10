@@ -1,0 +1,98 @@
+<% content_for :head do %>
+<style>
+
+
+  .renovation-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 0.6rem;
+  }
+  .renovation-card:has(input:checked) {
+    border-color: #2C2A25;
+    background: #F5F3EF;
+  }
+  .renovation-card input[type="radio"] { display: none; }
+  .renovation-card .reno-icon { font-size: 1.5rem; width: 2rem; text-align: center; }
+  .renovation-card .reno-desc { font-size: 0.82rem; color: #9B9588; }
+
+  .room-picker {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 1.25rem;
+    background: #FAFAF7;
+    margin-top: 0.75rem;
+  }
+  .room-checkbox-label {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #2C2A25;
+  }
+</style>
+<% end %>
+
+<div class="container py-4" style="max-width: 620px;">
+  <%= render "stepper", current_step: 2 %>
+
+  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Type de rénovation</h2>
+  <p class="mb-4" style="color: #9B9588;">Sélectionnez le type de travaux envisagés.</p>
+
+  <%= form_with url: wizard_step2_path, method: :post, data: { controller: "renovation-type" } do |f| %>
+    <% [
+      ["rafraichissement",  "🎨", "Rafraîchissement",          "Peinture, petites retouches, décoration"],
+      ["renovation_legere", "🔧", "Rénovation légère",          "Sols, peinture, petite plomberie/électricité"],
+      ["par_piece",         "🚪", "Rénovation par pièce",       "Rénovation ciblée de pièces spécifiques"],
+      ["renovation_complete","🏗️","Rénovation complète",        "Refonte totale de l'appartement/maison"],
+      ["energetique",       "🌿", "Rénovation énergétique",     "Isolation, fenêtres, chauffage, DPE"],
+      ["extension",         "📐", "Extension / Surélévation",  "Ajout de surface habitable"],
+      ["construction",      "🏠", "Construction neuve",         "Construction complète"]
+    ].each do |value, icon, label, desc| %>
+      <label class="renovation-card">
+        <input type="radio" name="renovation_type" value="<%= value %>"
+               <%= "checked" if @renovation_type == value %>
+               data-action="change->renovation-type#toggleRoomPicker">
+        <div class="reno-icon"><%= icon %></div>
+        <div>
+          <div style="font-weight: 600; font-size: 0.95rem;"><%= label %></div>
+          <div class="reno-desc"><%= desc %></div>
+        </div>
+      </label>
+    <% end %>
+
+    <%# Room picker — visible for "par_piece" %>
+    <div id="room-picker" class="room-picker" <%= @renovation_type == "par_piece" ? "" : "hidden" %>>
+      <div class="small fw-semibold mb-2" style="color: #9B9588;">Quelles pièces rénover ?</div>
+      <% Projects::WizardController::PRESET_ROOMS.each do |room| %>
+        <label class="room-checkbox-label">
+          <input type="checkbox" name="rooms[]" value="<%= room %>"
+                 <%= "checked" if @selected_rooms.include?(room) %>>
+          <%= room %>
+        </label>
+      <% end %>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <%= link_to "← Retour", wizard_step1_path, class: "btn btn-ghost-od" %>
+      <button type="submit" class="btn btn-dark-od">Suivant →</button>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  // Show/hide room picker based on selection (fallback if Stimulus isn't loaded yet)
+  document.addEventListener("turbo:load", function () {
+    const radios = document.querySelectorAll('input[name="renovation_type"]')
+    const picker = document.getElementById("room-picker")
+    radios.forEach(r => r.addEventListener("change", () => {
+      if (picker) picker.hidden = r.value !== "par_piece" || !r.checked
+    }))
+  })
+</script>

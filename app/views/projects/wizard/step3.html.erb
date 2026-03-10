@@ -1,0 +1,107 @@
+<% content_for :head do %>
+<style>
+
+
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 1.2rem 0.8rem;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.88rem;
+    color: #2C2A25;
+    transition: border-color 0.15s, background 0.15s;
+    min-height: 90px;
+  }
+  .category-card:has(input:checked) {
+    border-color: #2C2A25;
+    background: #F0EDE8;
+    font-weight: 600;
+  }
+  .category-card input[type="checkbox"] { display: none; }
+  .category-card .cat-icon { font-size: 1.6rem; line-height: 1; }
+
+  .group-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #9B9588;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+    margin-top: 1.5rem;
+  }
+</style>
+<% end %>
+
+<%
+category_icons = {
+  "maconnerie"  => "🏗️",
+  "plomberie"   => "🔧",
+  "electricite" => "⚡",
+  "menuiserie"  => "🚪",
+  "peinture"    => "🖌️",
+  "carrelage"   => "◻️",
+  "isolation"   => "🧱",
+  "chauffage"   => "🌡️"
+}
+%>
+
+<div class="container py-4" style="max-width: 720px;">
+  <%= render "stepper", current_step: 3 %>
+
+  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Travaux souhaités</h2>
+  <p class="mb-4" style="color: #9B9588;">Sélectionnez les catégories de travaux à inclure dans l'estimation.</p>
+
+  <% if @renovation_type.in?(%w[extension construction]) %>
+    <%# Free-text fallback for extension/construction %>
+    <%= form_with url: wizard_step3_path, method: :post do |f| %>
+      <div class="field-section" style="border: 1px solid #E8E4DC; border-radius: 10px; padding: 1.5rem; background: #fff;">
+        <p style="color: #9B9588; font-size: 0.9rem;">
+          Décrivez vos besoins spécifiques. Nos conseillers affineront l'estimation.
+        </p>
+        <textarea name="description" class="form-control" rows="4"
+                  placeholder="Ex: Extension de 20m² avec création d'une cuisine ouverte..."
+                  style="border-color: #E8E4DC; border-radius: 8px;"></textarea>
+
+        <%# Include all categories by default %>
+        <% WorkCategory.all.each do |cat| %>
+          <input type="hidden" name="categories[]" value="<%= cat.slug %>">
+        <% end %>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
+        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+      </div>
+    <% end %>
+
+  <% else %>
+    <%= form_with url: wizard_step3_path, method: :post do |f| %>
+      <% @category_groups.each do |group| %>
+        <div class="group-title"><%= group[:name] %></div>
+        <div class="row g-2">
+          <% group[:categories].each do |cat| %>
+            <div class="col-4 col-md-3">
+              <label class="category-card w-100">
+                <input type="checkbox" name="categories[]" value="<%= cat.slug %>"
+                       <%= "checked" if @selected_categories.include?(cat.slug) %>>
+                <div class="cat-icon"><%= category_icons[cat.slug] || "🔨" %></div>
+                <div><%= cat.name %></div>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="d-flex justify-content-between mt-4">
+        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
+        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,18 +1,33 @@
-<div class="container py-4">
-  <h1 class="mb-4">Catégories de travaux</h1>
+<%
+category_icons = {
+  "maconnerie"  => "🏗️",
+  "plomberie"   => "🔧",
+  "electricite" => "⚡",
+  "menuiserie"  => "🚪",
+  "peinture"    => "🖌️",
+  "carrelage"   => "◻️",
+  "isolation"   => "🧱",
+  "chauffage"   => "🌡️"
+}
+%>
+
+<div class="container py-4" style="max-width: 900px;">
+  <div class="od-page-title">Catégories de travaux</div>
 
   <div class="row g-3">
     <% @work_categories.each do |category| %>
-      <div class="col-md-4">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><%= category.name %></h5>
-            <p class="card-text text-muted small"><%= pluralize(category.materials.size, "matériau", "matériaux") %></p>
+      <div class="col-md-4 col-sm-6">
+        <%= link_to work_category_path(category), class: "od-card d-block p-4 text-decoration-none" do %>
+          <div style="font-size: 1.8rem; line-height: 1; margin-bottom: 0.6rem;">
+            <%= category_icons[category.slug] || "🔨" %>
           </div>
-          <div class="card-footer">
-            <%= link_to "Voir les matériaux", work_category_path(category), class: "btn btn-sm btn-outline-primary" %>
+          <div style="font-size: 0.95rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.25rem;">
+            <%= category.name %>
           </div>
-        </div>
+          <div style="font-size: 0.82rem; color: #9B9588;">
+            <%= pluralize(category.materials.size, "matériau", "matériaux") %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>

@@ -1,14 +1,14 @@
 <% if notice %>
-  <div class="alert alert-info alert-dismissible fade show m-1" role="alert">
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-    </button>
+  <div class="od-flash od-flash-notice" role="alert">
+    <span><%= notice %></span>
+    <button type="button" onclick="this.parentElement.remove()"
+            style="background:none;border:none;cursor:pointer;font-size:1rem;color:inherit;opacity:0.6;padding:0;line-height:1;">✕</button>
   </div>
 <% end %>
 <% if alert %>
-  <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
-    <%= alert %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-    </button>
+  <div class="od-flash od-flash-alert" role="alert">
+    <span><%= alert %></span>
+    <button type="button" onclick="this.parentElement.remove()"
+            style="background:none;border:none;cursor:pointer;font-size:1rem;color:inherit;opacity:0.6;padding:0;line-height:1;">✕</button>
   </div>
 <% end %>

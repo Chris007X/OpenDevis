@@ -1,0 +1,139 @@
+<% content_for :head do %>
+<style>
+
+
+  .import-mode-btn {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #2C2A25;
+  }
+  .import-mode-btn:hover { border-color: #2C2A25; }
+  .import-mode-btn.active { border-color: #2C2A25; background: #F0EDE8; }
+
+  .import-panel {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #FAFAF7;
+    padding: 1.25rem;
+    margin-top: 0.75rem;
+  }
+
+  .field-section {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 1.5rem;
+    background: #fff;
+  }
+  .field-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem; }
+  .form-control, .form-select {
+    border-color: #E8E4DC;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #2C2A25;
+    box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
+  }
+</style>
+<% end %>
+
+<div class="container py-4" style="max-width: 680px;">
+  <%= render "stepper", current_step: 1 %>
+
+  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre bien</h2>
+  <p class="mb-4" style="color: #9B9588;">Importez les infos ou remplissez manuellement.</p>
+
+  <%# Import modes %>
+  <div class="mb-4" data-controller="import-mode">
+    <div class="small fw-semibold mb-2" style="color: #9B9588;">Importer automatiquement <span class="fw-normal">(facultatif)</span></div>
+    <div class="d-flex gap-2 mb-2">
+      <button type="button" class="import-mode-btn flex-fill"
+              data-import-mode-target="btn"
+              data-action="click->import-mode#toggle"
+              data-mode="url">
+        🔗<br>URL d'annonce
+      </button>
+      <button type="button" class="import-mode-btn flex-fill"
+              data-import-mode-target="btn"
+              data-action="click->import-mode#toggle"
+              data-mode="pdf">
+        📄<br>PDF / Document
+      </button>
+      <button type="button" class="import-mode-btn flex-fill"
+              data-import-mode-target="btn"
+              data-action="click->import-mode#toggle"
+              data-mode="chat">
+        💬<br>Chat IA
+      </button>
+    </div>
+
+    <div data-import-mode-target="panel" data-mode="url" hidden class="import-panel">
+      <div class="d-flex gap-2">
+        <input type="text" class="form-control" placeholder="https://www.seloger.com/annonces/...">
+        <button class="btn btn-outline-secondary" type="button" onclick="alert('Fonctionnalité IA à venir ✨')">Analyser ✨</button>
+      </div>
+    </div>
+
+    <div data-import-mode-target="panel" data-mode="pdf" hidden class="import-panel text-center py-3">
+      <div style="color: #9B9588; font-size: 0.9rem;">
+        📄 Déposez votre document ici<br>
+        <span style="font-size: 0.8rem;">Fonctionnalité IA à venir</span>
+      </div>
+    </div>
+
+    <div data-import-mode-target="panel" data-mode="chat" hidden class="import-panel">
+      <div class="d-flex gap-2">
+        <input type="text" class="form-control" placeholder="Décrivez votre bien en quelques mots...">
+        <button class="btn btn-outline-secondary" type="button" onclick="alert('Fonctionnalité IA à venir ✨')">Envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  <%# Manual fields %>
+  <%= form_with model: @project, url: wizard_step1_path, method: :post do |f| %>
+    <div class="field-section">
+      <div class="small fw-semibold mb-3" style="color: #9B9588;">
+        Informations du bien — <span class="fw-normal">tous facultatifs</span>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="field-label">Type de bien</div>
+          <input type="text" name="project[property_url]" class="form-control"
+                 placeholder="Appartement, maison, studio..."
+                 value="<%= @project.property_url %>">
+        </div>
+        <div class="col-md-6">
+          <div class="field-label">Surface totale (m²)</div>
+          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5 %>
+        </div>
+        <div class="col-md-6">
+          <div class="field-label">Nombre de pièces</div>
+          <%= f.number_field :room_count, class: "form-control", placeholder: "ex. 4" %>
+        </div>
+        <div class="col-md-6">
+          <div class="field-label">Code postal</div>
+          <%= f.text_field :location_zip, class: "form-control", placeholder: "ex. 75001" %>
+        </div>
+        <div class="col-md-6">
+          <div class="field-label">DPE / Classe énergétique</div>
+          <%= f.select :energy_rating,
+                options_for_select(%w[A B C D E F G].map { |r| [r, r] }, @project.energy_rating),
+                { include_blank: "— Sélectionner —" },
+                class: "form-select" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <%= link_to "← Retour", projects_path, class: "btn btn-ghost-od" %>
+      <%= f.submit "Suivant →", class: "btn btn-dark-od" %>
+    </div>
+  <% end %>
+</div>

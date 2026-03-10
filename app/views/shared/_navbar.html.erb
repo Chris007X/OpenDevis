@@ -1,39 +1,94 @@
-<nav class="navbar navbar-expand-sm navbar-light navbar-lewagon">
-  <div class="container-fluid">
-    <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png" %>
+<style>
+  .od-navbar {
+    background: #fff;
+    border-bottom: 1px solid #E8E4DC;
+    padding: 0 1rem;
+    height: 58px;
+  }
+  .od-brand {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #2C2A25 !important;
+    text-decoration: none;
+    letter-spacing: -0.3px;
+  }
+  .od-brand:hover { color: #2C2A25 !important; }
+  .od-nav-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6B6560 !important;
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .od-nav-link:hover { background: #F5F3EF; color: #2C2A25 !important; }
+  .od-nav-link.active { color: #2C2A25 !important; font-weight: 600; }
+  .od-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #2C2A25;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+  .od-avatar:hover { background: #1a1916; }
+</style>
+
+<nav class="navbar od-navbar d-flex align-items-center">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <%# Brand %>
+    <%= link_to "OpenDevis", root_path, class: "od-brand me-4" %>
+
+    <%# Nav links (desktop) %>
+    <% if user_signed_in? %>
+      <div class="d-none d-sm-flex align-items-center gap-1 me-auto">
+        <%= link_to "Projets", projects_path,
+              class: "od-nav-link #{"active" if request.path.start_with?("/projects")}" %>
+      </div>
+
+      <%# Right side: new project + avatar %>
+      <div class="d-flex align-items-center gap-3">
+        <%= link_to "+ Nouveau projet", wizard_step1_path,
+              style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 0.4rem 0.9rem;
+                      font-size: 0.85rem; font-weight: 500; text-decoration: none;
+                      transition: background 0.12s;"  %>
+
+        <div class="dropdown">
+          <button class="od-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+            <%= (current_user.full_name&.first || current_user.email.first).upcase %>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" style="border: 1px solid #E8E4DC; border-radius: 10px; padding: 0.5rem;">
+            <li>
+              <span class="dropdown-item-text" style="font-size: 0.82rem; color: #9B9588; padding: 0.4rem 0.75rem;">
+                <%= current_user.email %>
+              </span>
+            </li>
+            <li><hr class="dropdown-divider" style="border-color: #E8E4DC; margin: 0.25rem 0;"></li>
+            <li><%= link_to "Matériaux", materials_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
+            <li><%= link_to "Catégories", work_categories_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
+            <li><hr class="dropdown-divider" style="border-color: #E8E4DC; margin: 0.25rem 0;"></li>
+            <li><%= link_to "Se déconnecter", destroy_user_session_path,
+                      data: { turbo_method: :delete },
+                      class: "dropdown-item",
+                      style: "font-size: 0.88rem; border-radius: 6px; color: #842029;" %></li>
+          </ul>
+        </div>
+      </div>
+
+    <% else %>
+      <div class="ms-auto d-flex gap-2">
+        <%= link_to "Se connecter", new_user_session_path, class: "od-nav-link" %>
+        <%= link_to "Créer un compte", new_user_registration_path,
+              style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 0.4rem 0.9rem;
+                      font-size: 0.85rem; font-weight: 500; text-decoration: none;" %>
+      </div>
     <% end %>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Ouvrir la navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto">
-        <% if user_signed_in? %>
-          <li class="nav-item active">
-            <%= link_to "Accueil", root_path, class: "nav-link" %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "Mes projets", projects_path, class: "nav-link" %>
-          </li>
-          <li class="nav-item dropdown">
-            <a href="#" class="avatar d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white fw-bold" id="navbarDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:36px;height:36px;text-decoration:none;">
-              <%= (current_user.full_name&.first || current_user.email.first).upcase %>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <%= link_to "Matériaux", materials_path, class: "dropdown-item" %>
-              <%= link_to "Catégories", work_categories_path, class: "dropdown-item" %>
-              <hr class="dropdown-divider">
-              <%= link_to "Se déconnecter", destroy_user_session_path, data: {turbo_method: :delete}, class: "dropdown-item" %>
-            </div>
-          </li>
-        <% else %>
-          <li class="nav-item">
-            <%= link_to "Se connecter", new_user_session_path, class: "nav-link" %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
   </div>
 </nav>

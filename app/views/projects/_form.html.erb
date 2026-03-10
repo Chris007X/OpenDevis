@@ -1,32 +1,35 @@
 <%= simple_form_for @project do |f| %>
-  <%= f.error_notification %>
+  <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
 
   <div class="row g-3">
     <div class="col-md-6">
-      <%= f.input :location_zip, label: "Code postal" %>
+      <%= f.input :location_zip, label: "Code postal", placeholder: "ex. 75001" %>
     </div>
     <div class="col-md-6">
       <%= f.input :status, as: :select,
-            collection: [["Brouillon", "draft"], ["Envoyé", "sent"], ["Accepté", "accepted"], ["Refusé", "rejected"]],
+            collection: [["Brouillon", "draft"], ["En cours", "sent"], ["Terminé", "accepted"], ["Refusé", "rejected"]],
             include_blank: false,
             label: "Statut" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :total_surface_sqm, label: "Surface totale (m²)" %>
+      <%= f.input :total_surface_sqm, label: "Surface totale (m²)", placeholder: "ex. 78" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :room_count, label: "Nombre de pièces" %>
+      <%= f.input :room_count, label: "Nombre de pièces", placeholder: "ex. 4" %>
     </div>
     <div class="col-md-4">
-      <%= f.input :energy_rating, as: :select, collection: %w[A B C D E F G], include_blank: "— Sélectionner —", label: "Classe énergétique" %>
+      <%= f.input :energy_rating, as: :select,
+            collection: %w[A B C D E F G],
+            include_blank: "— DPE —",
+            label: "Classe énergétique" %>
     </div>
     <div class="col-12">
-      <%= f.input :property_url, label: "URL du bien" %>
+      <%= f.input :property_url, label: "URL du bien", placeholder: "https://..." %>
     </div>
   </div>
 
-  <div class="mt-3">
-    <%= f.button :submit, class: "btn btn-primary" %>
-    <%= link_to "Annuler", @project.persisted? ? @project : projects_path, class: "btn btn-outline-secondary ms-2" %>
+  <div class="d-flex align-items-center gap-2 mt-4">
+    <%= f.button :submit, class: "btn btn-dark-od" %>
+    <%= link_to "Annuler", @project.persisted? ? @project : projects_path, class: "btn btn-ghost-od" %>
   </div>
 <% end %>

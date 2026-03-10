@@ -1,0 +1,108 @@
+/* ─── Design system globals ───────────────────────────────────── */
+body { background-color: #FAFAF7; }
+
+/* Buttons */
+.btn-dark-od {
+  background-color: #2C2A25; border-color: #2C2A25; color: #fff;
+  border-radius: 8px; font-weight: 500; padding: 0.5rem 1.2rem;
+}
+.btn-dark-od:hover { background-color: #1a1916; border-color: #1a1916; color: #fff; }
+
+.btn-ghost-od {
+  background: transparent; border: 1px solid #E8E4DC; color: #6B6560;
+  border-radius: 8px; font-weight: 500; padding: 0.5rem 1.2rem;
+}
+.btn-ghost-od:hover { border-color: #9B9588; color: #2C2A25; background: transparent; }
+
+/* Override Bootstrap's btn-primary & btn-outline-secondary everywhere */
+.btn-primary, .btn.btn-primary {
+  background-color: #2C2A25 !important; border-color: #2C2A25 !important; border-radius: 8px;
+}
+.btn-primary:hover { background-color: #1a1916 !important; border-color: #1a1916 !important; }
+
+.btn-outline-secondary, .btn.btn-outline-secondary {
+  border-color: #E8E4DC !important; color: #6B6560 !important; border-radius: 8px;
+}
+.btn-outline-secondary:hover { border-color: #9B9588 !important; color: #2C2A25 !important; }
+
+/* Status badges */
+.badge-brouillon { background-color: #EDE9E0; color: #6B6560; }
+.badge-en-cours  { background-color: #D4EDDA; color: #2D6A4F; }
+.badge-termine   { background-color: #D0E8F5; color: #1A5C80; }
+.badge-refuse    { background-color: #F8D7DA; color: #842029; }
+
+/* Cards */
+.od-card {
+  border: 1px solid #E8E4DC; border-radius: 10px; background: #fff;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.od-card:hover {
+  border-color: #2C2A25; transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44,42,37,0.08);
+}
+
+/* Form inputs */
+.form-control, .form-select {
+  border-color: #E8E4DC; border-radius: 8px; font-size: 0.95rem;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #2C2A25; box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
+}
+label, .form-label, .col-form-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; }
+.form-text, .hint { font-size: 0.78rem; color: #9B9588; }
+
+/* Form page layout */
+.od-form-card {
+  background: #fff; border: 1px solid #E8E4DC; border-radius: 10px; padding: 1.75rem 2rem;
+}
+.od-page-title { font-size: 1.3rem; font-weight: 700; color: #2C2A25; margin-bottom: 1.5rem; }
+.od-back-link {
+  color: #9B9588; font-size: 0.85rem; text-decoration: none; display: inline-block; margin-bottom: 1rem;
+}
+.od-back-link:hover { color: #2C2A25; }
+
+/* Tables */
+.od-table { border-collapse: collapse; width: 100%; }
+.od-table thead th {
+  font-size: 0.78rem; font-weight: 700; color: #9B9588; text-transform: uppercase;
+  letter-spacing: 0.04em; border-bottom: 1px solid #E8E4DC; padding: 0.6rem 0.75rem;
+  background: #FAFAF7;
+}
+.od-table tbody td {
+  font-size: 0.9rem; color: #2C2A25; padding: 0.75rem; border-bottom: 1px solid #F5F3EF;
+  vertical-align: middle;
+}
+.od-table tbody tr:last-child td { border-bottom: none; }
+.od-table tbody tr:hover td { background: #FAFAF7; }
+.od-table-wrap { border: 1px solid #E8E4DC; border-radius: 10px; overflow: hidden; }
+
+/* Flashes */
+.od-flash {
+  margin: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.od-flash-notice { background: #D4EDDA; color: #2D6A4F; border: 1px solid #b7dfbf; }
+.od-flash-alert  { background: #FFF3CD; color: #856404; border: 1px solid #ffe69c; }
+
+/* Wizard stepper */
+.wizard-stepper { gap: 0; }
+.wizard-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.step-circle {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 600;
+  border: 2px solid #E8E4DC; background: #fff; color: #9B9588;
+}
+.wizard-step.active .step-circle { border-color: #2C2A25; background: #2C2A25; color: #fff; }
+.wizard-step.done .step-circle   { border-color: #2C2A25; background: #2C2A25; color: #fff; }
+.step-label { font-size: 0.75rem; color: #9B9588; white-space: nowrap; }
+.wizard-step.active .step-label  { color: #2C2A25; font-weight: 600; }
+.wizard-connector {
+  height: 2px; width: 60px; background: #E8E4DC; margin: 0 8px; margin-bottom: 14px;
+}
+.wizard-connector.done { background: #2C2A25; }
