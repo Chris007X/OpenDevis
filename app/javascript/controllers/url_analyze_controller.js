@@ -41,11 +41,32 @@ export default class extends Controller {
   }
 
   fillFields(data) {
-    if (data.type_de_bien)      this.setField("project_property_url",      data.type_de_bien)
+    if (data.type_de_bien)      this.setPropertyType(data.type_de_bien)
     if (data.total_surface_sqm) this.setField("project_total_surface_sqm", data.total_surface_sqm)
     if (data.room_count)        this.setField("project_room_count",         data.room_count)
-    if (data.location_zip)      this.setField("project_location_zip",       data.location_zip)
+    if (data.location_zip)      this.setLocationZip(data.location_zip)
     if (data.energy_rating)     this.setSelect("project_energy_rating",     data.energy_rating)
+    if (data.summary)           this.setField("project_description",        data.summary)
+  }
+
+  setPropertyType(value) {
+    const normalized = value.toLowerCase().trim()
+    if (normalized === "appartement") {
+      document.getElementById("property_type_appartement")?.click()
+    } else if (normalized === "maison") {
+      document.getElementById("property_type_maison")?.click()
+    } else {
+      document.getElementById("property_type_autre")?.click()
+      const autreInput = document.querySelector("input[name='project[property_type_autre]']")
+      if (autreInput) autreInput.value = value
+    }
+  }
+
+  setLocationZip(value) {
+    const visible = document.querySelector("[data-city-autocomplete-target='input']")
+    const hidden  = document.querySelector("input[name='project[location_zip]']")
+    if (visible) visible.value = value
+    if (hidden)  hidden.value  = value
   }
 
   setField(id, value) {

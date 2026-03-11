@@ -70,6 +70,7 @@ class PdfPropertyAnalyzer
       - room_count: number of rooms as an integer
       - location_zip: French postal code as a 5-digit string
       - energy_rating: DPE energy class, one letter among A, B, C, D, E, F or G
+      - summary: a single professional sentence in French summarising the property (e.g. "Maison de 120 m² avec 5 pièces à Lyon, classée DPE C."). Only include fields that are present; omit null fields from the sentence.
 
       Set any field to null if the information is not present.
       Return only the JSON object, with no additional text.
