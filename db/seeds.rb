@@ -483,6 +483,74 @@ artisan_data.each do |ad|
   end
 end
 
+puts "Seeding bidding rounds for Marc Dubois..."
+
+marc   = Artisan.find_by!(email: "marc.dubois@artisan-maconnerie.fr")
+antoine = Artisan.find_by!(email: "a.vernet@btp-paris.fr")
+maconnerie = WorkCategory.find_by!(slug: "maconnerie")
+sika_mat  = Material.find_by!(brand: "Sika",  reference: "SikaTop-107 Seal")
+weber_mat = Material.find_by!(brand: "Weber", reference: "weber.rep 767")
+parex_mat = Material.find_by!(brand: "Parex", reference: "Parexlanko 260")
+
+bidding_project = Project.find_or_create_by!(user: alice, location_zip: "75010") do |p|
+  p.status            = "sent"
+  p.room_count        = 3
+  p.total_surface_sqm = 72.0
+  p.energy_rating     = "E"
+end
+
+facade_room = Room.find_or_create_by!(project: bidding_project, name: "Façade et murs porteurs") do |r|
+  r.surface_sqm   = 40.0
+  r.perimeter_lm  = 26.0
+  r.wall_height_m = 3.0
+end
+
+WorkItem.find_or_create_by!(room: facade_room, label: "Étanchéité sous-sol") do |item|
+  item.work_category    = maconnerie
+  item.material         = sika_mat
+  item.quantity         = 40
+  item.unit             = "kg"
+  item.unit_price_exVAT = 3.80
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+WorkItem.find_or_create_by!(room: facade_room, label: "Rejointoiement façade") do |item|
+  item.work_category    = maconnerie
+  item.material         = weber_mat
+  item.quantity         = 30
+  item.unit             = "kg"
+  item.unit_price_exVAT = 2.10
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+WorkItem.find_or_create_by!(room: facade_room, label: "Enduit de ravalement") do |item|
+  item.work_category    = maconnerie
+  item.material         = parex_mat
+  item.quantity         = 60
+  item.unit             = "kg"
+  item.unit_price_exVAT = 1.85
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+bidding_project.recompute_totals!
+
+bidding_round = BiddingRound.find_or_create_by!(project: bidding_project) do |br|
+  br.standing_level = 2
+  br.status         = "sent"
+  br.deadline       = 2.weeks.from_now
+end
+
+BiddingRequest.find_or_create_by!(bidding_round: bidding_round, work_category: maconnerie, artisan: marc) do |req|
+  req.status = "sent"
+end
+
+BiddingRequest.find_or_create_by!(bidding_round: bidding_round, work_category: maconnerie, artisan: antoine) do |req|
+  req.status = "sent"
+end
+
 puts "Done! #{WorkCategory.count} categories, #{Material.count} materials, #{User.count} users, " \
      "#{Project.count} projects, #{Room.count} rooms, #{WorkItem.count} work items, " \
-     "#{Document.count} documents, #{Artisan.count} artisans."
+     "#{Document.count} documents, #{Artisan.count} artisans, #{BiddingRound.count} bidding rounds."
