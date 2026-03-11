@@ -1,28 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Fetches unread notification count and shows/hides a badge.
-// Usage: data-controller="notification-badge" data-notification-badge-url-value="/notifications/unread_count"
 export default class extends Controller {
-  static targets = ["badge"]
-  static values  = { count: Number }
+  static targets = ["count"]
 
   connect() {
-    this.render()
+    this.poll()
+    this.interval = setInterval(() => this.poll(), 30000)
   }
 
-  countValueChanged() {
-    this.render()
+  disconnect() {
+    clearInterval(this.interval)
   }
 
-  render() {
-    const count = this.countValue
-    if (!this.hasBadgeTarget) return
+  async poll() {
+    try {
+      const response = await fetch("/notifications?format=json", {
+        headers: { "Accept": "application/json" }
+      })
+      if (!response.ok) return
 
-    if (count > 0) {
-      this.badgeTarget.textContent = count > 99 ? "99+" : count
-      this.badgeTarget.style.display = "inline-flex"
-    } else {
-      this.badgeTarget.style.display = "none"
+      const data = await response.json()
+      const unread = data.unread_count
+
+      if (!this.hasCountTarget) return
+
+      if (unread > 0) {
+        this.countTarget.textContent = unread > 9 ? "9+" : unread
+        this.countTarget.style.display = "inline-flex"
+      } else {
+        this.countTarget.style.display = "none"
+      }
+    } catch (_e) {
+      // Network error, ignore silently
     }
   }
 }

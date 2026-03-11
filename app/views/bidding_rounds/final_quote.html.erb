@@ -57,7 +57,9 @@
         · <%= @final_selections.count %> catégorie<%= @final_selections.count > 1 ? "s" : "" %>
       </div>
     </div>
-    <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
+    <%= link_to "Exporter PDF",
+          final_quote_project_bidding_round_path(@project, format: :pdf),
+          class: "btn btn-ghost-od btn-sm" %>
   </div>
 
   <%# Summary bar %>

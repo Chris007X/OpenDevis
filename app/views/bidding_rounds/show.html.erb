@@ -67,16 +67,10 @@
     "completed"   => ["Terminé",      "br-status-completed"],
     "cancelled"   => ["Annulé",       "br-status-cancelled"]
   }
-  req_labels = {
-    "pending"   => ["En attente", "req-pending"],
-    "sent"      => ["Envoyé",     "req-sent"],
-    "responded" => ["Répondu",    "req-responded"],
-    "declined"  => ["Décliné",    "req-declined"],
-    "expired"   => ["Expiré",     "req-expired"],
-    "replaced"  => ["Remplacé",   "req-replaced"]
-  }
   sl, sc = status_labels[@bidding_round.status] || ["Inconnu", "br-status-draft"]
 %>
+
+<%= turbo_stream_from "bidding_round_#{@bidding_round.id}_requests" %>
 
 <div class="container py-4" style="max-width: 1000px;">
   <%= link_to "← Retour au projet", project_path(@project),
@@ -102,37 +96,7 @@
 
   <%# Progress card %>
   <div class="progress-card">
-    <div class="row g-3 text-center">
-      <div class="col-4">
-        <div style="font-size: 1.8rem; font-weight: 700; color: #2C2A25;">
-          <%= @bidding_round.total_requests %>
-        </div>
-        <div style="font-size: 0.8rem; color: #9B9588;">Demandes envoyées</div>
-      </div>
-      <div class="col-4">
-        <div style="font-size: 1.8rem; font-weight: 700; color: #2D6A4F;">
-          <%= @bidding_round.responses_received %>
-        </div>
-        <div style="font-size: 0.8rem; color: #9B9588;">Réponses reçues</div>
-      </div>
-      <div class="col-4">
-        <div style="font-size: 1.8rem; font-weight: 700; color: #2C2A25;">
-          <% days_left = [(@bidding_round.deadline.to_date - Date.current).to_i, 0].max %>
-          <%= days_left %>j
-        </div>
-        <div style="font-size: 0.8rem; color: #9B9588;">Jours restants</div>
-      </div>
-    </div>
-    <% if @bidding_round.total_requests > 0 %>
-      <div class="mt-3">
-        <div style="font-size: 0.8rem; color: #9B9588; margin-bottom: 6px;">
-          Avancement : <%= @bidding_round.responses_received %> / <%= @bidding_round.total_requests %> réponses
-        </div>
-        <div style="background: #E8E4DC; border-radius: 4px; height: 6px;">
-          <div style="background: #2C2A25; border-radius: 4px; height: 6px; width: <%= [(@bidding_round.responses_received.to_f / @bidding_round.total_requests * 100).round, 100].min %>%;"></div>
-        </div>
-      </div>
-    <% end %>
+    <%= render "bidding_rounds/progress_bar", bidding_round: @bidding_round %>
   </div>
 
   <%# Requests by category %>
@@ -147,34 +111,7 @@
           </span>
         </div>
         <% requests.each do |req| %>
-          <% rl, rc = req_labels[req.status] || ["?", "req-pending"] %>
-          <div class="artisan-row">
-            <div class="d-flex align-items-center gap-3">
-              <div class="artisan-avatar-sm"><%= req.artisan.name.first.upcase %></div>
-              <div>
-                <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;"><%= req.artisan.name %></div>
-                <div style="font-size: 0.8rem; color: #9B9588;">
-                  <%= req.artisan.company_name.presence || req.artisan.postcode %>
-                  <% if req.artisan.rating.present? %>
-                    · ★ <%= req.artisan.star_rating %>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-              <% if req.responded? && req.price_total.present? %>
-                <div style="font-weight: 700; color: #2C2A25;">
-                  <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
-                </div>
-              <% end %>
-              <span class="req-status-badge <%= rc %>"><%= rl %></span>
-              <% if req.responded_at.present? %>
-                <span style="font-size: 0.75rem; color: #9B9588;">
-                  <%= l(req.responded_at, format: :short) %>
-                </span>
-              <% end %>
-            </div>
-          </div>
+          <%= render "bidding_rounds/bidding_request_row", bidding_request: req, project: @project %>
         <% end %>
       </div>
     <% end %>

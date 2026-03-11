@@ -1,0 +1,46 @@
+<%
+  req_labels = {
+    "pending"   => ["En attente", "req-pending"],
+    "sent"      => ["Envoyé",     "req-sent"],
+    "responded" => ["Répondu",    "req-responded"],
+    "declined"  => ["Décliné",    "req-declined"],
+    "expired"   => ["Expiré",     "req-expired"],
+    "replaced"  => ["Remplacé",   "req-replaced"]
+  }
+  rl, rc = req_labels[bidding_request.status] || ["?", "req-pending"]
+  local_project = local_assigns[:project] || bidding_request.bidding_round.project
+%>
+<div id="bidding_request_<%= bidding_request.id %>" class="artisan-row">
+  <div class="d-flex align-items-center gap-3">
+    <div class="artisan-avatar-sm"><%= bidding_request.artisan.name.first.upcase %></div>
+    <div>
+      <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;"><%= bidding_request.artisan.name %></div>
+      <div style="font-size: 0.8rem; color: #9B9588;">
+        <%= bidding_request.artisan.company_name.presence || bidding_request.artisan.postcode %>
+        <% if bidding_request.artisan.rating.present? %>
+          · ★ <%= bidding_request.artisan.star_rating %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <% if bidding_request.responded? && bidding_request.price_total.present? %>
+      <div style="font-weight: 700; color: #2C2A25;">
+        <%= number_to_currency(bidding_request.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+      </div>
+    <% end %>
+    <span class="req-status-badge <%= rc %>"><%= rl %></span>
+    <% if bidding_request.responded_at.present? %>
+      <span style="font-size: 0.75rem; color: #9B9588;">
+        <%= l(bidding_request.responded_at, format: :short) %>
+      </span>
+    <% end %>
+    <% if bidding_request.awaiting? %>
+      <%= turbo_frame_tag "replace_frame_#{bidding_request.id}" do %>
+        <%= link_to "Remplacer",
+              select_replacement_project_bidding_round_path(local_project, bidding_request_id: bidding_request.id),
+              style: "font-size: 0.75rem; color: #9B9588; text-decoration: underline;" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

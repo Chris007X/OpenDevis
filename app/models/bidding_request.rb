@@ -12,6 +12,8 @@ class BiddingRequest < ApplicationRecord
 
   before_validation :generate_token, on: :create
 
+  after_update_commit :broadcast_status_change, if: :saved_change_to_status?
+
   scope :active, -> { where.not(status: "replaced") }
   scope :pending_send, -> { where(status: "pending") }
 
@@ -36,4 +38,22 @@ class BiddingRequest < ApplicationRecord
   def generate_token
     self.token ||= SecureRandom.urlsafe_base64(32)
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def broadcast_status_change
+    project = bidding_round.project
+    broadcast_replace_to(
+      "bidding_round_#{bidding_round_id}_requests",
+      target: "bidding_request_#{id}",
+      partial: "bidding_rounds/bidding_request_row",
+      locals: { bidding_request: self, project: project }
+    )
+    broadcast_replace_to(
+      "bidding_round_#{bidding_round_id}_requests",
+      target: "bidding_progress",
+      partial: "bidding_rounds/progress_bar",
+      locals: { bidding_round: bidding_round }
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
 end
