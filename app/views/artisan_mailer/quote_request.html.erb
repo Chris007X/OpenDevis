@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; color: #2C2A25; background: #FAFAF7; padding: 20px;">
+  <h2>Demande de devis</h2>
+  <p>Bonjour <%= @artisan.name %>,</p>
+  <p>Vous avez reçu une demande de devis pour des travaux de <strong><%= @work_category.name %></strong>.</p>
+
+  <div style="background: #fff; border: 1px solid #E8E4DC; border-radius: 10px; padding: 20px; margin: 20px 0;">
+    <h3>Résumé du projet</h3>
+    <ul>
+      <li><strong>Catégorie :</strong> <%= @work_category.name %></li>
+      <li><strong>Surface totale :</strong> <%= @project.total_surface_sqm %> m²</li>
+      <li><strong>Nombre de pièces :</strong> <%= @project.room_count %></li>
+      <li><strong>Niveau de standing :</strong> <%= @round.standing_label %></li>
+      <li><strong>Localisation :</strong> <%= @project.location_zip %></li>
+    </ul>
+    <% if @category_estimate > 0 %>
+      <p><strong>Estimation de référence :</strong> <%= number_to_currency(@category_estimate, unit: "€", format: "%n %u", precision: 0) %> HT</p>
+    <% end %>
+    <p><strong>Date limite de réponse :</strong> <%= l(@round.deadline, format: :long) %></p>
+  </div>
+
+  <p>
+    <%= link_to "Répondre en ligne", @portal_url,
+          style: "background: #2C2A25; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none;" %>
+  </p>
+
+  <p style="color: #9B9588; font-size: 0.9em;">Vous pouvez également répondre directement à cet email en indiquant votre prix total HT.</p>
+
+  <p>Cordialement,<br>L'équipe OpenDevis</p>
+</body>
+</html>

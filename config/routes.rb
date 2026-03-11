@@ -15,6 +15,23 @@ Rails.application.routes.draw do
   resources :projects do
     resources :rooms,     only: [:index, :new, :create]
     resources :documents, only: [:index, :new, :create]
+    resource :bidding_round, only: [:new, :create, :show] do
+      post   :send_requests,      on: :member
+      get    :select_artisans,    on: :member
+      patch  :update_artisans,    on: :member
+      get    :review_responses,   on: :member
+      post   :confirm_selections, on: :member
+      get    :final_quote,        on: :member
+    end
+  end
+
+  get  "artisan/respond/:token", to: "artisan_portal#show",   as: :artisan_portal
+  post "artisan/respond/:token", to: "artisan_portal#submit",  as: :artisan_portal_submit
+
+  post "webhooks/inbound_email", to: "webhooks/inbound_email#create"
+
+  resources :notifications, only: [:index] do
+    post :mark_read, on: :member
   end
 
   resources :rooms, only: [:show, :edit, :update, :destroy] do

@@ -1,0 +1,125 @@
+<% content_for :head do %>
+<style>
+  .fq-card {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .fq-card-header {
+    padding: 14px 20px;
+    background: #FAFAF7;
+    border-bottom: 1px solid #E8E4DC;
+    font-weight: 700;
+    color: #2C2A25;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .fq-row {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F5F3EF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .fq-row:last-child { border-bottom: none; }
+  .ai-badge {
+    display: inline-block;
+    background: #D4EDDA; color: #2D6A4F;
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    margin-left: 8px;
+  }
+  .summary-stat {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .summary-stat.dark { background: #2C2A25; color: #fff; border-color: #2C2A25; }
+  .stat-label { font-size: 0.8rem; opacity: 0.7; margin-bottom: 4px; }
+  .stat-amount { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+</style>
+<% end %>
+
+<div class="container py-4" style="max-width: 1000px;">
+  <%= link_to "← Retour au projet", project_path(@project),
+        style: "color: #9B9588; text-decoration: none; font-size: 0.9rem;" %>
+
+  <div class="d-flex justify-content-between align-items-start mt-3 mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-1" style="font-weight: 700; color: #2C2A25;">Devis artisans finalisé</h2>
+      <div style="color: #9B9588; font-size: 0.9rem;">
+        Niveau : <strong style="color: #2C2A25;"><%= @bidding_round.standing_label %></strong>
+        · <%= @final_selections.count %> catégorie<%= @final_selections.count > 1 ? "s" : "" %>
+      </div>
+    </div>
+    <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
+  </div>
+
+  <%# Summary bar %>
+  <div class="row g-3 mb-5">
+    <div class="col-md-4">
+      <div class="summary-stat dark">
+        <div class="stat-label">Total artisans HT</div>
+        <div class="stat-amount">
+          <%= number_to_currency(@total_artisan_price, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-stat">
+        <div class="stat-label" style="color: #9B9588;">Estimation initiale HT</div>
+        <div class="stat-amount" style="color: #2C2A25;">
+          <%= number_to_currency(@original_estimate, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-stat">
+        <% diff = @total_artisan_price - @original_estimate.to_f %>
+        <div class="stat-label" style="color: #9B9588;">Écart</div>
+        <div class="stat-amount" style="color: <%= diff > 0 ? "#842029" : "#2D6A4F" %>;">
+          <%= diff >= 0 ? "+" : "" %><%= number_to_currency(diff, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Selections by category %>
+  <div style="font-weight: 700; color: #2C2A25; margin-bottom: 12px; font-size: 1rem;">Détail par catégorie</div>
+
+  <div class="fq-card">
+    <% @final_selections.each do |sel| %>
+      <div class="fq-row">
+        <div>
+          <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;">
+            <%= sel.work_category.name %>
+            <% if sel.ai_recommended? %>
+              <span class="ai-badge">Recommandé</span>
+            <% end %>
+          </div>
+          <div style="font-size: 0.82rem; color: #9B9588;">
+            <%= sel.artisan.name %>
+            <% if sel.artisan.company_name.present? %>
+              · <%= sel.artisan.company_name %>
+            <% end %>
+            <% if sel.artisan.rating.present? %>
+              · ★ <%= sel.artisan.star_rating %>
+            <% end %>
+          </div>
+        </div>
+        <div style="font-weight: 700; color: #2C2A25; font-size: 1rem; white-space: nowrap;">
+          <%= number_to_currency(sel.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <%= link_to "← Retour au projet", project_path(@project), class: "btn btn-ghost-od" %>
+  </div>
+</div>
