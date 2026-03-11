@@ -551,6 +551,204 @@ BiddingRequest.find_or_create_by!(bidding_round: bidding_round, work_category: m
   req.status = "sent"
 end
 
+# Project 2 — Réfection murs humides, Paris 75018
+project2 = Project.find_or_create_by!(user: bob, location_zip: "75018") do |p|
+  p.status            = "sent"
+  p.room_count        = 2
+  p.total_surface_sqm = 48.0
+  p.energy_rating     = "F"
+end
+
+cave_room = Room.find_or_create_by!(project: project2, name: "Cave et sous-sol") do |r|
+  r.surface_sqm   = 20.0
+  r.perimeter_lm  = 18.0
+  r.wall_height_m = 2.2
+end
+
+WorkItem.find_or_create_by!(room: cave_room, label: "Traitement humidité murs") do |item|
+  item.work_category    = maconnerie
+  item.material         = sika_mat
+  item.quantity         = 80
+  item.unit             = "kg"
+  item.unit_price_exVAT = 3.80
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+WorkItem.find_or_create_by!(room: cave_room, label: "Reprise enduit dégradé") do |item|
+  item.work_category    = maconnerie
+  item.material         = weber_mat
+  item.quantity         = 50
+  item.unit             = "kg"
+  item.unit_price_exVAT = 2.10
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+garage_room = Room.find_or_create_by!(project: project2, name: "Mur mitoyen garage") do |r|
+  r.surface_sqm   = 12.0
+  r.perimeter_lm  = 14.0
+  r.wall_height_m = 2.5
+end
+
+WorkItem.find_or_create_by!(room: garage_room, label: "Enduit de protection extérieur") do |item|
+  item.work_category    = maconnerie
+  item.material         = parex_mat
+  item.quantity         = 90
+  item.unit             = "kg"
+  item.unit_price_exVAT = 1.85
+  item.vat_rate         = 10
+  item.standing_level   = 1
+end
+
+project2.recompute_totals!
+
+round2 = BiddingRound.find_or_create_by!(project: project2) do |br|
+  br.standing_level = 2
+  br.status         = "sent"
+  br.deadline       = 10.days.from_now
+end
+
+karim = Artisan.find_by!(email: "k.benali@benali-travaux.fr")
+BiddingRequest.find_or_create_by!(bidding_round: round2, work_category: maconnerie, artisan: marc) do |req|
+  req.status = "sent"
+end
+BiddingRequest.find_or_create_by!(bidding_round: round2, work_category: maconnerie, artisan: karim) do |req|
+  req.status = "sent"
+end
+
+# Project 3 — Extension et maçonnerie lourde, Paris 75019
+project3 = Project.find_or_create_by!(user: alice, location_zip: "75019") do |p|
+  p.status            = "sent"
+  p.room_count        = 4
+  p.total_surface_sqm = 95.0
+  p.energy_rating     = "D"
+end
+
+extension_room = Room.find_or_create_by!(project: project3, name: "Extension arrière") do |r|
+  r.surface_sqm   = 30.0
+  r.perimeter_lm  = 22.0
+  r.wall_height_m = 2.7
+end
+
+WorkItem.find_or_create_by!(room: extension_room, label: "Montage murs en parpaing") do |item|
+  item.work_category    = maconnerie
+  item.material         = parex_mat
+  item.quantity         = 200
+  item.unit             = "kg"
+  item.unit_price_exVAT = 1.85
+  item.vat_rate         = 10
+  item.standing_level   = 3
+end
+
+WorkItem.find_or_create_by!(room: extension_room, label: "Enduit finition intérieur") do |item|
+  item.work_category    = maconnerie
+  item.material         = weber_mat
+  item.quantity         = 120
+  item.unit             = "kg"
+  item.unit_price_exVAT = 2.10
+  item.vat_rate         = 10
+  item.standing_level   = 3
+end
+
+terrace_room = Room.find_or_create_by!(project: project3, name: "Terrasse et margelles") do |r|
+  r.surface_sqm   = 18.0
+  r.perimeter_lm  = 17.0
+  r.wall_height_m = 1.0
+end
+
+WorkItem.find_or_create_by!(room: terrace_room, label: "Étanchéité dalle terrasse") do |item|
+  item.work_category    = maconnerie
+  item.material         = sika_mat
+  item.quantity         = 60
+  item.unit             = "kg"
+  item.unit_price_exVAT = 3.80
+  item.vat_rate         = 10
+  item.standing_level   = 3
+end
+
+project3.recompute_totals!
+
+round3 = BiddingRound.find_or_create_by!(project: project3) do |br|
+  br.standing_level = 3
+  br.status         = "sent"
+  br.deadline       = 3.weeks.from_now
+end
+
+pierre = Artisan.find_by!(email: "pierre.moreau.mac@gmail.com")
+BiddingRequest.find_or_create_by!(bidding_round: round3, work_category: maconnerie, artisan: marc) do |req|
+  req.status = "sent"
+end
+BiddingRequest.find_or_create_by!(bidding_round: round3, work_category: maconnerie, artisan: pierre) do |req|
+  req.status = "sent"
+end
+
+# Project 4 — Rénovation complète immeuble Haussmann, Paris 75002
+project4 = Project.find_or_create_by!(user: bob, location_zip: "75002") do |p|
+  p.status            = "sent"
+  p.room_count        = 6
+  p.total_surface_sqm = 130.0
+  p.energy_rating     = "E"
+end
+
+facade2_room = Room.find_or_create_by!(project: project4, name: "Façade côté rue") do |r|
+  r.surface_sqm   = 55.0
+  r.perimeter_lm  = 30.0
+  r.wall_height_m = 4.0
+end
+
+WorkItem.find_or_create_by!(room: facade2_room, label: "Ravalement complet façade") do |item|
+  item.work_category    = maconnerie
+  item.material         = parex_mat
+  item.quantity         = 300
+  item.unit             = "kg"
+  item.unit_price_exVAT = 1.85
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+WorkItem.find_or_create_by!(room: facade2_room, label: "Injection résine fissures") do |item|
+  item.work_category    = maconnerie
+  item.material         = sika_mat
+  item.quantity         = 25
+  item.unit             = "kg"
+  item.unit_price_exVAT = 3.80
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+cour_room = Room.find_or_create_by!(project: project4, name: "Cour intérieure") do |r|
+  r.surface_sqm   = 25.0
+  r.perimeter_lm  = 20.0
+  r.wall_height_m = 3.5
+end
+
+WorkItem.find_or_create_by!(room: cour_room, label: "Reprise joints pierre de taille") do |item|
+  item.work_category    = maconnerie
+  item.material         = weber_mat
+  item.quantity         = 80
+  item.unit             = "kg"
+  item.unit_price_exVAT = 2.10
+  item.vat_rate         = 10
+  item.standing_level   = 2
+end
+
+project4.recompute_totals!
+
+round4 = BiddingRound.find_or_create_by!(project: project4) do |br|
+  br.standing_level = 2
+  br.status         = "sent"
+  br.deadline       = 1.week.from_now
+end
+
+stephan = Artisan.find_by!(email: "s.girard@girard-construction.fr")
+BiddingRequest.find_or_create_by!(bidding_round: round4, work_category: maconnerie, artisan: marc) do |req|
+  req.status = "sent"
+end
+BiddingRequest.find_or_create_by!(bidding_round: round4, work_category: maconnerie, artisan: stephan) do |req|
+  req.status = "sent"
+end
+
 puts "Done! #{WorkCategory.count} categories, #{Material.count} materials, #{User.count} users, " \
      "#{Project.count} projects, #{Room.count} rooms, #{WorkItem.count} work items, " \
      "#{Document.count} documents, #{Artisan.count} artisans, #{BiddingRound.count} bidding rounds."
