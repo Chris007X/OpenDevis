@@ -1,0 +1,22 @@
+Bonjour <%= @artisan.name %>,
+
+Vous avez reçu une demande de devis pour des travaux de <%= @work_category.name %>.
+
+Résumé du projet :
+• Catégorie : <%= @work_category.name %>
+• Surface totale : <%= @project.total_surface_sqm %> m²
+• Nombre de pièces : <%= @project.room_count %>
+• Niveau de standing : <%= @round.standing_label %>
+• Localisation : <%= @project.location_zip %>
+<% if @category_estimate > 0 %>
+• Estimation de référence : <%= number_to_currency(@category_estimate, unit: "€", format: "%n %u", precision: 0) %> HT
+<% end %>
+
+Date limite de réponse : <%= l(@round.deadline, format: :long) %>
+
+Répondre en ligne : <%= @portal_url %>
+
+Vous pouvez également répondre directement à cet email en indiquant votre prix total HT.
+
+Cordialement,
+L'équipe OpenDevis

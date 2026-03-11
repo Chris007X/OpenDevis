@@ -204,6 +204,53 @@ status_label, status_class = case @project.status
     <% end %>
   <% end %>
 
+  <%# ── Artisan bidding CTA ────────────────────────────────────────────── %>
+  <% if @project.bidding_round.nil? %>
+    <div style="border: 1.5px dashed #E8E4DC; border-radius: 10px; background: #fff;
+                padding: 24px 28px; margin-bottom: 28px;
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <div style="font-weight: 700; color: #2C2A25; margin-bottom: 4px;">Obtenir des devis artisans</div>
+        <div style="color: #9B9588; font-size: 0.88rem;">
+          Envoyez votre estimation à des artisans locaux et comparez leurs propositions.
+        </div>
+      </div>
+      <%= link_to "Demander des devis →", new_project_bidding_round_path(@project, standing: @standing),
+            style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 10px 20px;
+                    font-size: 0.9rem; font-weight: 600; text-decoration: none; white-space: nowrap;" %>
+    </div>
+  <% else %>
+    <%
+      br = @project.bidding_round
+      br_label, br_class = case br.status
+        when "sent"        then ["Envoyé",    "badge-en-cours"]
+        when "in_progress" then ["En cours",  "badge-en-cours"]
+        when "completed"   then ["Terminé",   "badge-termine"]
+        else                    ["Brouillon", "badge-brouillon"]
+      end
+    %>
+    <div style="border: 1px solid #E8E4DC; border-radius: 10px; background: #fff;
+                padding: 20px 24px; margin-bottom: 28px;
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span style="font-weight: 700; color: #2C2A25;">Devis artisans</span>
+          <span class="badge <%= br_class %> fw-normal" style="font-size: 0.75rem; padding: 0.25em 0.7em; border-radius: 20px;">
+            <%= br_label %>
+          </span>
+        </div>
+        <div style="color: #9B9588; font-size: 0.85rem;">
+          <%= br.responses_received %> / <%= br.total_requests %> réponses reçues
+          · Niveau <%= br.standing_label %>
+          · Date limite <%= l(br.deadline, format: :short) %>
+        </div>
+      </div>
+      <%= link_to "Voir le suivi →", project_bidding_round_path(@project),
+            style: "background: transparent; border: 1px solid #E8E4DC; color: #2C2A25; border-radius: 8px;
+                    padding: 8px 18px; font-size: 0.88rem; font-weight: 500; text-decoration: none;" %>
+    </div>
+  <% end %>
+
   <%# ── Rooms section ───────────────────────────────────────────────────── %>
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="section-title mb-0">Par pièce</div>

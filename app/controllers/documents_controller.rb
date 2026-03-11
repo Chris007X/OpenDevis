@@ -1,5 +1,5 @@
 class DocumentsController < ApplicationController
-  before_action :set_project, only: [:index, :new, :create]
+  before_action :set_project, only: %i[index new create]
   before_action :set_document, only: [:destroy]
 
   def index

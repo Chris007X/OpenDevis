@@ -1,5 +1,5 @@
 class WorkItemsController < ApplicationController
-  before_action :set_work_item, only: [:edit, :update, :destroy]
+  before_action :set_work_item, only: %i[edit update destroy]
 
   def new
     @room = Room.find(params[:room_id])
@@ -53,6 +53,7 @@ class WorkItemsController < ApplicationController
   end
 
   def work_item_params
-    params.require(:work_item).permit(:label, :quantity, :unit, :unit_price_exVAT, :standing_level, :vat_rate, :work_category_id, :material_id)
+    params.require(:work_item).permit(:label, :quantity, :unit, :unit_price_exVAT, :standing_level, :vat_rate,
+                                      :work_category_id, :material_id)
   end
 end

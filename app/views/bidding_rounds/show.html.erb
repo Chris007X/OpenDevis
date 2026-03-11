@@ -1,0 +1,123 @@
+<% content_for :head do %>
+<style>
+  .br-status-badge {
+    display: inline-block;
+    padding: 0.3em 0.8em;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .br-status-draft      { background: #EDE9E0; color: #6B6560; }
+  .br-status-sent       { background: #D0E8F5; color: #1A5C80; }
+  .br-status-in_progress { background: #FFF3CD; color: #856404; }
+  .br-status-completed  { background: #D4EDDA; color: #2D6A4F; }
+  .br-status-cancelled  { background: #F8D7DA; color: #842029; }
+
+  .req-status-badge {
+    font-size: 0.75rem;
+    padding: 0.2em 0.6em;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .req-pending   { background: #EDE9E0; color: #6B6560; }
+  .req-sent      { background: #D0E8F5; color: #1A5C80; }
+  .req-responded { background: #D4EDDA; color: #2D6A4F; }
+  .req-declined  { background: #F8D7DA; color: #842029; }
+  .req-expired   { background: #F8D7DA; color: #842029; }
+  .req-replaced  { background: #EDE9E0; color: #9B9588; }
+
+  .cat-group { border: 1px solid #E8E4DC; border-radius: 10px; background: #fff; margin-bottom: 16px; overflow: hidden; }
+  .cat-group-header {
+    padding: 14px 20px;
+    background: #FAFAF7;
+    border-bottom: 1px solid #E8E4DC;
+    font-weight: 700;
+    color: #2C2A25;
+  }
+  .artisan-row {
+    padding: 14px 20px;
+    border-bottom: 1px solid #F5F3EF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .artisan-row:last-child { border-bottom: none; }
+  .artisan-avatar-sm {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #E8E4DC; color: #6B6560;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+  }
+  .progress-card {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    background: #fff;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+</style>
+<% end %>
+
+<%
+  status_labels = {
+    "draft"       => ["Brouillon",    "br-status-draft"],
+    "sent"        => ["Envoyé",       "br-status-sent"],
+    "in_progress" => ["En cours",     "br-status-in_progress"],
+    "completed"   => ["Terminé",      "br-status-completed"],
+    "cancelled"   => ["Annulé",       "br-status-cancelled"]
+  }
+  sl, sc = status_labels[@bidding_round.status] || ["Inconnu", "br-status-draft"]
+%>
+
+<%= turbo_stream_from "bidding_round_#{@bidding_round.id}_requests" %>
+
+<div class="container py-4" style="max-width: 1000px;">
+  <%= link_to "← Retour au projet", project_path(@project),
+        style: "color: #9B9588; text-decoration: none; font-size: 0.9rem;" %>
+
+  <div class="d-flex justify-content-between align-items-start mt-3 mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-1" style="font-weight: 700; color: #2C2A25;">Suivi des devis artisans</h2>
+      <div style="color: #9B9588; font-size: 0.9rem;">
+        Niveau : <strong style="color: #2C2A25;"><%= @bidding_round.standing_label %></strong>
+        · Date limite : <strong style="color: #2C2A25;"><%= l(@bidding_round.deadline, format: :short) %></strong>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="br-status-badge <%= sc %>"><%= sl %></span>
+      <% if @bidding_round.ready_for_review? %>
+        <%= link_to "Voir les recommandations →",
+              review_responses_project_bidding_round_path(@project),
+              class: "btn btn-dark-od btn-sm" %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Progress card %>
+  <div class="progress-card">
+    <%= render "bidding_rounds/progress_bar", bidding_round: @bidding_round %>
+  </div>
+
+  <%# Requests by category %>
+  <% if @requests_by_category.any? %>
+    <div style="font-weight: 700; color: #2C2A25; margin-bottom: 12px;">Par catégorie</div>
+    <% @requests_by_category.each do |category, requests| %>
+      <div class="cat-group">
+        <div class="cat-group-header">
+          <%= category&.name || "Autre" %>
+          <span style="color: #9B9588; font-weight: 400; font-size: 0.85rem; margin-left: 8px;">
+            <%= requests.count %> artisan<%= requests.count > 1 ? "s" : "" %>
+          </span>
+        </div>
+        <% requests.each do |req| %>
+          <%= render "bidding_rounds/bidding_request_row", bidding_request: req, project: @project %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="text-center py-5" style="border: 1px solid #E8E4DC; border-radius: 10px; background: #fff;">
+      <div style="color: #9B9588; font-size: 0.9rem;">Aucune demande envoyée pour l'instant.</div>
+    </div>
+  <% end %>
+</div>

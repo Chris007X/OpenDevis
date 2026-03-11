@@ -1,7 +1,5 @@
 <% content_for :head do %>
 <style>
-
-
   .category-card {
     display: flex;
     flex-direction: column;
@@ -36,20 +34,56 @@
     margin-bottom: 0.6rem;
     margin-top: 1.5rem;
   }
+  .group-title:first-of-type { margin-top: 0; }
+
+  .room-tab {
+    display: inline-block;
+    padding: 0.45rem 1rem;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 20px;
+    background: #fff;
+    color: #6B6560;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .room-tab:hover { border-color: #2C2A25; }
+  .room-tab.active {
+    border-color: #2C2A25;
+    background: #2C2A25;
+    color: #fff;
+  }
+  .room-tab .badge-count {
+    display: inline-block;
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 0 0.4em;
+    font-size: 0.75rem;
+    margin-left: 0.3em;
+  }
+
+  .room-categories-panel { display: none; }
+  .room-categories-panel.active { display: block; }
+
+  .custom-needs-section {
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 1.25rem;
+    background: #fff;
+    margin-top: 1.5rem;
+  }
 </style>
 <% end %>
 
 <%
-category_icons = {
-  "maconnerie"  => "🏗️",
-  "plomberie"   => "🔧",
-  "electricite" => "⚡",
-  "menuiserie"  => "🚪",
-  "peinture"    => "🖌️",
-  "carrelage"   => "◻️",
-  "isolation"   => "🧱",
-  "chauffage"   => "🌡️"
-}
+  # Determine if we show per-room tabs or a single category grid
+  is_par_piece = @renovation_type == "par_piece"
+  rooms_data = is_par_piece ? @selected_rooms : []
+
+  # For non-par_piece: selected categories is a flat array
+  # For par_piece: we use room_categories from session or compute defaults
+  room_categories = session[:wizard_room_categories] || {}
 %>
 
 <div class="container py-4" style="max-width: 720px;">
@@ -61,45 +95,118 @@ category_icons = {
   <% if @renovation_type.in?(%w[construction extension]) %>
     <%# Free-text fallback for construction %>
     <%= form_with url: wizard_step3_path, method: :post do |f| %>
-      <div class="field-section" style="border: 1px solid #E8E4DC; border-radius: 10px; padding: 1.5rem; background: #fff;">
+      <div class="custom-needs-section">
         <p style="color: #9B9588; font-size: 0.9rem;">
           Décrivez vos besoins spécifiques. Nos conseillers affineront l'estimation.
         </p>
-        <textarea name="description" class="form-control" rows="4"
+        <textarea name="custom_needs" class="form-control" rows="4"
                   placeholder="Ex: Extension de 20m² avec création d'une cuisine ouverte..."
-                  style="border-color: #E8E4DC; border-radius: 8px;"></textarea>
+                  style="border-color: #E8E4DC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
 
         <%# Include all categories by default %>
-        <% WorkCategory.all.each do |cat| %>
-          <input type="hidden" name="categories[]" value="<%= cat.slug %>">
+        <% @category_groups.each do |group| %>
+          <% group[:slugs].each do |slug| %>
+            <input type="hidden" name="categories[]" value="<%= slug %>">
+          <% end %>
         <% end %>
       </div>
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", @project_type.in?(%w[construction extension]) ? wizard_step1_path : wizard_step2_path, class: "btn btn-ghost-od" %>
+        <%= link_to "← Retour", wizard_step1_path, class: "btn btn-ghost-od" %>
+        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+      </div>
+    <% end %>
+
+  <% elsif is_par_piece %>
+    <%# Per-room category selection with tabs %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "room-tabs" } do |f| %>
+      <div class="d-flex gap-2 flex-wrap mb-3">
+        <% rooms_data.each_with_index do |room, idx| %>
+          <% room_name = room["name"] %>
+          <button type="button" class="room-tab <%= 'active' if idx == 0 %>"
+                  data-action="click->room-tabs#switch"
+                  data-room-tabs-target="tab"
+                  data-room="<%= room_name %>">
+            <%= room_name %>
+          </button>
+        <% end %>
+      </div>
+
+      <%# Category panels per room — filtered by ROOM_ALLOWED_CATEGORIES %>
+      <% rooms_data.each_with_index do |room, idx| %>
+        <% room_name = room["name"] %>
+        <% saved_cats = room_categories[room_name] || [] %>
+        <% allowed = @room_allowed_categories[room_name] || @category_groups.flat_map { |g| g[:slugs] } %>
+        <div class="room-categories-panel <%= 'active' if idx == 0 %>"
+             data-room-tabs-target="panel" data-room="<%= room_name %>">
+          <% @category_groups.each do |group| %>
+            <% filtered_slugs = group[:slugs].select { |s| allowed.include?(s) } %>
+            <% next if filtered_slugs.empty? %>
+            <div class="group-title"><%= group[:name] %></div>
+            <div class="row g-2">
+              <% filtered_slugs.each do |slug| %>
+                <% cat = @category_labels[slug] %>
+                <div class="col-4 col-md-3">
+                  <label class="category-card w-100">
+                    <input type="checkbox" name="room_categories[<%= room_name %>][]" value="<%= slug %>"
+                           <%= "checked" if saved_cats.include?(slug) %>>
+                    <div class="cat-icon"><%= cat[:icon] %></div>
+                    <div><%= cat[:label] %></div>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Also store flat list of all unique categories for generation %>
+      <%# This hidden field will be populated by JS or we compute server-side %>
+
+      <%# Custom needs %>
+      <div class="custom-needs-section">
+        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem;">Autres / Besoins spécifiques</div>
+        <textarea name="custom_needs" class="form-control" rows="3"
+                  placeholder="J'aimerais également..."
+                  style="border-color: #E8E4DC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
         <button type="submit" class="btn btn-dark-od">Suivant →</button>
       </div>
     <% end %>
 
   <% else %>
+    <%# Standard category grid (renovation_complete / energetique) %>
     <%= form_with url: wizard_step3_path, method: :post do |f| %>
       <% @category_groups.each do |group| %>
+        <% next if group[:slugs].empty? %>
         <div class="group-title"><%= group[:name] %></div>
         <div class="row g-2">
-          <% group[:categories].each do |cat| %>
+          <% group[:slugs].each do |slug| %>
+            <% cat = @category_labels[slug] %>
             <div class="col-4 col-md-3">
               <label class="category-card w-100">
-                <input type="checkbox" name="categories[]" value="<%= cat.slug %>"
-                       <%= "checked" if @selected_categories.include?(cat.slug) %>>
-                <div class="cat-icon"><%= category_icons[cat.slug] || "🔨" %></div>
-                <div><%= cat.name %></div>
+                <input type="checkbox" name="categories[]" value="<%= slug %>"
+                       <%= "checked" if @selected_categories.include?(slug) %>>
+                <div class="cat-icon"><%= cat[:icon] %></div>
+                <div><%= cat[:label] %></div>
               </label>
             </div>
           <% end %>
         </div>
       <% end %>
 
+      <%# Custom needs %>
+      <div class="custom-needs-section">
+        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem;">Autres / Besoins spécifiques</div>
+        <textarea name="custom_needs" class="form-control" rows="3"
+                  placeholder="J'aimerais également..."
+                  style="border-color: #E8E4DC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
+      </div>
+
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", @project_type.in?(%w[construction extension]) ? wizard_step1_path : wizard_step2_path, class: "btn btn-ghost-od" %>
+        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
         <button type="submit" class="btn btn-dark-od">Suivant →</button>
       </div>
     <% end %>

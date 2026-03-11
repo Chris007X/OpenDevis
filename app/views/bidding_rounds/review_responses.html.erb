@@ -1,0 +1,109 @@
+<% content_for :head do %>
+<style>
+  .rec-card {
+    border: 2px solid #E8E4DC;
+    border-radius: 10px;
+    padding: 16px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    user-select: none;
+  }
+  .rec-card:hover { border-color: #9B9588; }
+  .rec-card.selected { border-color: #2C2A25; background: #F5F3EE; }
+  .rec-card.recommended { border-color: #2D6A4F; }
+  .rec-card.recommended.selected { background: #EAF5EE; }
+  .rec-badge {
+    display: inline-block;
+    background: #D4EDDA; color: #2D6A4F;
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .rec-radio { position: absolute; top: 14px; right: 14px; accent-color: #2C2A25; }
+  .score-bar-wrap { height: 4px; background: #E8E4DC; border-radius: 2px; margin-top: 8px; }
+  .score-bar { height: 4px; background: #2C2A25; border-radius: 2px; }
+  .cat-section { border: 1px solid #E8E4DC; border-radius: 10px; background: #fff; margin-bottom: 20px; overflow: hidden; }
+  .cat-header { padding: 14px 20px; background: #FAFAF7; border-bottom: 1px solid #E8E4DC; font-weight: 700; color: #2C2A25; }
+  .cat-body { padding: 16px 20px; }
+</style>
+<% end %>
+
+<div class="container py-4" style="max-width: 920px;">
+  <%= link_to "← Retour au suivi", project_bidding_round_path(@project),
+        style: "color: #9B9588; text-decoration: none; font-size: 0.9rem;" %>
+
+  <h2 class="mt-3 mb-1" style="font-weight: 700; color: #2C2A25;">Recommandations</h2>
+  <p class="mb-4" style="color: #9B9588;">
+    Sélectionnez l'artisan retenu pour chaque catégorie. La recommandation est basée sur le prix (60%) et la note (40%).
+  </p>
+
+  <%= form_with url: confirm_selections_project_bidding_round_path(@project), method: :post do |f| %>
+    <% if @recommendations.any? %>
+      <% @recommendations.each do |category_id, scored| %>
+        <% category = scored.first[:request].work_category %>
+        <div class="cat-section">
+          <div class="cat-header"><%= category.name %></div>
+          <div class="cat-body">
+            <div class="row g-3">
+              <% scored.each_with_index do |item, idx| %>
+                <% req = item[:request] %>
+                <% is_top = idx == 0 %>
+                <div class="col-md-4">
+                  <label class="rec-card w-100 <%= "recommended" if is_top %>">
+                    <input type="radio"
+                           name="selections[<%= category_id %>]"
+                           value="<%= req.id %>"
+                           class="rec-radio"
+                           <%= "checked" if is_top %>
+                           required>
+                    <% if is_top %>
+                      <input type="hidden" name="ai_recommended_ids[]" value="<%= req.id %>">
+                    <% end %>
+                    <div style="height: 22px; margin-bottom: 8px;">
+                      <% if is_top %>
+                        <span class="rec-badge">✨ Recommandé</span>
+                      <% end %>
+                    </div>
+                    <div style="font-weight: 700; color: #2C2A25; font-size: 1rem; margin-bottom: 2px;">
+                      <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+                    </div>
+                    <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;"><%= req.artisan.name %></div>
+                    <div style="font-size: 0.8rem; color: #9B9588;">
+                      <%= req.artisan.company_name.presence || req.artisan.postcode %>
+                      <% if req.artisan.rating.present? %>
+                        · ★ <%= req.artisan.star_rating %>
+                      <% end %>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #9B9588; margin-top: 6px;">
+                      Score : <%= (item[:score] * 100).round %>%
+                    </div>
+                    <div class="score-bar-wrap">
+                      <div class="score-bar" style="width: <%= (item[:score] * 100).round %>%;"></div>
+                    </div>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <%= link_to "← Retour", project_bidding_round_path(@project),
+              style: "color: #9B9588; text-decoration: none;" %>
+        <button type="submit"
+                style="background: #2C2A25; color: #fff; border: none; padding: 10px 24px; border-radius: 8px;
+                       font-weight: 600; cursor: pointer;">
+          Confirmer les sélections →
+        </button>
+      </div>
+    <% else %>
+      <div class="text-center py-5" style="border: 1px solid #E8E4DC; border-radius: 10px; background: #fff;">
+        <div style="color: #9B9588;">Aucune réponse reçue pour l'instant.</div>
+        <%= link_to "← Retour", project_bidding_round_path(@project), class: "btn btn-ghost-od btn-sm mt-3" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

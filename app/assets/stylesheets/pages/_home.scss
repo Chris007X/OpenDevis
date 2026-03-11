@@ -54,6 +54,50 @@
   border-radius: 12px;
 }
 
+// Hero animated words
+.hero-words-loader {
+  display: inline-block;
+  overflow: hidden;
+  clip-path: inset(0);        // force le clipping même avec les transforms GPU
+  vertical-align: bottom;
+  height: 1.15em;
+  position: relative;
+}
+
+.hero-words {
+  display: flex;
+  flex-direction: column;
+  animation: hero-spin 9s infinite;
+}
+
+.hero-word {
+  display: block;
+  height: 1.15em;
+  line-height: 1.15em;
+  color: $blue;
+  font-style: normal;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+@keyframes hero-spin {
+  // Mot 1 : rénovation (visible au départ)
+  0%    { transform: translateY(0); }
+  // Transition vers mot 2
+  5.5%  { transform: translateY(-25%); }
+  // Mot 2 : construction (2.5s de pause)
+  33%   { transform: translateY(-25%); }
+  // Transition vers mot 3
+  38.5% { transform: translateY(-50%); }
+  // Mot 3 : isolation (2.5s de pause)
+  66%   { transform: translateY(-50%); }
+  // Transition vers copie mot 1
+  71.5% { transform: translateY(-75%); }
+  // Copie rénovation (2.5s de pause, puis boucle invisible)
+  99%   { transform: translateY(-75%); }
+  100%  { transform: translateY(-75%); }
+}
+
 // Step numbers
 .step-number {
   width: 48px;

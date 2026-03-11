@@ -10,9 +10,69 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_11_114142) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "artisan_categories", force: :cascade do |t|
+    t.bigint "artisan_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "work_category_id", null: false
+    t.index ["artisan_id", "work_category_id"], name: "index_artisan_categories_on_artisan_id_and_work_category_id", unique: true
+    t.index ["artisan_id"], name: "index_artisan_categories_on_artisan_id"
+    t.index ["work_category_id"], name: "index_artisan_categories_on_work_category_id"
+  end
+
+  create_table "artisans", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.text "certifications"
+    t.string "company_name"
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "name", null: false
+    t.string "phone"
+    t.string "portfolio_url"
+    t.string "postcode", null: false
+    t.decimal "rating", precision: 3, scale: 2
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_artisans_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_artisans_on_reset_password_token", unique: true
+  end
+
+  create_table "bidding_requests", force: :cascade do |t|
+    t.bigint "artisan_id", null: false
+    t.bigint "bidding_round_id", null: false
+    t.datetime "created_at", null: false
+    t.decimal "price_total", precision: 10, scale: 2
+    t.bigint "replaced_by_id"
+    t.datetime "responded_at"
+    t.string "response_method"
+    t.datetime "sent_at"
+    t.string "status", default: "pending", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "work_category_id", null: false
+    t.index ["artisan_id"], name: "index_bidding_requests_on_artisan_id"
+    t.index ["bidding_round_id", "work_category_id", "artisan_id"], name: "index_bidding_requests_on_round_category_artisan", unique: true
+    t.index ["bidding_round_id"], name: "index_bidding_requests_on_bidding_round_id"
+    t.index ["token"], name: "index_bidding_requests_on_token", unique: true
+    t.index ["work_category_id"], name: "index_bidding_requests_on_work_category_id"
+  end
+
+  create_table "bidding_rounds", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deadline", null: false
+    t.bigint "project_id", null: false
+    t.integer "standing_level", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_bidding_rounds_on_project_id", unique: true
+  end
 
   create_table "documents", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -23,6 +83,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_150000) do
     t.datetime "updated_at", null: false
     t.datetime "uploaded_at"
     t.index ["project_id"], name: "index_documents_on_project_id"
+  end
+
+  create_table "final_selections", force: :cascade do |t|
+    t.boolean "ai_recommended", default: false, null: false
+    t.bigint "bidding_request_id", null: false
+    t.bigint "bidding_round_id", null: false
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "work_category_id", null: false
+    t.index ["bidding_request_id"], name: "index_final_selections_on_bidding_request_id"
+    t.index ["bidding_round_id", "work_category_id"], name: "idx_on_bidding_round_id_work_category_id_4aba6d8560", unique: true
+    t.index ["bidding_round_id"], name: "index_final_selections_on_bidding_round_id"
+    t.index ["work_category_id"], name: "index_final_selections_on_work_category_id"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -37,8 +111,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_150000) do
     t.index ["work_category_id"], name: "index_materials_on_work_category_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "kind", null: false
+    t.bigint "project_id"
+    t.boolean "read", default: false, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["project_id"], name: "index_notifications_on_project_id"
+    t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "description"
     t.string "energy_rating"
     t.string "location_zip"
     t.text "property_url"
@@ -103,8 +192,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_150000) do
     t.index ["work_category_id"], name: "index_work_items_on_work_category_id"
   end
 
+  add_foreign_key "artisan_categories", "artisans"
+  add_foreign_key "artisan_categories", "work_categories"
+  add_foreign_key "bidding_requests", "artisans"
+  add_foreign_key "bidding_requests", "bidding_rounds"
+  add_foreign_key "bidding_requests", "work_categories"
+  add_foreign_key "bidding_rounds", "projects"
   add_foreign_key "documents", "projects"
+  add_foreign_key "final_selections", "bidding_requests"
+  add_foreign_key "final_selections", "bidding_rounds"
+  add_foreign_key "final_selections", "work_categories"
   add_foreign_key "materials", "work_categories"
+  add_foreign_key "notifications", "projects"
+  add_foreign_key "notifications", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "rooms", "projects"
   add_foreign_key "work_items", "materials"

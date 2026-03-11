@@ -6,4 +6,5 @@ class User < ApplicationRecord
 
   # Associations
   has_many :projects, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 end
