@@ -89,6 +89,26 @@ module Projects
       redirect_to wizard_step4_path
     end
 
+    # ── Chat IA – AJAX endpoint ───────────────────────────────────────────────
+    def chat_property
+      history = (params[:history] || []).map do |msg|
+        { role: msg[:role].to_s, content: msg[:content].to_s }
+      end
+      result = ::PropertyChatAnalyzer.new(history).chat
+      render json: result
+    rescue => e
+      render json: { reply: friendly_error(e.message), data: {}, complete: false }, status: :unprocessable_entity
+    end
+
+    # ── URL analyzer – AJAX endpoint ─────────────────────────────────────────
+    def analyze_url
+      url = params[:url].to_s.strip
+      result = ::PropertyUrlAnalyzer.new(url).analyze
+      render json: { success: true, data: result }
+    rescue => e
+      render json: { success: false, error: friendly_error(e.message) }, status: :unprocessable_entity
+    end
+
     # ── Step 4 – Recap + generate ─────────────────────────────────────────────
     def step4
       @project          = find_wizard_project || (redirect_to(wizard_step1_path) && return)
@@ -126,6 +146,25 @@ module Projects
     end
 
     private
+
+    def friendly_error(message)
+      case message
+      when /HTTP 403/, /HTTP 401/
+        "Ce site bloque l'accès automatique. Copiez-collez les informations manuellement."
+      when /HTTP 404/
+        "Annonce introuvable. Vérifiez que le lien est correct et que l'annonce est toujours en ligne."
+      when /HTTP 5/, /HTTP 503/, /HTTP 502/
+        "Le site est temporairement indisponible. Réessayez dans quelques instants."
+      when /timeout/, /Timeout/, /timed out/
+        "La page met trop de temps à répondre. Vérifiez votre connexion ou essayez un autre lien."
+      when /LLM API error/
+        "Impossible d'analyser le contenu de cette page. Remplissez les informations manuellement."
+      when /getaddrinfo/, /SocketError/, /connection/i
+        "Impossible de se connecter à ce site. Vérifiez que le lien est correct."
+      else
+        "Ce lien n'a pas pu être analysé. Remplissez les informations manuellement."
+      end
+    end
 
     def find_wizard_project
       id = session[:wizard_project_id]
