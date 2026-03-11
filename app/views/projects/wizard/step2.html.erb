@@ -1,7 +1,5 @@
 <% content_for :head do %>
 <style>
-
-
   .renovation-card {
     display: flex;
     align-items: center;
@@ -29,15 +27,62 @@
     background: #FAFAF7;
     margin-top: 0.75rem;
   }
-  .room-checkbox-label {
-    display: flex; align-items: center; gap: 0.6rem;
+  .room-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     padding: 0.5rem 0;
+    flex-wrap: wrap;
+  }
+  .room-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
     font-size: 0.95rem;
     color: #2C2A25;
+    font-weight: 500;
+    min-width: 130px;
+  }
+  .room-detail-fields {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+  .room-detail-fields select {
+    border: 1px solid #E8E4DC;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+    color: #2C2A25;
+    background: #fff;
+  }
+  .room-detail-fields select:focus {
+    border-color: #2C2A25;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
+  }
+  .room-detail-label {
+    font-size: 0.8rem;
+    color: #9B9588;
+    white-space: nowrap;
+  }
+
+  .field-error {
+    font-size: 0.8rem;
+    color: #C25E4A;
+    margin-top: 0.25rem;
   }
 </style>
 <% end %>
+
+<%
+  # Parse stored room data: session[:wizard_rooms] is now an array of hashes
+  # [{ "name" => "Salon", "count" => "1", "reno_type" => "renovation_legere" }, ...]
+  selected_rooms_data = (@selected_rooms.is_a?(Array) && @selected_rooms.first.is_a?(Hash)) ? @selected_rooms : []
+  selected_room_names = selected_rooms_data.map { |r| r["name"] }
+%>
 
 <div class="container py-4" style="max-width: 620px;">
   <%= render "stepper", current_step: 2 %>
@@ -45,13 +90,12 @@
   <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Type de rénovation</h2>
   <p class="mb-4" style="color: #9B9588;">Sélectionnez le type de travaux envisagés.</p>
 
-  <%= form_with url: wizard_step2_path, method: :post, data: { controller: "renovation-type" } do |f| %>
+  <%= form_with url: wizard_step2_path, method: :post,
+      data: { controller: "renovation-type", action: "change->renovation-type#validate" } do |f| %>
     <% [
-      ["home_staging",      "🎨", "Home staging",               "Mise en valeur du bien pour la vente"],
-      ["renovation_legere", "🔧", "Rénovation légère",          "Sols, peinture, petite plomberie/électricité"],
-      ["par_piece",         "🚪", "Rénovation par pièce",       "Rénovation ciblée de pièces spécifiques"],
-      ["renovation_complete","🏗️","Rénovation complète",        "Refonte totale de l'appartement/maison"],
-      ["energetique",       "🌿", "Rénovation énergétique",     "Isolation, fenêtres, chauffage, DPE"]
+      ["renovation_complete", "🏗️", "Rénovation complète",              "Estimation rapide"],
+      ["par_piece",           "🚪", "Rénovation par pièce",             "Estimation plus détaillée ou pour des pièces spécifiques"],
+      ["energetique",         "🌿", "Rénovation énergétique seulement", "Isolation, fenêtres, chauffage"]
     ].each do |value, icon, label, desc| %>
       <label class="renovation-card">
         <input type="radio" name="renovation_type" value="<%= value %>"
@@ -66,31 +110,59 @@
     <% end %>
 
     <%# Room picker — visible for "par_piece" %>
-    <div id="room-picker" class="room-picker" <%= @renovation_type == "par_piece" ? "" : "hidden" %>>
-      <div class="small fw-semibold mb-2" style="color: #9B9588;">Quelles pièces rénover ?</div>
+    <div data-renovation-type-target="roomPicker"
+         class="room-picker" <%= @renovation_type == "par_piece" ? "" : "hidden" %>>
+      <div class="small fw-semibold mb-2" style="color: #9B9588;">
+        Quelles pièces rénover ? <span style="color: #C25E4A;">*</span>
+      </div>
+
+      <% room_reno_types = [
+        ["renovation_complete", "Rénovation complète"],
+        ["energetique",         "Rénovation énergétique"]
+      ] %>
+
       <% Projects::WizardController::PRESET_ROOMS.each do |room| %>
-        <label class="room-checkbox-label">
-          <input type="checkbox" name="rooms[]" value="<%= room %>"
-                 <%= "checked" if @selected_rooms.include?(room) %>>
-          <%= room %>
-        </label>
+        <%
+          room_data = selected_rooms_data.find { |r| r["name"] == room } || {}
+          is_checked = selected_room_names.include?(room)
+        %>
+        <div class="room-row">
+          <label class="room-checkbox-label">
+            <input type="checkbox" name="rooms[][name]" value="<%= room %>"
+                   <%= "checked" if is_checked %>
+                   data-action="change->renovation-type#toggleRoomFields">
+            <%= room %>
+          </label>
+
+          <div data-renovation-type-target="roomDetail" data-room="<%= room %>"
+               class="room-detail-fields" <%= "hidden" unless is_checked %>>
+            <span class="room-detail-label">Nombre</span>
+            <select name="room_details[<%= room %>][count]">
+              <% (1..9).each do |n| %>
+                <option value="<%= n %>" <%= "selected" if room_data["count"].to_s == n.to_s %>><%= n %></option>
+              <% end %>
+            </select>
+
+            <span class="room-detail-label">Type de réno</span>
+            <select name="room_details[<%= room %>][reno_type]">
+              <% room_reno_types.each do |val, label| %>
+                <option value="<%= val %>" <%= "selected" if room_data["reno_type"] == val %>><%= label %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @errors&.include?(:rooms) %>
+        <div class="field-error">Veuillez sélectionner au moins une pièce</div>
       <% end %>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
       <%= link_to "← Retour", wizard_step1_path, class: "btn btn-ghost-od" %>
-      <button type="submit" class="btn btn-dark-od">Suivant →</button>
+      <button type="submit" class="btn btn-dark-od"
+              data-renovation-type-target="submit"
+              <%= "disabled" unless @renovation_type.present? %>>Suivant →</button>
     </div>
   <% end %>
 </div>
-
-<script>
-  // Show/hide room picker based on selection (fallback if Stimulus isn't loaded yet)
-  document.addEventListener("turbo:load", function () {
-    const radios = document.querySelectorAll('input[name="renovation_type"]')
-    const picker = document.getElementById("room-picker")
-    radios.forEach(r => r.addEventListener("change", () => {
-      if (picker) picker.hidden = r.value !== "par_piece" || !r.checked
-    }))
-  })
-</script>

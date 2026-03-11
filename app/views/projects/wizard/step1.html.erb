@@ -1,7 +1,5 @@
 <% content_for :head do %>
 <style>
-
-
   .import-mode-btn {
     border: 1px solid #E8E4DC;
     border-radius: 10px;
@@ -31,6 +29,7 @@
     background: #fff;
   }
   .field-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem; }
+  .field-label .required { color: #C25E4A; margin-left: 2px; }
   .form-control, .form-select {
     border-color: #E8E4DC;
     border-radius: 8px;
@@ -40,8 +39,78 @@
     border-color: #2C2A25;
     box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
   }
+
+  /* Property type radio cards */
+  .property-type-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .property-type-option {
+    flex: 1;
+    min-width: 120px;
+  }
+  .property-type-option input[type="radio"] { display: none; }
+  .property-type-option label {
+    display: block;
+    text-align: center;
+    padding: 0.65rem 0.75rem;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #2C2A25;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .property-type-option label:hover { border-color: #2C2A25; }
+  .property-type-option input:checked + label {
+    border-color: #2C2A25;
+    background: #F0EDE8;
+    font-weight: 600;
+  }
+
+  /* City autocomplete */
+  .autocomplete-wrapper { position: relative; }
+  .autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid #E8E4DC;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(44,42,37,0.1);
+    margin-top: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .autocomplete-item {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #2C2A25;
+    cursor: pointer;
+  }
+  .autocomplete-item:hover { background: #F0EDE8; }
+
+  .field-error {
+    font-size: 0.8rem;
+    color: #C25E4A;
+    margin-top: 0.25rem;
+  }
 </style>
 <% end %>
+
+<%
+  # Extract property type from property_url for pre-filling
+  property_type_value = case @project.property_url
+                        when "appartement", "maison" then @project.property_url
+                        when nil, "" then nil
+                        else "autre"
+                        end
+  property_type_autre = property_type_value == "autre" ? @project.property_url : ""
+%>
 
 <div class="container py-4" style="max-width: 680px;">
   <%= render "stepper", current_step: 1, project_type: @project_type %>
@@ -50,7 +119,7 @@
     <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez le bien souhaité</h2>
     <p class="mb-4" style="color: #9B9588;">Renseignez les caractéristiques de votre futur bien.</p>
   <% else %>
-    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre bien</h2>
+    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez le bien</h2>
     <p class="mb-4" style="color: #9B9588;">Importez les infos ou remplissez manuellement.</p>
   <% end %>
 
@@ -107,31 +176,84 @@
   </div>
 
   <%# Manual fields %>
-  <%= form_with model: @project, url: wizard_step1_path, method: :post do |f| %>
+  <%= form_with model: @project, url: wizard_step1_path, method: :post,
+      data: { controller: "wizard-form", action: "input->wizard-form#validate change->wizard-form#validate" } do |f| %>
     <div class="field-section">
       <div class="small fw-semibold mb-3" style="color: #9B9588;">
-        Informations du bien — <span class="fw-normal">tous facultatifs</span>
+        Informations du bien
       </div>
 
       <div class="row g-3">
-        <div class="col-12">
-          <div class="field-label">Type de bien</div>
-          <input type="text" name="project[property_url]" class="form-control"
-                 placeholder="Appartement, maison, studio..."
-                 value="<%= @project.property_url %>">
+        <%# Type de bien — required, radio cards %>
+        <div class="col-12" data-controller="property-type">
+          <div class="field-label">Type de bien <span class="required">*</span></div>
+          <div class="property-type-options">
+            <div class="property-type-option">
+              <input type="radio" name="project[property_type]" id="property_type_appartement" value="appartement"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     <%= "checked" if property_type_value == "appartement" %>>
+              <label for="property_type_appartement">Appartement</label>
+            </div>
+            <div class="property-type-option">
+              <input type="radio" name="project[property_type]" id="property_type_maison" value="maison"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     <%= "checked" if property_type_value == "maison" %>>
+              <label for="property_type_maison">Maison</label>
+            </div>
+            <div class="property-type-option">
+              <input type="radio" name="project[property_type]" id="property_type_autre" value="autre"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     <%= "checked" if property_type_value == "autre" %>>
+              <label for="property_type_autre">Autre</label>
+            </div>
+          </div>
+          <div data-property-type-target="autreField" <%= "hidden" unless property_type_value == "autre" %> class="mt-2">
+            <input type="text" name="project[property_type_autre]" class="form-control"
+                   placeholder="Veuillez préciser..." value="<%= property_type_autre %>">
+          </div>
+          <% if @errors&.include?(:property_type) %>
+            <div class="field-error">Ce champ est obligatoire</div>
+          <% end %>
         </div>
+
+        <%# Surface — required %>
         <div class="col-md-6">
-          <div class="field-label">Surface totale (m²)</div>
-          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5 %>
+          <div class="field-label">Surface actuelle du bien (m²) <span class="required">*</span></div>
+          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5,
+              data: { required: true } %>
+          <% if @errors&.include?(:total_surface_sqm) %>
+            <div class="field-error">Ce champ est obligatoire</div>
+          <% end %>
         </div>
+
+        <%# Nombre de pièces — optional %>
         <div class="col-md-6">
           <div class="field-label">Nombre de pièces</div>
           <%= f.number_field :room_count, class: "form-control", placeholder: "ex. 4" %>
         </div>
-        <div class="col-md-6">
-          <div class="field-label">Code postal</div>
-          <%= f.text_field :location_zip, class: "form-control", placeholder: "ex. 75001" %>
+
+        <%# Code postal — required, with autocomplete %>
+        <div class="col-md-6" data-controller="city-autocomplete">
+          <div class="field-label">Code postal <span class="required">*</span></div>
+          <div class="autocomplete-wrapper">
+            <input type="text" class="form-control"
+                   placeholder="ex. 75001"
+                   value="<%= @project.location_zip %>"
+                   data-city-autocomplete-target="input"
+                   data-action="input->city-autocomplete#search input->wizard-form#validate"
+                   data-required="true"
+                   autocomplete="off">
+            <input type="hidden" name="project[location_zip]"
+                   value="<%= @project.location_zip %>"
+                   data-city-autocomplete-target="hidden">
+            <div data-city-autocomplete-target="results" hidden class="autocomplete-results"></div>
+          </div>
+          <% if @errors&.include?(:location_zip) %>
+            <div class="field-error">Ce champ est obligatoire</div>
+          <% end %>
         </div>
+
+        <%# DPE — optional %>
         <div class="col-md-6">
           <div class="field-label"><%= @project_type.in?(%w[construction extension]) ? "DPE souhaité" : "DPE / Classe énergétique" %></div>
           <%= f.select :energy_rating,
@@ -142,9 +264,16 @@
       </div>
     </div>
 
+    <%# Commentaire — optional %>
+    <div class="field-section mt-3">
+      <div class="field-label">Commentaire</div>
+      <%= f.text_area :description, class: "form-control", rows: 3,
+          placeholder: "Ajoutez des précisions sur votre projet..." %>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mt-4">
       <%= link_to "← Retour", wizard_choose_path, class: "btn btn-ghost-od" %>
-      <%= f.submit "Suivant →", class: "btn btn-dark-od" %>
+      <%= f.submit "Suivant →", class: "btn btn-dark-od", data: { wizard_form_target: "submit" } %>
     </div>
   <% end %>
 </div>
