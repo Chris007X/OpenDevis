@@ -12,10 +12,23 @@
   padding-bottom: 4rem;
 }
 
-// Stacked card mock-up
+// Stacked card mock-up — float wrapper + 3D tilt
+.hero-card-float {
+  animation: hero-float 4s ease-in-out infinite;
+  will-change: transform;
+  perspective-origin: center center;
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
 .hero-card-stack {
   position: relative;
   height: 280px;
+  // preserve-3d propagates the JS perspective+rotateXY down to card children
+  transform-style: preserve-3d;
 
   .hero-card-back {
     position: absolute;
@@ -24,6 +37,12 @@
     right: 0;
     transform: rotate(3deg);
     opacity: 0.7;
+    transform-style: preserve-3d;
+    transition: box-shadow 0.4s ease;
+
+    // Text elements float above the card surface
+    h5     { transform: translateZ(18px); }
+    .badge { transform: translateZ(28px); }
   }
 
   .hero-card-front {
@@ -32,6 +51,20 @@
     bottom: 0;
     left: 0;
     transform: rotate(-1deg);
+    transform-style: preserve-3d;
+    transition: box-shadow 0.4s ease;
+
+    // Layered depth: price pops most, table mid, labels subtle
+    h5            { transform: translateZ(20px); }
+    .badge        { transform: translateZ(30px); }
+    .table        { transform: translateZ(14px); }
+    .fw-bold      { transform: translateZ(28px); }
+    .text-primary { transform: translateZ(42px); }
+  }
+
+  &:hover {
+    .hero-card-front { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important; }
+    .hero-card-back  { box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important; }
   }
 }
 

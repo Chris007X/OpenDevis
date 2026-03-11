@@ -33,7 +33,10 @@
       </div>
 
       <div class="col-lg-6">
-        <div class="hero-card-stack">
+        <div class="hero-card-float">
+        <div class="hero-card-stack"
+             data-controller="card-tilt"
+             data-action="mousemove->card-tilt#mousemove mouseleave->card-tilt#mouseleave mouseenter->card-tilt#mouseenter">
           <div class="card shadow hero-card-back">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-start mb-3">
@@ -77,6 +80,7 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
