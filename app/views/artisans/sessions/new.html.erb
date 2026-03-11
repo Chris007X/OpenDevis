@@ -1,0 +1,35 @@
+<div style="min-height: calc(100vh - 56px); display: flex; align-items: center; justify-content: center; padding: 24px;">
+  <div style="background: #fff; border: 1px solid #E8E4DC; border-radius: 12px; padding: 40px; width: 100%; max-width: 420px;">
+    <h1 style="font-size: 1.4rem; font-weight: 700; color: #2C2A25; margin-bottom: 6px;">Connexion artisan</h1>
+    <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 28px;">Accédez à votre tableau de bord pour gérer vos demandes de devis.</p>
+
+    <%= form_with url: artisan_session_path, method: :post, data: { turbo: false } do |f| %>
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 6px;">Email</label>
+        <input type="email" name="artisan[email]" autofocus autocomplete="email"
+               placeholder="votre@email.com"
+               style="width: 100%; border: 1px solid #E8E4DC; border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
+      </div>
+      <div style="margin-bottom: 24px;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 6px;">Mot de passe</label>
+        <input type="password" name="artisan[password]" autocomplete="current-password"
+               style="width: 100%; border: 1px solid #E8E4DC; border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
+      </div>
+      <button type="submit" style="width: 100%; background: #2C2A25; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+        Se connecter
+      </button>
+    <% end %>
+
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E8E4DC; text-align: center;">
+      <a href="<%= new_artisan_password_path %>" style="color: #9B9588; font-size: 0.85rem; text-decoration: none;">Mot de passe oublié ?</a>
+    </div>
+
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E8E4DC; text-align: center;">
+      <p style="font-size: 0.85rem; color: #9B9588; margin-bottom: 10px;">Vous êtes un particulier ?</p>
+      <a href="<%= new_user_session_path %>"
+         style="display: block; width: 100%; border: 1px solid #E8E4DC; border-radius: 8px; padding: 10px; font-size: 0.9rem; font-weight: 600; color: #2C2A25; text-decoration: none; text-align: center; box-sizing: border-box;">
+        Accéder à l'espace client →
+      </a>
+    </div>
+  </div>
+</div>
