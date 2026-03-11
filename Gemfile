@@ -49,6 +49,8 @@ gem "sassc-rails"
 gem "pundit"
 gem "prawn"
 gem "prawn-table"
+gem "faraday"
+gem "pdf-reader"
 
 group :development, :test do
   gem "dotenv-rails"
