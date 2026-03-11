@@ -33,7 +33,7 @@
       border-radius: 8px; font-weight: 500; cursor: pointer; width: 100%;
     }
     .btn-decline:hover { border-color: #9B9588; color: #2C2A25; }
-    .status-responded { background: #D4EDDA; color: #2D6A4F; padding: 16px; border-radius: 10px; }
+    .status-responded { background: #D4EDDA; color: #2D6A4F; padding: 16px; border-radius: 10px; margin-bottom: 20px; }
     .status-declined  { background: #F8D7DA; color: #842029; padding: 16px; border-radius: 10px; }
     .status-expired   { background: #FFF3CD; color: #856404; padding: 16px; border-radius: 10px; }
   </style>
@@ -44,73 +44,144 @@
   </div>
 
   <div class="portal-card">
-    <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
-    <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
-      Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
-    </p>
+    <% if @bidding_request.status == "responded" %>
+      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">✅ Devis envoyé</h2>
+      <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
+        Bonjour <%= @bidding_request.artisan.name %>, votre réponse a bien été enregistrée.
+      </p>
 
-    <div class="info-block">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Catégorie</div>
-          <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
-        </div>
-        <div>
-          <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Localisation</div>
-          <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.location_zip %></div>
-        </div>
-        <div>
-          <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Standing</div>
-          <div style="font-weight: 600;"><%= @bidding_request.bidding_round.standing_label %></div>
-        </div>
-        <div>
-          <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Date limite</div>
-          <div style="font-weight: 600;"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
-        </div>
-        <% if @bidding_request.bidding_round.project.total_surface_sqm.present? %>
-          <div>
-            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Surface</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.total_surface_sqm %> m²</div>
-          </div>
-        <% end %>
-        <% if @bidding_request.bidding_round.project.room_count.present? %>
-          <div>
-            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Pièces</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.room_count %></div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <% if @error %>
-      <div style="background: #FFF3CD; color: #856404; border: 1px solid #ffe69c; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
-        <%= @error %>
-      </div>
-    <% end %>
-
-    <% case @bidding_request.status %>
-    <% when "responded" %>
       <div class="status-responded">
-        <strong>Réponse enregistrée ✓</strong><br>
-        Votre prix : <%= number_to_currency(@bidding_request.price_total, unit: "€", format: "%n %u") %> HT<br>
-        <span style="font-size: 0.85rem; opacity: 0.8;">Répondu le <%= @bidding_request.responded_at.strftime("%d/%m/%Y à %H:%M") %></span>
+        <strong>Réponse enregistrée ✓</strong>
       </div>
-    <% when "declined" %>
+
+      <div class="info-block">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Catégorie</div>
+            <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Votre prix</div>
+            <div style="font-weight: 600; color: #2D6A4F;">
+              <%= number_to_currency(@bidding_request.price_total, unit: "€", format: "%n %u") %> HT
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Envoyé le</div>
+            <div style="font-weight: 600;"><%= @bidding_request.responded_at.strftime("%d/%m/%Y à %H:%M") %></div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Date limite</div>
+            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
+          </div>
+        </div>
+      </div>
+
+      <% unless @bidding_request.bidding_round.deadline_passed? %>
+        <p style="color: #9B9588; font-size: 0.85rem; margin-bottom: 16px;">
+          Vous pouvez modifier votre prix jusqu'à la date limite
+          (<%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y à %H:%M") %>).
+        </p>
+
+        <%= form_with url: artisan_portal_submit_path(@bidding_request.token), method: :post do |f| %>
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
+              Prix total HT (€)
+            </label>
+            <div style="display: flex; align-items: center; border: 2px solid #E8E4DC; border-radius: 8px; overflow: hidden;">
+              <input type="number"
+                     name="price_total"
+                     step="0.01"
+                     min="0.01"
+                     value="<%= @bidding_request.price_total %>"
+                     style="border: none; padding: 12px 16px; font-size: 1.1rem; flex: 1; outline: none; background: transparent;">
+              <span style="padding: 0 16px; color: #9B9588; font-size: 1.1rem;">€ HT</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">
+            Mettre à jour
+          </button>
+        <% end %>
+      <% end %>
+
+    <% elsif @bidding_request.status == "declined" %>
+      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
+      <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
+        Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
+      </p>
+      <div class="info-block" style="margin-top: 20px;">
+        <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+      </div>
       <div class="status-declined">
         <strong>Demande déclinée</strong><br>
         Vous avez décliné cette demande de devis.
       </div>
-    <% when "expired" %>
-      <div class="status-expired">
+
+    <% elsif @bidding_request.status == "expired" %>
+      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
+      <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
+        Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
+      </p>
+      <div class="status-expired" style="margin-top: 20px;">
         <strong>Délai dépassé</strong><br>
         La date limite de réponse est passée.
       </div>
-    <% when "replaced" %>
-      <div class="status-expired">
+
+    <% elsif @bidding_request.status == "replaced" %>
+      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
+      <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
+        Bonjour <%= @bidding_request.artisan.name %>.
+      </p>
+      <div class="status-expired" style="margin-top: 20px;">
         <strong>Demande annulée</strong><br>
         Cette demande a été annulée par le donneur d'ordre.
       </div>
+
     <% else %>
+      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
+      <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 0;">
+        Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
+      </p>
+
+      <div class="info-block">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Catégorie</div>
+            <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Localisation</div>
+            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.location_zip %></div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Standing</div>
+            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.standing_label %></div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Date limite</div>
+            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
+          </div>
+          <% if @bidding_request.bidding_round.project.total_surface_sqm.present? %>
+            <div>
+              <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Surface</div>
+              <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.total_surface_sqm %> m²</div>
+            </div>
+          <% end %>
+          <% if @bidding_request.bidding_round.project.room_count.present? %>
+            <div>
+              <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 2px;">Pièces</div>
+              <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.room_count %></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @error %>
+        <div style="background: #FFF3CD; color: #856404; border: 1px solid #ffe69c; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+          <%= @error %>
+        </div>
+      <% end %>
+
       <% if @bidding_request.bidding_round.deadline_passed? %>
         <div class="status-expired">
           <strong>Délai dépassé</strong><br>

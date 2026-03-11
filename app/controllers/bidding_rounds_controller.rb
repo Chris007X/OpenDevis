@@ -61,7 +61,15 @@ class BiddingRoundsController < ApplicationController
       end
     end
 
-    redirect_to send_requests_project_bidding_round_path(@project), allow_other_host: false
+    @bidding_round.bidding_requests.pending_send.each do |request|
+      SendBiddingRequestEmailJob.perform_later(request.id)
+      request.update!(status: "sent", sent_at: Time.current)
+    end
+
+    @bidding_round.update!(status: "sent")
+    session.delete(:selected_category_ids)
+
+    redirect_to project_bidding_round_path(@project), notice: "Les demandes ont été envoyées aux artisans."
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -73,7 +81,7 @@ class BiddingRoundsController < ApplicationController
       request.update!(status: "sent", sent_at: Time.current)
     end
 
-    @bidding_round.update!(status: "sent")
+    @bidding_round.update!(status: "sent") unless @bidding_round.status == "sent"
     session.delete(:selected_category_ids)
 
     redirect_to project_bidding_round_path(@project), notice: "Les demandes ont été envoyées aux artisans."

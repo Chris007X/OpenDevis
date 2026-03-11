@@ -59,9 +59,13 @@
                            <%= "checked" if is_top %>
                            required>
                     <% if is_top %>
-                      <span class="rec-badge">Recommandé</span><br>
                       <input type="hidden" name="ai_recommended_ids[]" value="<%= req.id %>">
                     <% end %>
+                    <div style="height: 22px; margin-bottom: 8px;">
+                      <% if is_top %>
+                        <span class="rec-badge">✨ Recommandé</span>
+                      <% end %>
+                    </div>
                     <div style="font-weight: 700; color: #2C2A25; font-size: 1rem; margin-bottom: 2px;">
                       <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
                     </div>
