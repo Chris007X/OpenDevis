@@ -93,6 +93,7 @@ class PropertyUrlAnalyzer
       - room_count: the number of rooms as an integer
       - location_zip: the French postal code as a 5-digit string
       - energy_rating: the DPE energy class, one letter among A, B, C, D, E, F or G
+      - summary: a single professional sentence in French summarising the property (e.g. "Appartement de 65 m² avec 3 pièces situé dans le 11e arrondissement de Paris, classé DPE D."). Only include fields that are present; omit null fields from the sentence.
 
       Set any field to null if the information is not present in the text.
       Return only the JSON object, with no additional text.
