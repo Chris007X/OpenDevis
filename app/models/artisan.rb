@@ -1,10 +1,11 @@
 class Artisan < ApplicationRecord
+  devise :database_authenticatable, :recoverable, :rememberable, :validatable
+
   has_many :artisan_categories, dependent: :destroy
   has_many :work_categories, through: :artisan_categories
   has_many :bidding_requests, dependent: :destroy
 
-  validates :name, :email, :postcode, presence: true
-  validates :email, uniqueness: true
+  validates :name, :postcode, presence: true
   validates :rating, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }, allow_nil: true
 
   scope :active, -> { where(active: true) }

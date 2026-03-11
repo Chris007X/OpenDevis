@@ -2,6 +2,11 @@ class NotificationsController < ApplicationController
   def index
     @notifications = policy_scope(Notification).recent
     authorize Notification
+
+    respond_to do |format|
+      format.html
+      format.json { render json: { unread_count: current_user.notifications.unread.count } }
+    end
   end
 
   def mark_read

@@ -1,0 +1,92 @@
+<style>
+  .ad-container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+  .ad-section-title { font-weight: 700; font-size: 1rem; color: #2C2A25; margin-bottom: 12px; margin-top: 32px; }
+  .ad-section-title:first-of-type { margin-top: 0; }
+  .ad-request-card {
+    background: #fff; border: 1px solid #E8E4DC; border-radius: 10px; padding: 16px 20px;
+    margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    text-decoration: none; color: inherit; transition: border-color 0.12s, box-shadow 0.12s;
+  }
+  .ad-request-card:hover { border-color: #2C2A25; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .ad-status-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+  }
+  .badge-sent      { background: #D0E8F5; color: #1A5C80; }
+  .badge-responded { background: #D4EDDA; color: #2D6A4F; }
+  .badge-declined  { background: #F8D7DA; color: #842029; }
+  .badge-expired   { background: #EDE9E0; color: #6B6560; }
+  .badge-replaced  { background: #EDE9E0; color: #9B9588; }
+  .ad-empty { text-align: center; padding: 32px; background: #fff; border: 1px solid #E8E4DC; border-radius: 10px; color: #9B9588; font-size: 0.9rem; }
+</style>
+
+<div class="ad-container">
+  <h2 style="font-weight: 700; color: #2C2A25; margin-bottom: 4px;">Bonjour <%= current_artisan.name %> 👋</h2>
+  <p style="color: #9B9588; font-size: 0.9rem; margin-bottom: 32px;">Gérez vos demandes de devis depuis votre tableau de bord.</p>
+
+  <div class="ad-section-title">
+    Demandes en attente
+    <% if @pending_requests.any? %>
+      <span style="color: #9B9588; font-weight: 400; font-size: 0.85rem; margin-left: 6px;">(<%= @pending_requests.count %>)</span>
+    <% end %>
+  </div>
+
+  <% if @pending_requests.any? %>
+    <% @pending_requests.each do |req| %>
+      <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
+        <div>
+          <div style="font-weight: 600; color: #2C2A25; margin-bottom: 3px;"><%= req.work_category.name %></div>
+          <div style="font-size: 0.82rem; color: #9B9588;">
+            <%= req.bidding_round.project.location_zip %>
+            <% if req.bidding_round.project.total_surface_sqm.present? %>
+              · <%= req.bidding_round.project.total_surface_sqm.to_i %> m²
+            <% end %>
+            · Standing <%= req.bidding_round.standing_label %>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
+          <span style="font-size: 0.8rem; color: #9B9588;">
+            Limite : <%= req.bidding_round.deadline.strftime("%d/%m/%Y") %>
+          </span>
+          <span class="ad-status-badge badge-sent">À répondre</span>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="ad-empty">Aucune demande en attente.</div>
+  <% end %>
+
+  <div class="ad-section-title">Demandes passées</div>
+
+  <% if @past_requests.any? %>
+    <% @past_requests.each do |req| %>
+      <%
+        badge_class = case req.status
+                      when "responded" then "badge-responded"
+                      when "declined"  then "badge-declined"
+                      when "expired"   then "badge-expired"
+                      else "badge-replaced"
+                      end
+        badge_label = { "responded" => "Répondu", "declined" => "Décliné",
+                        "expired" => "Expiré", "replaced" => "Remplacé" }[req.status]
+      %>
+      <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
+        <div>
+          <div style="font-weight: 600; color: #2C2A25; margin-bottom: 3px;"><%= req.work_category.name %></div>
+          <div style="font-size: 0.82rem; color: #9B9588;">
+            <%= req.bidding_round.project.location_zip %> · Standing <%= req.bidding_round.standing_label %>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
+          <% if req.responded? && req.price_total.present? %>
+            <span style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;">
+              <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+            </span>
+          <% end %>
+          <span class="ad-status-badge <%= badge_class %>"><%= badge_label %></span>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="ad-empty">Aucune demande passée.</div>
+  <% end %>
+</div>

@@ -35,6 +35,14 @@ class BiddingRoundPolicy < ApplicationPolicy
     new?
   end
 
+  def select_replacement?
+    new?
+  end
+
+  def replace_artisan?
+    new?
+  end
+
   private
 
   def record_project_owner?

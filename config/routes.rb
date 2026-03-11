@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
+  devise_for :artisans, path: "artisans", controllers: { sessions: "artisans/sessions" }
   root to: "pages#home"
 
   # Project wizard (creation flow)
@@ -21,14 +22,25 @@ Rails.application.routes.draw do
       post   :send_requests,      on: :member
       get    :select_artisans,    on: :member
       patch  :update_artisans,    on: :member
-      get    :review_responses,   on: :member
-      post   :confirm_selections, on: :member
-      get    :final_quote,        on: :member
+      get    :review_responses,    on: :member
+      post   :confirm_selections,  on: :member
+      get    :final_quote,         on: :member
+      get    :select_replacement,  on: :member
+      post   :replace_artisan,     on: :member
     end
   end
 
   get  "artisan/respond/:token", to: "artisan_portal#show",   as: :artisan_portal
   post "artisan/respond/:token", to: "artisan_portal#submit",  as: :artisan_portal_submit
+
+  namespace :artisan_dashboard do
+    root to: "home#index"
+    resources :requests, only: [:index, :show] do
+      post :submit_price, on: :member
+      post :decline,      on: :member
+    end
+    resource :profile, only: [:show, :edit, :update]
+  end
 
   post "webhooks/inbound_email", to: "webhooks/inbound_email#create"
 

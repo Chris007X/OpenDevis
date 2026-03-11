@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tableau de bord artisan · OpenDevis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  <style>
+    body { background: #FAFAF7; font-family: system-ui, sans-serif; color: #2C2A25; margin: 0; }
+    .ad-navbar {
+      background: #2C2A25;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ad-brand { font-weight: 800; color: #fff; text-decoration: none; font-size: 1rem; letter-spacing: -0.3px; }
+    .ad-brand span { color: #9B9588; font-weight: 400; margin-left: 6px; font-size: 0.85rem; }
+    .ad-nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.88rem; font-weight: 500;
+                   padding: 0.3rem 0.7rem; border-radius: 6px; transition: background 0.12s; }
+    .ad-nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .ad-nav-logout { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <nav class="ad-navbar">
+    <%= link_to raw("OpenDevis <span>Espace artisan</span>"), artisan_dashboard_root_path, class: "ad-brand" %>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <% if artisan_signed_in? %>
+        <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">
+          <%= current_artisan.name %>
+        </span>
+        <%= link_to "Mes demandes", artisan_dashboard_root_path, class: "ad-nav-link" %>
+        <%= link_to "Profil", edit_artisan_dashboard_profile_path, class: "ad-nav-link" %>
+        <%= link_to "Déconnexion", destroy_artisan_session_path, data: { turbo_method: :delete },
+              class: "ad-nav-link ad-nav-logout" %>
+      <% end %>
+    </div>
+  </nav>
+
+  <% if notice.present? %>
+    <div style="background: #D4EDDA; color: #2D6A4F; border-bottom: 1px solid #b7dfc9; padding: 10px 24px; font-size: 0.9rem;">
+      <%= notice %>
+    </div>
+  <% end %>
+  <% if alert.present? %>
+    <div style="background: #F8D7DA; color: #842029; border-bottom: 1px solid #f1aeb5; padding: 10px 24px; font-size: 0.9rem;">
+      <%= alert %>
+    </div>
+  <% end %>
+
+  <%= yield %>
+</body>
+</html>

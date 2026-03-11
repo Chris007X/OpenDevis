@@ -1,4 +1,6 @@
 class ArtisanPortalController < ApplicationController
+  include ArtisanSubmission
+
   skip_before_action :authenticate_user!
   before_action :set_bidding_request
   layout "artisan_portal"
@@ -40,6 +42,7 @@ class ArtisanPortalController < ApplicationController
       round.update!(status: "in_progress") if round.status == "sent"
     end
 
+    notify_artisan_responded(@bidding_request)
     redirect_to artisan_portal_path(@bidding_request.token), notice: "Votre réponse a été enregistrée."
   end
   # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity

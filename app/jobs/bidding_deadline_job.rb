@@ -5,7 +5,7 @@ class BiddingDeadlineJob < ApplicationJob
     round = BiddingRound.find_by(id: bidding_round_id)
     return unless round&.deadline_passed?
 
-    round.bidding_requests.where(status: "sent").update_all(status: "expired")
+    round.bidding_requests.where(status: "sent").find_each { |req| req.update!(status: "expired") }
 
     Notification.create!(
       user: round.project.user,

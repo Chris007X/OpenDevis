@@ -2,7 +2,8 @@
 class BiddingRoundsController < ApplicationController
   before_action :set_project
   before_action :set_bidding_round, only: %i[show send_requests select_artisans update_artisans
-                                             review_responses confirm_selections final_quote]
+                                             review_responses confirm_selections final_quote
+                                             select_replacement replace_artisan]
 
   def new
     authorize :bidding_round, :new?
@@ -67,6 +68,7 @@ class BiddingRoundsController < ApplicationController
     end
 
     @bidding_round.update!(status: "sent")
+    BiddingDeadlineJob.set(wait_until: @bidding_round.deadline).perform_later(@bidding_round.id)
     session.delete(:selected_category_ids)
 
     redirect_to project_bidding_round_path(@project), notice: "Les demandes ont été envoyées aux artisans."
@@ -134,6 +136,7 @@ class BiddingRoundsController < ApplicationController
   end
   # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def final_quote
     authorize @bidding_round, :final_quote?
     @final_selections = @bidding_round.final_selections.includes(:work_category, bidding_request: :artisan)
@@ -144,7 +147,54 @@ class BiddingRoundsController < ApplicationController
     @original_estimate = @project.rooms.joins(work_items: :work_category)
                                  .where(work_items: { standing_level: standing, work_category_id: category_ids })
                                  .sum("work_items.quantity * work_items.\"unit_price_exVAT\"")
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf_data = FinalQuotePdfGenerator.new(@bidding_round).generate
+        send_data pdf_data,
+                  filename: "devis-#{@project.id}-#{Date.current}.pdf",
+                  type: "application/pdf",
+                  disposition: "attachment"
+      end
+    end
   end
+  # rubocop:enable Metrics/MethodLength
+
+  def select_replacement
+    authorize @bidding_round, :select_replacement?
+    @bidding_request = @bidding_round.bidding_requests.find(params[:bidding_request_id])
+    assigned_artisan_ids = @bidding_round.bidding_requests.active.pluck(:artisan_id)
+    @available_artisans = Artisan.active
+                                 .for_postcode(@project.location_zip)
+                                 .for_category(@bidding_request.work_category_id)
+                                 .where.not(id: assigned_artisan_ids)
+                                 .order(rating: :desc)
+                                 .limit(10)
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def replace_artisan
+    authorize @bidding_round, :replace_artisan?
+    @old_request = @bidding_round.bidding_requests.find(params[:bidding_request_id])
+    @new_artisan = Artisan.find(params[:new_artisan_id])
+
+    @old_request.update!(status: "replaced")
+
+    new_request = @bidding_round.bidding_requests.create!(
+      work_category: @old_request.work_category,
+      artisan: @new_artisan,
+      status: "sent",
+      sent_at: Time.current
+    )
+
+    @old_request.update!(replaced_by: new_request)
+    SendBiddingRequestEmailJob.perform_later(new_request.id)
+
+    redirect_to project_bidding_round_path(@project),
+                notice: "#{@new_artisan.name} a été contacté(e) en remplacement."
+  end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

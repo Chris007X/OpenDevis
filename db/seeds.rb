@@ -469,7 +469,11 @@ artisan_data.each do |ad|
     a.rating       = ad[:rating]
     a.certifications = ad[:certifications]
     a.active       = true
+    a.password     = "password123"
+    a.password_confirmation = "password123"
   end
+
+  artisan.update!(password: "password123", password_confirmation: "password123") if artisan.encrypted_password.blank?
 
   ad[:categories].each do |slug|
     category = WorkCategory.find_by(slug: slug)

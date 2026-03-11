@@ -1,0 +1,34 @@
+<div id="bidding_progress">
+  <div class="row g-3 text-center">
+    <div class="col-4">
+      <div style="font-size: 1.8rem; font-weight: 700; color: #2C2A25;">
+        <%= bidding_round.total_requests %>
+      </div>
+      <div style="font-size: 0.8rem; color: #9B9588;">Demandes envoyées</div>
+    </div>
+    <div class="col-4">
+      <div style="font-size: 1.8rem; font-weight: 700; color: #2D6A4F;">
+        <%= bidding_round.responses_received %>
+      </div>
+      <div style="font-size: 0.8rem; color: #9B9588;">Réponses reçues</div>
+    </div>
+    <div class="col-4">
+      <div style="font-size: 1.8rem; font-weight: 700; color: #2C2A25;">
+        <% days_left = [(bidding_round.deadline.to_date - Date.current).to_i, 0].max %>
+        <%= days_left %>j
+      </div>
+      <div style="font-size: 0.8rem; color: #9B9588;">Jours restants</div>
+    </div>
+  </div>
+  <% if bidding_round.total_requests > 0 %>
+    <div class="mt-3">
+      <div style="font-size: 0.8rem; color: #9B9588; margin-bottom: 6px;">
+        Avancement : <%= bidding_round.responses_received %> / <%= bidding_round.total_requests %> réponses
+      </div>
+      <div style="background: #E8E4DC; border-radius: 4px; height: 6px;">
+        <div style="background: #2C2A25; border-radius: 4px; height: 6px;
+                    width: <%= [(bidding_round.responses_received.to_f / bidding_round.total_requests * 100).round, 100].min %>%;"></div>
+      </div>
+    </div>
+  <% end %>
+</div>
