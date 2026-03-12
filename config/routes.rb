@@ -15,9 +15,10 @@ Rails.application.routes.draw do
   get  "projects/wizard/step4",    to: "projects/wizard#step4",      as: :wizard_step4
   get  "projects/wizard/edit/:id", to: "projects/wizard#edit_recap", as: :wizard_edit
   post "projects/wizard/generate",    to: "projects/wizard#generate",    as: :wizard_generate
-  post "projects/wizard/analyze_url",  to: "projects/wizard#analyze_url",  as: :wizard_analyze_url
+  post "projects/wizard/analyze_url",   to: "projects/wizard#analyze_url",   as: :wizard_analyze_url
   post "projects/wizard/chat_property", to: "projects/wizard#chat_property", as: :wizard_chat_property
   post "projects/wizard/analyze_pdf",   to: "projects/wizard#analyze_pdf",   as: :wizard_analyze_pdf
+  post "projects/wizard/upload_photo",  to: "projects/wizard#upload_photo",  as: :wizard_upload_photo
 
   resources :projects do
     resources :rooms,     only: [:index, :new, :create]

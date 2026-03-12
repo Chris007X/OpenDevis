@@ -207,6 +207,17 @@ module Projects
       render json: { success: false, error: friendly_error(e.message) }, status: :unprocessable_entity
     end
 
+    # ── Photo upload – AJAX endpoint ─────────────────────────────────────────
+    def upload_photo
+      file = params[:photo]
+      return render json: { error: "Fichier manquant" }, status: :bad_request unless file
+
+      validate_photo!(file)
+      render json: { photo_url: save_photo(file) }
+    rescue StandardError => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+
     # ── PDF analyzer – AJAX endpoint ─────────────────────────────────────────
     def analyze_pdf
       file = params[:file]
@@ -328,6 +339,21 @@ module Projects
       end
     end
 
+    def validate_photo!(file)
+      allowed = %w[image/jpeg image/png image/webp image/gif]
+      raise "Format non supporté (JPG, PNG, WEBP, GIF uniquement)" unless allowed.include?(file.content_type)
+      raise "Fichier trop grand (max 5 Mo)" if file.size > 5.megabytes
+    end
+
+    def save_photo(file)
+      dir = Rails.root.join("public/uploads/wizard_photos")
+      FileUtils.mkdir_p(dir)
+      ext = File.extname(file.original_filename).downcase.presence || ".jpg"
+      filename = "#{SecureRandom.hex(12)}#{ext}"
+      FileUtils.cp(file.tempfile.path, dir.join(filename))
+      "/uploads/wizard_photos/#{filename}"
+    end
+
     def find_wizard_project
       id = session[:wizard_project_id]
       return nil unless id
@@ -336,7 +362,9 @@ module Projects
     end
 
     def step1_params
-      params.require(:project).permit(:name, :location_zip, :total_surface_sqm, :room_count, :energy_rating, :description)
+      params.require(:project).permit(
+        :name, :location_zip, :total_surface_sqm, :room_count, :energy_rating, :description, :photo_url
+      )
     end
 
     def resolve_property_type

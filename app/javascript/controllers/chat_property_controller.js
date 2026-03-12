@@ -177,6 +177,16 @@ export default class extends Controller {
     if (data.location_zip)      this.setLocationZip(data.location_zip)
     if (data.energy_rating)     this.setSelect("project_energy_rating",     data.energy_rating)
     if (data.summary)           this.setField("project_description",        data.summary)
+    const nameField = document.getElementById("project_name")
+    if (nameField && !nameField.value.trim()) nameField.value = this.buildAutoTitle(data)
+  }
+
+  buildAutoTitle(data) {
+    const parts = []
+    if (data.type_de_bien)      parts.push(data.type_de_bien)
+    if (data.location_zip)      parts.push(data.location_zip)
+    if (data.total_surface_sqm) parts.push(`${data.total_surface_sqm}m²`)
+    return parts.join(" ")
   }
 
   setPropertyType(value) {

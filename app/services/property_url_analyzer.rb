@@ -11,25 +11,29 @@ class PropertyUrlAnalyzer
   end
 
   def analyze
-    html = fetch_html
-    text = extract_text(html)
-    query_llm(text)
+    html  = fetch_html
+    doc   = Nokogiri::HTML(html)
+    photo = extract_photo(doc)
+    text  = extract_text_from_doc(doc)
+    result = query_llm(text)
+    result["photo_url"] = photo if photo
+    result
   end
 
   private
 
   BROWSER_HEADERS = {
-    "User-Agent"      => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept"          => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language" => "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
     "Accept-Encoding" => "identity",
-    "DNT"             => "1",
-    "Connection"      => "keep-alive",
+    "DNT" => "1",
+    "Connection" => "keep-alive",
     "Upgrade-Insecure-Requests" => "1",
-    "Sec-Fetch-Dest"  => "document",
-    "Sec-Fetch-Mode"  => "navigate",
-    "Sec-Fetch-Site"  => "none",
-    "Sec-Fetch-User"  => "?1"
+    "Sec-Fetch-Dest" => "document",
+    "Sec-Fetch-Mode" => "navigate",
+    "Sec-Fetch-Site" => "none",
+    "Sec-Fetch-User" => "?1"
   }.freeze
 
   def fetch_html
@@ -43,8 +47,25 @@ class PropertyUrlAnalyzer
     response.body
   end
 
-  def extract_text(html)
-    doc = Nokogiri::HTML(html)
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+  def extract_photo(doc)
+    url = doc.at('meta[property="og:image"]')&.[]("content") ||
+          doc.at('meta[name="twitter:image"]')&.[]("content") ||
+          doc.css("img[src]").find do |img|
+            img["src"].to_s.match?(/\.(jpg|jpeg|png|webp)/i) &&
+              !img["src"].to_s.match?(/logo|icon|sprite|avatar|placeholder/i)
+          end&.[]("src")
+    return nil unless url.present?
+    return url if url.start_with?("http")
+
+    URI.join(@url, url).to_s
+  rescue URI::InvalidURIError
+    nil
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+
+  def extract_text_from_doc(doc)
+    doc = doc.dup
     doc.search("script, style, nav, footer, header, iframe").remove
     doc.text.gsub(/\s+/, " ").strip.first(MAX_TEXT_LENGTH)
   end
