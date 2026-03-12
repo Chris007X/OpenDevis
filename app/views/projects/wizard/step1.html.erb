@@ -318,7 +318,8 @@
           <%= f.text_field :name, class: "form-control", placeholder: "ex. Rénovation appartement Montmartre" %>
         </div>
 
-        <%# Type de bien — required, radio cards %>
+        <%# Type de bien — required, radio cards (hidden for construction flow) %>
+        <% unless @project_type == "construction" %>
         <div class="col-12" data-controller="property-type">
           <div class="field-label">Type de bien <span class="required">*</span></div>
           <div class="property-type-options">
@@ -349,10 +350,11 @@
             <div class="field-error">Ce champ est obligatoire</div>
           <% end %>
         </div>
+        <% end %>
 
         <%# Surface — required %>
         <div class="col-md-6">
-          <div class="field-label">Surface actuelle du bien (m²) <span class="required">*</span></div>
+          <div class="field-label"><%= @project_type == "construction" ? "Surface souhaitée du bien (m²)" : "Surface actuelle du bien (m²)" %> <span class="required">*</span></div>
           <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5,
               min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>

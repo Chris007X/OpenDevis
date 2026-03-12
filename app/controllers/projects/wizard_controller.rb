@@ -75,6 +75,8 @@ module Projects
 
       # Build property_url from property_type params
       property_url = resolve_property_type
+      # For construction flow, property type is not shown — use a default
+      property_url = "construction" if property_url.blank? && session[:wizard_project_type] == "construction"
       @project.assign_attributes(step1_params.merge(status: :draft, property_url: property_url))
 
       # Server-side validation for required fields
