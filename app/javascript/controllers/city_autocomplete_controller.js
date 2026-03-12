@@ -16,6 +16,19 @@ export default class extends Controller {
     document.removeEventListener("click", this.handleClickOutside)
   }
 
+  // Strip non-digit characters from the input
+  filterDigits() {
+    const pos = this.inputTarget.selectionStart
+    const before = this.inputTarget.value
+    const filtered = before.replace(/\D/g, "")
+    if (before !== filtered) {
+      this.inputTarget.value = filtered
+      // Restore cursor position accounting for removed chars
+      const diff = before.length - filtered.length
+      this.inputTarget.setSelectionRange(pos - diff, pos - diff)
+    }
+  }
+
   search() {
     clearTimeout(this.timeout)
 
@@ -27,8 +40,8 @@ export default class extends Controller {
 
     const raw = this.inputTarget.value.trim()
 
-    // Sync hidden field with visible input
-    this.hiddenTarget.value = raw
+    // Clear hidden field — user must select from suggestions to validate
+    this.hiddenTarget.value = ""
 
     // Extract digits only to decide when to trigger search
     const digits = raw.replace(/\D/g, "")

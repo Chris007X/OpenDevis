@@ -27,12 +27,19 @@
     background: #FAFAF7;
     margin-top: 0.75rem;
   }
-  .room-row {
+
+  .room-group {
+    border: 1px solid #E8E4DC;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+  .room-group-header {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0;
-    flex-wrap: wrap;
+    padding: 0.65rem 1rem;
   }
   .room-checkbox-label {
     display: flex;
@@ -42,31 +49,77 @@
     font-size: 0.95rem;
     color: #2C2A25;
     font-weight: 500;
-    min-width: 130px;
-  }
-  .room-detail-fields {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     flex: 1;
   }
-  .room-detail-fields select {
+  .room-count-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .room-count-control .btn-count {
+    width: 26px; height: 26px;
     border: 1px solid #E8E4DC;
     border-radius: 6px;
-    padding: 0.3rem 0.5rem;
+    background: #fff;
+    color: #2C2A25;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    padding: 0;
+  }
+  .room-count-control .btn-count:hover { background: #F0EDE8; border-color: #2C2A25; }
+  .room-count-control .count-display {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2C2A25;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .room-instances {
+    border-top: 1px solid #E8E4DC;
+  }
+  .room-instance {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 2.75rem;
+    border-top: 1px solid #F0EDE8;
+  }
+  .room-instance:first-child { border-top: none; }
+  .room-instance-name {
+    font-size: 0.88rem;
+    color: #2C2A25;
+    font-weight: 500;
+    min-width: 100px;
+  }
+  .room-instance-surface {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+  .room-instance-surface input {
+    width: 80px;
+    border: 1px solid #E8E4DC;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
     font-size: 0.85rem;
     color: #2C2A25;
     background: #fff;
   }
-  .room-detail-fields select:focus {
+  .room-instance-surface input:focus {
     border-color: #2C2A25;
     outline: none;
     box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
   }
-  .room-detail-label {
+  .room-instance-surface span {
     font-size: 0.8rem;
     color: #9B9588;
-    white-space: nowrap;
   }
 
   .field-error {
@@ -79,9 +132,12 @@
 
 <%
   # Parse stored room data: session[:wizard_rooms] is now an array of hashes
-  # [{ "name" => "Salon", "count" => "1", "reno_type" => "renovation_legere" }, ...]
+  # [{ "name" => "Chambre 1", "base" => "Chambre", "surface" => "12" }, ...]
   selected_rooms_data = (@selected_rooms.is_a?(Array) && @selected_rooms.first.is_a?(Hash)) ? @selected_rooms : []
-  selected_room_names = selected_rooms_data.map { |r| r["name"] }
+
+  # Group by base name to rebuild counts
+  selected_bases = selected_rooms_data.map { |r| r["base"] || r["name"] }.uniq
+  selected_counts = selected_rooms_data.group_by { |r| r["base"] || r["name"] }
 %>
 
 <div class="container py-4" style="max-width: 620px;">
@@ -93,9 +149,8 @@
   <%= form_with url: wizard_step2_path, method: :post,
       data: { controller: "renovation-type", action: "change->renovation-type#validate" } do |f| %>
     <% [
-      ["renovation_complete", "🏗️", "Rénovation complète",              "Estimation rapide"],
-      ["par_piece",           "🚪", "Rénovation par pièce",             "Estimation plus détaillée ou pour des pièces spécifiques"],
-      ["energetique",         "🌿", "Rénovation énergétique seulement", "Isolation, fenêtres, chauffage"]
+      ["renovation_complete", "🏗️", "Rénovation complète",  "Estimation rapide"],
+      ["par_piece",           "🚪", "Rénovation par pièce", "Estimation plus détaillée ou pour des pièces spécifiques"]
     ].each do |value, icon, label, desc| %>
       <label class="renovation-card">
         <input type="radio" name="renovation_type" value="<%= value %>"
@@ -116,39 +171,54 @@
         Quelles pièces rénover ? <span style="color: #C25E4A;">*</span>
       </div>
 
-      <% room_reno_types = [
-        ["renovation_complete", "Rénovation complète"],
-        ["energetique",         "Rénovation énergétique"]
-      ] %>
-
       <% Projects::WizardController::PRESET_ROOMS.each do |room| %>
         <%
-          room_data = selected_rooms_data.find { |r| r["name"] == room } || {}
-          is_checked = selected_room_names.include?(room)
+          is_checked = selected_bases.include?(room)
+          room_instances = selected_counts[room] || []
+          count = [room_instances.size, 1].max
         %>
-        <div class="room-row">
-          <label class="room-checkbox-label">
-            <input type="checkbox" name="rooms[][name]" value="<%= room %>"
-                   <%= "checked" if is_checked %>
-                   data-action="change->renovation-type#toggleRoomFields">
-            <%= room %>
-          </label>
+        <div class="room-group" data-renovation-type-target="roomGroup" data-room="<%= room %>">
+          <div class="room-group-header">
+            <label class="room-checkbox-label">
+              <input type="checkbox"
+                     data-renovation-type-target="roomCheckbox"
+                     data-room="<%= room %>"
+                     <%= "checked" if is_checked %>
+                     data-action="change->renovation-type#toggleRoom">
+              <%= room %>
+            </label>
 
-          <div data-renovation-type-target="roomDetail" data-room="<%= room %>"
-               class="room-detail-fields" <%= "hidden" unless is_checked %>>
-            <span class="room-detail-label">Nombre</span>
-            <select name="room_details[<%= room %>][count]">
-              <% (1..9).each do |n| %>
-                <option value="<%= n %>" <%= "selected" if room_data["count"].to_s == n.to_s %>><%= n %></option>
-              <% end %>
-            </select>
+            <div class="room-count-control" <%= "hidden" unless is_checked %>
+                 data-renovation-type-target="countControl" data-room="<%= room %>">
+              <button type="button" class="btn-count"
+                      data-action="click->renovation-type#decrement"
+                      data-room="<%= room %>">−</button>
+              <span class="count-display"
+                    data-renovation-type-target="countDisplay" data-room="<%= room %>"><%= count %></span>
+              <button type="button" class="btn-count"
+                      data-action="click->renovation-type#increment"
+                      data-room="<%= room %>">+</button>
+            </div>
+          </div>
 
-            <span class="room-detail-label">Type de réno</span>
-            <select name="room_details[<%= room %>][reno_type]">
-              <% room_reno_types.each do |val, label| %>
-                <option value="<%= val %>" <%= "selected" if room_data["reno_type"] == val %>><%= label %></option>
+          <div class="room-instances" <%= "hidden" unless is_checked %>
+               data-renovation-type-target="roomInstances" data-room="<%= room %>">
+            <% if is_checked %>
+              <% room_instances.each_with_index do |inst, i| %>
+                <div class="room-instance" data-room-index>
+                  <div class="room-instance-name"><%= count > 1 ? "#{room} #{i + 1}" : room %></div>
+                  <input type="hidden" class="room-field-name" name="rooms[][name]" value="<%= count > 1 ? "#{room} #{i + 1}" : room %>">
+                  <input type="hidden" class="room-field-base" name="rooms[][base]" value="<%= room %>">
+                  <input type="hidden" class="room-field-surface" name="rooms[][surface]" value="<%= inst["surface"] %>">
+                  <div class="room-instance-surface">
+                    <input type="number" placeholder="—" min="0" step="0.5"
+                           data-action="input->renovation-type#syncSurface"
+                           value="<%= inst["surface"] %>">
+                    <span>m²</span>
+                  </div>
+                </div>
               <% end %>
-            </select>
+            <% end %>
           </div>
         </div>
       <% end %>

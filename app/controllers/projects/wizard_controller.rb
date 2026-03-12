@@ -81,7 +81,9 @@ module Projects
       @errors = []
       @errors << :property_type if property_url.blank?
       @errors << :total_surface_sqm if @project.total_surface_sqm.blank? || @project.total_surface_sqm <= 0
-      @errors << :location_zip if @project.location_zip.blank?
+      @errors << :total_surface_sqm if @project.total_surface_sqm.present? && @project.total_surface_sqm < 0
+      @errors << :location_zip if @project.location_zip.blank? || !@project.location_zip.match?(/\A.+\(\d{5}\)\z/)
+      @errors.uniq!
 
       if @errors.any?
         @project_type = session[:wizard_project_type]
@@ -124,13 +126,11 @@ module Projects
       session[:wizard_renovation_type] = params[:renovation_type]
 
       if params[:renovation_type] == "par_piece"
-        # Build structured room data: [{ "name" => "Salon", "count" => "2", "reno_type" => "renovation_legere" }]
-        checked_rooms = (params[:rooms] || []).filter_map { |r| r[:name].presence }
-        details = params[:room_details] || {}
-
-        room_data = checked_rooms.map do |name|
-          d = details[name] || {}
-          { "name" => name, "count" => (d[:count] || 1).to_s, "reno_type" => d[:reno_type] || "renovation_legere" }
+        # params[:rooms] is an array of hashes: [{ name: "Salon", base: "Salon", surface: "30" }, ...]
+        raw_rooms = params.permit(rooms: [ :name, :base, :surface ]).fetch(:rooms, [])
+        room_data = raw_rooms.filter_map do |entry|
+          next unless entry[:name].present?
+          { "name" => entry[:name], "base" => entry[:base].presence || entry[:name], "surface" => entry[:surface].to_s.strip }
         end
 
         if room_data.empty?
@@ -218,6 +218,42 @@ module Projects
       render json: { success: false, error: friendly_error(e.message) }, status: :unprocessable_entity
     end
 
+    # ── Edit – Restore wizard session from existing project and go to step4 ──
+    def edit_recap
+      @project = current_user.projects.find(params[:id])
+
+      # Restore wizard session state from the existing project
+      session[:wizard_project_id]   = @project.id
+      session[:wizard_project_type] = "renovation"
+
+      rooms = @project.rooms.includes(work_items: :work_category)
+
+      if rooms.size == 1 && rooms.first.name == "Ensemble des travaux"
+        session[:wizard_renovation_type] = "renovation_complete"
+        session[:wizard_rooms] = []
+        # Restore selected categories from work items
+        slugs = rooms.first.work_items.map { |wi| wi.work_category&.slug }.compact.uniq
+        session[:wizard_categories] = slugs
+        session[:wizard_room_categories] = {}
+      else
+        session[:wizard_renovation_type] = "par_piece"
+        room_data = []
+        room_categories = {}
+        rooms.each do |room|
+          # Infer base name by stripping trailing number (e.g. "Chambre 2" → "Chambre")
+          base = room.name.sub(/\s+\d+\z/, "")
+          room_data << { "name" => room.name, "base" => base, "surface" => room.surface_sqm&.to_s || "" }
+          slugs = room.work_items.map { |wi| wi.work_category&.slug }.compact.uniq
+          room_categories[room.name] = slugs if slugs.any?
+        end
+        session[:wizard_rooms] = room_data
+        session[:wizard_room_categories] = room_categories
+        session[:wizard_categories] = room_categories.values.flatten.uniq
+      end
+
+      redirect_to wizard_step4_path
+    end
+
     # ── Step 4 – Recap + generate ─────────────────────────────────────────────
     def step4
       @project          = find_wizard_project || (redirect_to(wizard_step1_path) && return)
@@ -225,31 +261,36 @@ module Projects
       @renovation_type  = session[:wizard_renovation_type]
       @selected_rooms   = session[:wizard_rooms] || []
       @selected_cats    = load_selected_categories
+      @room_categories  = session[:wizard_room_categories] || {}
+      @category_labels  = CATEGORY_LABELS
     end
 
     def generate
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
 
-      standing         = params[:standing].to_i.clamp(1, 3)
+      # Clear existing rooms/work_items when re-generating
+      @project.rooms.destroy_all if @project.rooms.any?
+
       renovation_type  = session[:wizard_renovation_type]
       category_slugs   = session[:wizard_categories] || []
       room_categories  = session[:wizard_room_categories] || {}
 
       if renovation_type == "par_piece" && session[:wizard_rooms].present?
         session[:wizard_rooms].each do |room_data|
-          name  = room_data["name"]
-          count = (room_data["count"] || 1).to_i
-          cats  = room_categories[name] || category_slugs
+          name    = room_data["name"]
+          base    = room_data["base"] || name
+          surface = room_data["surface"].presence&.to_f
+          cats    = room_categories[base] || room_categories[name] || category_slugs
 
-          count.times do |i|
-            room_label = count > 1 ? "#{name} #{i + 1}" : name
-            room = @project.rooms.create!(name: room_label)
-            generate_work_items(room, cats, standing)
-          end
+          room_attrs = { name: name }
+          room_attrs[:surface_sqm] = surface if surface && surface > 0
+          room = @project.rooms.create!(**room_attrs)
+          # Generate work items for all 3 standing levels
+          [1, 2, 3].each { |level| generate_work_items(room, cats, level) }
         end
       else
         room = @project.rooms.create!(name: "Ensemble des travaux")
-        generate_work_items(room, category_slugs, standing)
+        [1, 2, 3].each { |level| generate_work_items(room, category_slugs, level) }
       end
 
       @project.recompute_totals!
@@ -259,7 +300,7 @@ module Projects
         session.delete(k)
       end
 
-      redirect_to project_path(@project, standing: standing), notice: "Estimation générée !"
+      redirect_to project_path(@project, standing: 2), notice: "Estimation générée !"
     end
 
     private
@@ -293,7 +334,7 @@ module Projects
     end
 
     def step1_params
-      params.require(:project).permit(:location_zip, :total_surface_sqm, :room_count, :energy_rating, :description)
+      params.require(:project).permit(:name, :location_zip, :total_surface_sqm, :room_count, :energy_rating, :description)
     end
 
     def resolve_property_type

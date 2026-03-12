@@ -15,7 +15,8 @@
     font-size: 0.88rem;
     color: #2C2A25;
     transition: border-color 0.15s, background 0.15s;
-    min-height: 90px;
+    height: 100%;
+    min-height: 110px;
   }
   .category-card:has(input:checked) {
     border-color: #2C2A25;
@@ -131,11 +132,12 @@
         <% end %>
       </div>
 
-      <%# Category panels per room — filtered by ROOM_ALLOWED_CATEGORIES %>
+      <%# Category panels per room — filtered by ROOM_ALLOWED_CATEGORIES using base name %>
       <% rooms_data.each_with_index do |room, idx| %>
         <% room_name = room["name"] %>
-        <% saved_cats = room_categories[room_name] || [] %>
-        <% allowed = @room_allowed_categories[room_name] || @category_groups.flat_map { |g| g[:slugs] } %>
+        <% room_base = room["base"] || room_name %>
+        <% saved_cats = room_categories[room_name] || room_categories[room_base] || [] %>
+        <% allowed = @room_allowed_categories[room_base] || @category_groups.flat_map { |g| g[:slugs] } %>
         <div class="room-categories-panel <%= 'active' if idx == 0 %>"
              data-room-tabs-target="panel" data-room="<%= room_name %>">
           <% @category_groups.each do |group| %>

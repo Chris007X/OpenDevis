@@ -1,7 +1,5 @@
 <% content_for :head do %>
 <style>
-
-
   .recap-block {
     border: 1px solid #E8E4DC;
     border-radius: 10px;
@@ -9,9 +7,18 @@
     padding: 1.25rem 1.5rem;
     margin-bottom: 1rem;
   }
+  .recap-block-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #9B9588;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+  }
   .recap-row { display: flex; gap: 2rem; flex-wrap: wrap; }
   .recap-item { font-size: 0.9rem; }
   .recap-item .ri-label { color: #9B9588; font-size: 0.8rem; }
+  .recap-item .ri-value { color: #2C2A25; font-weight: 500; }
 
   .cat-chip {
     display: inline-block;
@@ -24,25 +31,29 @@
     margin: 0.2rem;
   }
 
-  .standing-btn {
-    flex: 1;
-    border: 1.5px solid #E8E4DC;
-    border-radius: 8px;
-    background: #fff;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #6B6560;
-    cursor: pointer;
-    transition: border-color 0.12s, background 0.12s, color 0.12s;
-    text-align: center;
+  .room-recap {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid #F0EDE8;
   }
-  .standing-btn:has(input:checked) {
-    border-color: #2C2A25;
-    background: #2C2A25;
-    color: #fff;
+  .room-recap:last-child { border-bottom: none; }
+  .room-recap-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
   }
-  .standing-btn input { display: none; }
+  .room-recap-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #2C2A25;
+  }
+  .room-recap-surface {
+    font-size: 0.82rem;
+    color: #9B9588;
+  }
+  .room-recap-cats {
+    padding-left: 0.25rem;
+  }
 
   .generate-btn {
     background: #2C2A25;
@@ -61,11 +72,11 @@
 
 <%
 reno_labels = {
-  "par_piece"          => "Rénovation par pièce",
-  "renovation_complete"=> "Rénovation complète",
-  "energetique"        => "Rénovation énergétique seulement",
-  "construction"       => "Construction neuve",
-  "extension"          => "Extension / Surélévation"
+  "par_piece"           => "Rénovation par pièce",
+  "renovation_complete" => "Rénovation complète",
+  "energetique"         => "Rénovation énergétique",
+  "construction"        => "Construction neuve",
+  "extension"           => "Extension / Surélévation"
 }
 %>
 
@@ -77,64 +88,105 @@ reno_labels = {
 
   <%# Property info block %>
   <div class="recap-block">
+    <div class="recap-block-title">Le bien</div>
     <div class="recap-row">
+      <% if @project.name.present? %>
+        <div class="recap-item">
+          <div class="ri-label">Titre</div>
+          <div class="ri-value"><%= @project.name %></div>
+        </div>
+      <% end %>
+      <% if @project.property_url.present? %>
+        <div class="recap-item">
+          <div class="ri-label">Type de bien</div>
+          <div class="ri-value"><%= @project.property_url.capitalize %></div>
+        </div>
+      <% end %>
       <% if @project.location_zip.present? %>
         <div class="recap-item">
-          <div class="ri-label">Code postal</div>
-          <div><%= @project.location_zip %></div>
+          <div class="ri-label">Localisation</div>
+          <div class="ri-value"><%= @project.location_zip %></div>
         </div>
       <% end %>
       <% if @project.total_surface_sqm.present? %>
         <div class="recap-item">
           <div class="ri-label">Surface</div>
-          <div><%= @project.total_surface_sqm %> m²</div>
+          <div class="ri-value"><%= @project.total_surface_sqm %> m²</div>
         </div>
       <% end %>
       <% if @project.room_count.present? %>
         <div class="recap-item">
-          <div class="ri-label">Pièces</div>
-          <div><%= @project.room_count %></div>
+          <div class="ri-label">Nombre de pièces</div>
+          <div class="ri-value"><%= @project.room_count %></div>
         </div>
       <% end %>
       <% if @project.energy_rating.present? %>
         <div class="recap-item">
           <div class="ri-label">DPE</div>
-          <div><%= @project.energy_rating %></div>
+          <div class="ri-value"><%= @project.energy_rating %></div>
         </div>
       <% end %>
-      <div class="recap-item">
-        <div class="ri-label">Type de projet</div>
-        <div><%= @project_type.in?(%w[construction extension]) ? reno_labels[@project_type] : (reno_labels[@renovation_type] || "—") %></div>
-      </div>
     </div>
   </div>
 
-  <%# Selected work categories %>
-  <% if @selected_cats.any? %>
+  <%# Renovation type %>
+  <div class="recap-block">
+    <div class="recap-block-title">Type de rénovation</div>
+    <div style="font-size: 0.95rem; font-weight: 500; color: #2C2A25;">
+      <%= @project_type.in?(%w[construction extension]) ? reno_labels[@project_type] : (reno_labels[@renovation_type] || "—") %>
+    </div>
+    <% if @renovation_type == "par_piece" && @selected_rooms.any? %>
+      <div class="small mt-1" style="color: #9B9588;">
+        <%= @selected_rooms.size %> pièce<%= @selected_rooms.size > 1 ? "s" : "" %> sélectionnée<%= @selected_rooms.size > 1 ? "s" : "" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Detailed rooms + categories for "par_piece" mode %>
+  <% if @renovation_type == "par_piece" && @selected_rooms.any? %>
     <div class="recap-block">
-      <div class="small fw-semibold mb-2" style="color: #9B9588;">Travaux sélectionnés</div>
+      <div class="recap-block-title">Détail par pièce</div>
+      <% @selected_rooms.each do |room| %>
+        <% room_name = room["name"] %>
+        <% room_base = room["base"] || room_name %>
+        <% room_surface = room["surface"].presence %>
+        <% room_cats = @room_categories[room_name] || @room_categories[room_base] || [] %>
+        <div class="room-recap">
+          <div class="room-recap-header">
+            <span class="room-recap-name"><%= room_name %></span>
+            <% if room_surface.present? %>
+              <span class="room-recap-surface">· <%= room_surface %> m²</span>
+            <% end %>
+          </div>
+          <div class="room-recap-cats">
+            <% if room_cats.any? %>
+              <% room_cats.each do |slug| %>
+                <% cat = @category_labels[slug] %>
+                <% if cat %>
+                  <span class="cat-chip"><%= cat[:icon] %> <%= cat[:label] %></span>
+                <% end %>
+              <% end %>
+            <% else %>
+              <span class="small" style="color: #9B9588;">Aucun travaux sélectionné</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+  <%# Global categories for other modes %>
+  <% elsif @selected_cats.any? %>
+    <div class="recap-block">
+      <div class="recap-block-title">Travaux sélectionnés</div>
       <% @selected_cats.each do |cat| %>
-        <span class="cat-chip"><%= cat[:label] %></span>
+        <span class="cat-chip"><%= cat[:icon] %> <%= cat[:label] %></span>
       <% end %>
     </div>
   <% end %>
 
-  <%# Generate form with standing selector %>
+  <%# Generate form — standing is set to Standard by default %>
   <%= form_with url: wizard_generate_path, method: :post do |f| %>
-    <div class="recap-block">
-      <div class="small fw-semibold mb-3" style="color: #2C2A25;">Niveau de standing</div>
-      <div class="d-flex gap-2">
-        <% [[1, "Éco"], [2, "Standard"], [3, "Premium"]].each do |level, label| %>
-          <label class="standing-btn">
-            <input type="radio" name="standing" value="<%= level %>" <%= "checked" if level == 2 %>>
-            <%= label %>
-          </label>
-        <% end %>
-      </div>
-      <div class="small mt-2" style="color: #9B9588;">
-        Éco = budget maîtrisé · Standard = rapport qualité/prix · Premium = matériaux haut de gamme
-      </div>
-    </div>
+    <input type="hidden" name="standing" value="2">
 
     <div class="d-flex justify-content-between align-items-center mt-4">
       <%= link_to "← Retour", @project_type == "construction" ? wizard_step1_path : wizard_step3_path, class: "btn btn-ghost-od" %>

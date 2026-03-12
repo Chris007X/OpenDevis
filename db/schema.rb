@@ -131,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_120657) do
     t.text "description"
     t.string "energy_rating"
     t.string "location_zip"
+    t.string "name"
     t.text "property_url"
     t.integer "room_count"
     t.string "status"

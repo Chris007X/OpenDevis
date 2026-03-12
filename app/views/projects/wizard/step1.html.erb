@@ -312,6 +312,12 @@
       </div>
 
       <div class="row g-3">
+        <%# Titre du projet — optional %>
+        <div class="col-12">
+          <div class="field-label">Titre du projet</div>
+          <%= f.text_field :name, class: "form-control", placeholder: "ex. Rénovation appartement Montmartre" %>
+        </div>
+
         <%# Type de bien — required, radio cards %>
         <div class="col-12" data-controller="property-type">
           <div class="field-label">Type de bien <span class="required">*</span></div>
@@ -348,7 +354,7 @@
         <div class="col-md-6">
           <div class="field-label">Surface actuelle du bien (m²) <span class="required">*</span></div>
           <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5,
-              data: { required: true } %>
+              min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>
             <div class="field-error">Ce champ est obligatoire</div>
           <% end %>
@@ -366,18 +372,21 @@
           <div class="autocomplete-wrapper">
             <input type="text" class="form-control"
                    placeholder="ex. 75001"
-                   value="<%= @project.location_zip %>"
+                   inputmode="numeric"
+                   pattern="[0-9]*"
+                   value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"
                    data-city-autocomplete-target="input"
-                   data-action="input->city-autocomplete#search input->wizard-form#validate"
+                   data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits input->wizard-form#validate"
                    data-required="true"
                    autocomplete="off">
             <input type="hidden" name="project[location_zip]"
                    value="<%= @project.location_zip %>"
-                   data-city-autocomplete-target="hidden">
+                   data-city-autocomplete-target="hidden"
+                   data-required="true">
             <div data-city-autocomplete-target="results" hidden class="autocomplete-results"></div>
           </div>
           <% if @errors&.include?(:location_zip) %>
-            <div class="field-error">Ce champ est obligatoire</div>
+            <div class="field-error">Veuillez saisir un code postal et sélectionner une ville dans la liste</div>
           <% end %>
         </div>
 

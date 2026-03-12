@@ -1,17 +1,24 @@
 <%
 project_type = local_assigns[:project_type] || "renovation"
 
+step_paths = {
+  1 => wizard_step1_path,
+  2 => wizard_step2_path,
+  3 => wizard_step3_path,
+  4 => wizard_step4_path
+}
+
 if project_type.in?(%w[construction extension])
   steps = [
-    [1, "Bien immobilier"],
-    [3, "Travaux"],
+    [1, "Le bien existant"],
+    [3, "Détails des travaux"],
     [4, "Récapitulatif"]
   ]
 else
   steps = [
-    [1, "Bien immobilier"],
-    [2, "Rénovation"],
-    [3, "Travaux"],
+    [1, "Le bien existant"],
+    [2, "Type de rénovation"],
+    [3, "Détails des travaux"],
     [4, "Récapitulatif"]
   ]
 end
@@ -19,11 +26,25 @@ end
 
 <div class="d-flex justify-content-center align-items-center mb-5 wizard-stepper">
   <% steps.each_with_index do |(num, label), idx| %>
-    <div class="wizard-step <%= num == current_step ? 'active' : (num < current_step ? 'done' : 'pending') %>">
-      <div class="step-circle">
-        <% if num < current_step %>✓<% else %><%= idx + 1 %><% end %>
-      </div>
-      <div class="step-label d-none d-sm-block"><%= label %></div>
+    <%
+      state = if num == current_step
+               "active"
+             elsif num < current_step
+               "done"
+             else
+               "pending"
+             end
+    %>
+    <div class="wizard-step <%= state %>">
+      <% if state == "done" %>
+        <%= link_to step_paths[num], class: "wizard-step-link" do %>
+          <div class="step-circle"><%= num %></div>
+          <div class="step-label d-none d-sm-block"><%= label %></div>
+        <% end %>
+      <% else %>
+        <div class="step-circle"><%= num %></div>
+        <div class="step-label d-none d-sm-block"><%= label %></div>
+      <% end %>
     </div>
     <% if idx < steps.length - 1 %>
       <div class="wizard-connector <%= num < current_step ? 'done' : '' %>"></div>

@@ -15,6 +15,10 @@ export default class extends Controller {
         const name = field.name
         return this.element.querySelector(`input[name="${name}"]:checked`) !== null
       }
+      // For number fields, also check that value is non-negative
+      if (field.type === "number" && field.value !== "" && parseFloat(field.value) < 0) {
+        return false
+      }
       return field.value.trim() !== ""
     })
 

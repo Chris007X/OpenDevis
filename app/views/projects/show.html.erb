@@ -120,7 +120,7 @@ status_label, status_class = case @project.status
     </div>
     <div class="d-flex gap-2 align-items-center">
       <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
-      <%= link_to "Modifier", edit_project_path(@project), class: "btn btn-ghost-od btn-sm" %>
+      <%= link_to "Modifier", wizard_edit_path(@project), class: "btn btn-ghost-od btn-sm" %>
       <%= button_to "Supprimer", @project, method: :delete,
             data: { turbo_confirm: "Supprimer ce projet ?" },
             class: "btn btn-ghost-od btn-sm" %>
@@ -133,9 +133,9 @@ status_label, status_class = case @project.status
     <%# Summary bar %>
     <div class="row g-3 mb-5">
       <div class="col-md-4">
-        <div class="summary-card">
-          <div class="summary-label">Total HT</div>
-          <div class="summary-amount">
+        <div class="summary-card-light">
+          <div class="summary-label" style="color: #9B9588;">Total HT</div>
+          <div class="summary-amount" style="font-size: 1.3rem; color: #6B6560;">
             <%= number_to_currency(@total_ht, unit: "€", format: "%n %u",
                   separator: ",", delimiter: "\u202F") %>
           </div>
@@ -252,11 +252,8 @@ status_label, status_class = case @project.status
   <% end %>
 
   <%# ── Rooms section ───────────────────────────────────────────────────── %>
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="mb-3">
     <div class="section-title mb-0">Par pièce</div>
-    <%= link_to @rooms.any? ? "+ Ajouter une pièce" : "+ Ajouter la première pièce",
-          new_project_room_path(@project),
-          class: "btn #{ @rooms.any? ? 'btn-ghost-od' : 'btn-dark-od' } btn-sm" %>
   </div>
 
   <% if @rooms.any? %>
