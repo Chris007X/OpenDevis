@@ -6,7 +6,7 @@
     height: 58px;
   }
   .od-brand {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #2C2A25 !important;
     text-decoration: none;
@@ -43,7 +43,9 @@
   <div class="container-fluid d-flex align-items-center justify-content-between">
 
     <%# Brand %>
-    <%= link_to "OpenDevis", root_path, class: "od-brand me-4" %>
+    <%= link_to root_path, class: "od-brand me-4" do %>
+      Open<span style="color: #2563eb;">Devis</span>
+    <% end %>
 
     <%# Nav links (desktop) %>
     <% if user_signed_in? %>
