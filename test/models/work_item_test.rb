@@ -54,4 +54,39 @@ class WorkItemTest < ActiveSupport::TestCase
     @work_item.material = nil
     assert_not @work_item.valid?
   end
+
+  # Test 37
+  test "requires label" do
+    @work_item.label = nil
+    assert_not @work_item.valid?
+    assert_includes @work_item.errors[:label], "can't be blank"
+  end
+
+  # Test 38
+  test "quantity must be greater than zero" do
+    @work_item.quantity = 0
+    assert_not @work_item.valid?
+    @work_item.quantity = -1
+    assert_not @work_item.valid?
+  end
+
+  # Test 39
+  test "unit_price_exVAT can be zero" do
+    @work_item.unit_price_exVAT = 0
+    assert @work_item.valid?
+  end
+
+  # Test 40
+  test "unit_price_exVAT cannot be negative" do
+    @work_item.unit_price_exVAT = -5
+    assert_not @work_item.valid?
+  end
+
+  # Test 41
+  test "saving a work_item triggers recompute_totals! on its project" do
+    @work_item.save!
+    @room.project.reload
+    expected_exvat = @work_item.quantity * @work_item.unit_price_exVAT
+    assert_equal expected_exvat, @room.project.total_exVAT
+  end
 end

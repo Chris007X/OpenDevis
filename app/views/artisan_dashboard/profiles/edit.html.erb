@@ -43,6 +43,35 @@
         <%= f.url_field :portfolio_url, style: field_style %>
       </div>
 
+      <div style="margin-bottom: 24px;">
+        <label style="<%= label_style %>">Corps de métier</label>
+        <p style="font-size: 0.82rem; color: #9B9588; margin: 0 0 12px;">
+          Sélectionnez les catégories de travaux que vous réalisez.
+        </p>
+        <% category_icons = {
+             "maconnerie" => "🏗️", "plomberie" => "🔧", "electricite" => "⚡",
+             "menuiserie" => "🚪", "peinture" => "🖌️", "carrelage" => "◻️",
+             "isolation" => "🧱", "chauffage" => "🌡️"
+           } %>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;">
+          <% @work_categories.each do |cat| %>
+            <% selected = @artisan.work_category_ids.include?(cat.id) %>
+            <label style="display: flex; align-items: center; gap: 10px; border: 1.5px solid <%= selected ? "#2C2A25" : "#E8E4DC" %>;
+                          border-radius: 8px; padding: 10px 14px; cursor: pointer; background: <%= selected ? "#F5F3EF" : "#fff" %>;
+                          transition: border-color 0.15s;">
+              <%= check_box_tag "artisan[work_category_ids][]", cat.id, selected,
+                    id: "cat_#{cat.id}",
+                    style: "accent-color: #2C2A25; width: 16px; height: 16px; flex-shrink: 0;" %>
+              <span style="font-size: 0.88rem; font-weight: 500; color: #2C2A25;">
+                <%= category_icons[cat.slug] || "🔨" %> <%= cat.name %>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <%# Hidden field so unchecking all sends an empty array %>
+        <%= hidden_field_tag "artisan[work_category_ids][]", "" %>
+      </div>
+
       <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
               padding: 12px 28px; font-size: 1rem; font-weight: 600; cursor: pointer;">
         Enregistrer
