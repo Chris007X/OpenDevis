@@ -60,6 +60,13 @@
       · le <%= @bidding_request.responded_at.strftime("%d/%m/%Y à %H:%M") %>
     </div>
 
+    <% if @bidding_request.artisan_comment.present? %>
+      <div style="background: #F5F3EE; border: 1px solid #E8E4DC; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+        <div style="font-size: 0.75rem; color: #9B9588; margin-bottom: 4px;">Commentaire inclus</div>
+        <div style="font-size: 0.9rem; color: #2C2A25; white-space: pre-wrap;"><%= @bidding_request.artisan_comment %></div>
+      </div>
+    <% end %>
+
     <% unless @bidding_request.bidding_round.deadline_passed? %>
       <p style="color: #9B9588; font-size: 0.85rem; margin-bottom: 16px;">
         Vous pouvez modifier votre prix jusqu'à la date limite.
@@ -75,6 +82,13 @@
                    style="border: none; padding: 12px 16px; font-size: 1.1rem; flex: 1; outline: none; background: transparent;">
             <span style="padding: 0 16px; color: #9B9588; font-size: 1.1rem;">€ HT</span>
           </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
+            Commentaire (optionnel)
+          </label>
+          <textarea name="artisan_comment" rows="4" placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
+                    style="width: 100%; border: 2px solid #E8E4DC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"><%= @bidding_request.artisan_comment %></textarea>
         </div>
         <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
                 padding: 11px 24px; font-size: 0.95rem; font-weight: 600; cursor: pointer;">
@@ -116,6 +130,13 @@
           <p style="font-size: 0.78rem; color: #9B9588; margin-top: 6px;">
             Indiquez votre prix de main-d'œuvre et fournitures, hors taxes.
           </p>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
+            Commentaire (optionnel)
+          </label>
+          <textarea name="artisan_comment" rows="4" placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
+                    style="width: 100%; border: 2px solid #E8E4DC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"></textarea>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
           <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
