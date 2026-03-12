@@ -1,0 +1,73 @@
+<% content_for :title, "Mon profil — OpenDevis" %>
+<% content_for :head do %>
+<style>
+  body { background-color: #FAFAF7; }
+  .profile-card {
+    background: #fff;
+    border: 1px solid #E8E4DC;
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  .avatar-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #2C2A25;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-row { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.6rem 0; border-bottom: 1px solid #F5F3EF; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 0.82rem; color: #9B9588; width: 110px; flex-shrink: 0; }
+  .info-value { font-size: 0.92rem; color: #2C2A25; }
+  .btn-edit {
+    background: #2C2A25; color: #fff; border: none;
+    border-radius: 8px; font-weight: 500; font-size: 0.9rem;
+    padding: 0.5rem 1.25rem; cursor: pointer; text-decoration: none;
+    display: inline-block; transition: background 0.12s;
+  }
+  .btn-edit:hover { background: #1a1916; color: #fff; }
+</style>
+<% end %>
+
+<div class="container py-5" style="max-width: 620px;">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-circle">
+        <%= (@user.full_name&.first || @user.email.first).upcase %>
+      </div>
+      <div>
+        <div style="font-size: 1.3rem; font-weight: 700; color: #2C2A25;">
+          <%= @user.full_name.presence || "Mon profil" %>
+        </div>
+        <div style="font-size: 0.88rem; color: #9B9588;"><%= @user.email %></div>
+      </div>
+    </div>
+    <%= link_to "Modifier", edit_profile_path, class: "btn-edit" %>
+  </div>
+
+  <div class="profile-card">
+    <div class="info-row">
+      <span class="info-label">Nom complet</span>
+      <span class="info-value"><%= @user.full_name.presence || "—" %></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email</span>
+      <span class="info-value"><%= @user.email %></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Téléphone</span>
+      <span class="info-value"><%= @user.phone.presence || "—" %></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Localisation</span>
+      <span class="info-value"><%= @user.location.presence || "—" %></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Membre depuis</span>
+      <span class="info-value"><%= @user.created_at.strftime("%B %Y") %></span>
+    </div>
+  </div>
+</div>

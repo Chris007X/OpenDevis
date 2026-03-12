@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def after_sign_in_path_for(resource)
+    resource.is_a?(User) ? projects_path : super
+  end
+
   def skip_pundit?
     devise_controller? || artisan_route? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)/
   end

@@ -58,6 +58,8 @@ Rails.application.routes.draw do
   resources :work_items, only: [:edit, :update, :destroy]
   resources :documents,  only: [:destroy]
 
+  resource :profile, only: [:show, :edit, :update]
+
   resources :work_categories, only: [:index, :show]
   resources :materials,       only: [:index, :show]
 
