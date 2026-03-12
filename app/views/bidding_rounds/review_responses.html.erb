@@ -76,6 +76,11 @@
                         · ★ <%= req.artisan.star_rating %>
                       <% end %>
                     </div>
+                    <% if req.artisan_comment.present? %>
+                      <div style="font-size: 0.78rem; color: #6B6560; margin-top: 8px; padding: 8px; background: #F5F3EE; border-radius: 6px; white-space: pre-wrap;">
+                        <%= req.artisan_comment %>
+                      </div>
+                    <% end %>
                     <div style="font-size: 0.75rem; color: #9B9588; margin-top: 6px;">
                       Score : <%= (item[:score] * 100).round %>%
                     </div>

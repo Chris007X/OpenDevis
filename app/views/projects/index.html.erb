@@ -50,80 +50,169 @@
   .project-count { color: #9B9588; font-size: 0.95rem; margin-top: 2px; }
 
   .empty-state-icon { font-size: 3.5rem; line-height: 1; }
+
+  .project-card-wrapper { position: relative; }
+  .btn-delete-project {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: #C5BFB5;
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.12s, background 0.12s;
+    cursor: pointer;
+  }
+  .btn-delete-project:hover {
+    color: #842029;
+    background: #F8D7DA;
+  }
 </style>
 <% end %>
 
-<div class="container py-4" style="max-width: 1100px;">
-  <%# Header %>
-  <div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-      <div class="page-title">Mes projets</div>
-      <div class="project-count"><%= pluralize(@projects.size, "projet") %></div>
-    </div>
-    <%= link_to wizard_choose_path, class: "btn btn-primary-dark" do %>
-      + Nouveau projet
-    <% end %>
-  </div>
+<div data-controller="delete-confirm">
 
-  <% if @projects.any? %>
-    <div class="row g-3">
-      <% @projects.each do |project| %>
-        <% status_label, status_class = case project.status
-           when "draft"     then ["Brouillon", "badge-brouillon"]
-           when "sent"      then ["En cours",  "badge-en-cours"]
-           when "accepted"  then ["Terminé",   "badge-termine"]
-           when "rejected"  then ["Refusé",    "badge-refuse"]
-           else                  ["Brouillon", "badge-brouillon"]
-           end %>
-        <div class="col-md-4">
-          <%= link_to project, class: "project-card p-4 h-100" do %>
-            <%# Top row: zip + badge %>
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <div style="font-size: 1.05rem; font-weight: 600; color: #2C2A25;">
-                  <%= project.location_zip.presence || "Sans localisation" %>
-                </div>
-              </div>
-              <span class="badge <%= status_class %> fw-normal" style="font-size: 0.8rem; padding: 0.35em 0.75em; border-radius: 20px;">
-                <%= status_label %>
-              </span>
-            </div>
-
-            <%# Total TTC %>
-            <div class="card-total mb-1">
-              <% if project.total_incVAT.present? && project.total_incVAT > 0 %>
-                <%= number_to_currency(project.total_incVAT, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
-              <% else %>
-                — €
-              <% end %>
-            </div>
-            <div class="card-meta mb-3">Total TTC estimé</div>
-
-            <%# Room count + surface %>
-            <div class="card-meta">
-              <% parts = [] %>
-              <% parts << "#{project.room_count}p" if project.room_count.present? %>
-              <% parts << "#{project.total_surface_sqm&.to_i} m²" if project.total_surface_sqm.present? %>
-              <% unless parts.empty? %>
-                <span><%= parts.join(" · ") %></span>
-                <span class="mx-1">·</span>
-              <% end %>
-              <span>Modifié <%= time_ago_in_words(project.updated_at) %></span>
-            </div>
-          <% end %>
-        </div>
+  <div class="container py-4" style="max-width: 1100px;">
+    <%# Header %>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+      <div>
+        <div class="page-title">Mes projets</div>
+        <div class="project-count"><%= pluralize(@projects.size, "projet") %></div>
+      </div>
+      <%= link_to wizard_choose_path, class: "btn btn-primary-dark" do %>
+        + Nouveau projet
       <% end %>
     </div>
 
-  <% else %>
-    <%# Empty state %>
-    <div class="d-flex flex-column align-items-center justify-content-center py-5 mt-4">
-      <div class="empty-state-icon mb-3">🏗️</div>
-      <h5 style="color: #2C2A25; font-weight: 600;">Aucun projet pour le moment</h5>
-      <p class="text-center mb-4" style="color: #9B9588; max-width: 360px;">
-        Créez votre première estimation de travaux en quelques clics.
-      </p>
-      <%= link_to "+ Nouveau projet", wizard_choose_path, class: "btn btn-primary-dark" %>
+    <% if @projects.any? %>
+      <div class="row g-3">
+        <% @projects.each do |project| %>
+          <% status_label, status_class = case project.status
+             when "draft"     then ["Brouillon", "badge-brouillon"]
+             when "sent"      then ["En cours",  "badge-en-cours"]
+             when "accepted"  then ["Terminé",   "badge-termine"]
+             when "rejected"  then ["Refusé",    "badge-refuse"]
+             else                  ["Brouillon", "badge-brouillon"]
+             end %>
+          <div class="col-md-4">
+            <div class="project-card-wrapper h-100">
+              <button class="btn-delete-project"
+                      title="Supprimer ce projet"
+                      data-action="click->delete-confirm#show"
+                      data-delete-path="<%= project_path(project) %>"
+                      data-delete-name="<%= project.location_zip.presence || "Sans localisation" %>">
+                &times;
+              </button>
+              <%= link_to project, class: "project-card p-4 h-100" do %>
+                <%# Top row: zip + badge %>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <div style="font-size: 1.05rem; font-weight: 600; color: #2C2A25;">
+                      <%= project.location_zip.presence || "Sans localisation" %>
+                    </div>
+                  </div>
+                  <span class="badge <%= status_class %> fw-normal" style="font-size: 0.8rem; padding: 0.35em 0.75em; border-radius: 20px;">
+                    <%= status_label %>
+                  </span>
+                </div>
+
+                <%# Total TTC %>
+                <div class="card-total mb-1">
+                  <% if project.total_incVAT.present? && project.total_incVAT > 0 %>
+                    <%= number_to_currency(project.total_incVAT, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+                  <% else %>
+                    — €
+                  <% end %>
+                </div>
+                <div class="card-meta mb-3">Total TTC estimé</div>
+
+                <%# Room count + surface %>
+                <div class="card-meta">
+                  <% parts = [] %>
+                  <% parts << "#{project.room_count}p" if project.room_count.present? %>
+                  <% parts << "#{project.total_surface_sqm&.to_i} m²" if project.total_surface_sqm.present? %>
+                  <% unless parts.empty? %>
+                    <span><%= parts.join(" · ") %></span>
+                    <span class="mx-1">·</span>
+                  <% end %>
+                  <span>Modifié <%= time_ago_in_words(project.updated_at) %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+    <% else %>
+      <%# Empty state %>
+      <div class="d-flex flex-column align-items-center justify-content-center py-5 mt-4">
+        <div class="empty-state-icon mb-3">🏗️</div>
+        <h5 style="color: #2C2A25; font-weight: 600;">Aucun projet pour le moment</h5>
+        <p class="text-center mb-4" style="color: #9B9588; max-width: 360px;">
+          Créez votre première estimation de travaux en quelques clics.
+        </p>
+        <%= link_to "+ Nouveau projet", wizard_choose_path, class: "btn btn-primary-dark" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Modal de confirmation de suppression — à l'intérieur du controller Stimulus %>
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content" style="border: 1px solid #E8E4DC; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,42,37,0.12);">
+        <div class="modal-body p-4">
+
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: #F8D7DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#842029" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; color: #2C2A25; font-size: 1rem;">Supprimer le projet</div>
+              <div style="color: #9B9588; font-size: 0.85rem; margin-top: 2px;">
+                "<span data-delete-confirm-target="nameDisplay" style="color: #2C2A25; font-weight: 500;"></span>"
+              </div>
+            </div>
+          </div>
+
+          <p style="color: #6B6560; font-size: 0.88rem; margin: 0 0 1.25rem;">
+            Cette action est irréversible. Toutes les pièces et les postes associés à ce projet seront définitivement supprimés.
+          </p>
+
+          <div class="d-flex gap-2 justify-content-end">
+            <button type="button"
+                    data-bs-dismiss="modal"
+                    style="border: 1px solid #E8E4DC; background: #fff; color: #6B6560; border-radius: 8px; font-size: 0.88rem; padding: 0.45rem 1rem; cursor: pointer;">
+              Annuler
+            </button>
+            <button type="button"
+                    data-action="click->delete-confirm#confirm"
+                    style="background: #842029; color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 500; padding: 0.45rem 1rem; cursor: pointer;">
+              Supprimer définitivement
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
+  </div>
+
+  <%# Formulaire caché utilisé par le controller pour soumettre le DELETE %>
+  <%= form_with url: "#", method: :delete,
+        data: { delete_confirm_target: "form" },
+        style: "display: none;" do |f| %>
+    <%= f.submit %>
   <% end %>
+
 </div>

@@ -31,6 +31,7 @@ module ArtisanDashboard
       @bidding_request.update!(
         status: "responded",
         price_total: price,
+        artisan_comment: params[:artisan_comment].to_s.strip.presence,
         responded_at: Time.current,
         response_method: "dashboard"
       )

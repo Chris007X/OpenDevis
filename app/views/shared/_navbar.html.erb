@@ -72,11 +72,6 @@
           <% end %>
         </div>
 
-        <%= link_to "+ Nouveau projet", wizard_step1_path,
-              style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 0.4rem 0.9rem;
-                      font-size: 0.85rem; font-weight: 500; text-decoration: none;
-                      transition: background 0.12s;"  %>
-
         <div class="dropdown">
           <button class="od-avatar" data-bs-toggle="dropdown" aria-expanded="false">
             <%= (current_user.full_name&.first || current_user.email.first).upcase %>
@@ -88,8 +83,8 @@
               </span>
             </li>
             <li><hr class="dropdown-divider" style="border-color: #E8E4DC; margin: 0.25rem 0;"></li>
-            <li><%= link_to "Matériaux", materials_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
-            <li><%= link_to "Catégories", work_categories_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
+            <li><%= link_to "Profil", profile_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
+            <li><%= link_to "Paramètres", edit_user_registration_path, class: "dropdown-item", style: "font-size: 0.88rem; border-radius: 6px;" %></li>
             <li><hr class="dropdown-divider" style="border-color: #E8E4DC; margin: 0.25rem 0;"></li>
             <li><%= link_to "Se déconnecter", destroy_user_session_path,
                       data: { turbo_method: :delete },
@@ -101,7 +96,9 @@
 
     <% else %>
       <div class="ms-auto d-flex gap-2">
-        <%= link_to "Se connecter", new_user_session_path, class: "od-nav-link" %>
+        <% unless request.path == new_artisan_session_path || request.path == new_user_session_path %>
+          <%= link_to "Se connecter", new_user_session_path, class: "od-nav-link" %>
+        <% end %>
         <%= link_to "Créer un compte", new_user_registration_path,
               style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 0.4rem 0.9rem;
                       font-size: 0.85rem; font-weight: 500; text-decoration: none;" %>

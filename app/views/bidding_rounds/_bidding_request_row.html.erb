@@ -28,6 +28,12 @@
       <div style="font-weight: 700; color: #2C2A25;">
         <%= number_to_currency(bidding_request.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
       </div>
+      <% if bidding_request.artisan_comment.present? %>
+        <span title="<%= bidding_request.artisan_comment %>"
+              style="font-size: 0.75rem; color: #9B9588; cursor: help; border-bottom: 1px dashed #9B9588;">
+          💬 commentaire
+        </span>
+      <% end %>
     <% end %>
     <span class="req-status-badge <%= rc %>"><%= rl %></span>
     <% if bidding_request.responded_at.present? %>
