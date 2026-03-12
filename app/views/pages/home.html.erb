@@ -1,87 +1,126 @@
 <% content_for :title, "OpenDevis — Vos devis de construction en quelques minutes" %>
 
 <%# ── HERO ──────────────────────────────────────────────────────────────── %>
-<section class="hero">
-  <div class="container py-5">
+<section class="hero-v2">
+  <div class="container py-5 py-lg-6">
     <div class="row align-items-center g-5">
+
+      <%# Colonne gauche : texte %>
       <div class="col-lg-6">
-        <span class="badge text-bg-warning mb-3 px-3 py-2 fs-6">Gratuit & Open Source</span>
-        <h1 class="display-4 fw-bold lh-sm mb-4">
-          Des devis de chantier professionnels pour votre
+        <div class="hero-badge mb-4">
+          <span class="hero-badge-dot">
+            <span class="hero-badge-ping"></span>
+          </span>
+          Reprenez le contrôle de votre rénovation
+        </div>
+
+        <h1 class="hero-v2-title mb-4">
+          Obtenez le devis de vos
           <span class="hero-words-loader">
             <span class="hero-words">
-              <span class="hero-word">rénovation</span>
-              <span class="hero-word">construction</span>
-              <span class="hero-word">isolation</span>
-              <span class="hero-word">rénovation</span>
+              <span class="hero-word">travaux</span>
+              <span class="hero-word">rénovations</span>
+              <span class="hero-word">isolations</span>
+              <span class="hero-word">travaux</span>
             </span>
-          </span>
-          <br>en quelques minutes.
+          </span><br>
+          facilement et instantanément.
         </h1>
-        <p class="lead text-muted mb-4">
-          OpenDevis vous permet de construire des devis détaillés pièce par pièce — avec matériaux, TVA et totaux calculés automatiquement.
-          Fini les tableaux Excel. Fini les erreurs de calcul.
+
+        <p class="hero-v2-lead mb-4">
+          Visitez, chiffrez, décidez l'esprit léger. OpenDevis vous guide pas à pas pour estimer chaque poste de dépense, à votre rythme et en totale autonomie, sans dépendre de l'agenda de quiconque.
         </p>
-        <div class="d-flex flex-wrap gap-3">
-          <% if user_signed_in? %>
-            <%= link_to "Mes projets", projects_path, class: "btn btn-primary btn-lg px-4" %>
-          <% else %>
-            <%= link_to "Commencer gratuitement", new_user_registration_path, class: "btn btn-primary btn-lg px-4" %>
+
+        <%# Avis clients %>
+        <div class="hero-social-proof mb-5">
+          <div class="hero-avatars">
+            <div class="hero-avatar" style="background: #fbbf24;">S</div>
+            <div class="hero-avatar" style="background: #34d399;">M</div>
+            <div class="hero-avatar" style="background: #60a5fa;">A</div>
+            <div class="hero-avatar" style="background: #f87171;">L</div>
+          </div>
+          <div>
+            <div class="hero-stars">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+            </div>
+            <p class="hero-social-label">
+              <strong>4,9/5</strong> · Plébiscité par +200 propriétaires
+            </p>
+          </div>
+        </div>
+
+        <% if user_signed_in? %>
+          <%= link_to projects_path, class: "btn hero-v2-cta" do %>
+            Mes projets <i class="fa fa-arrow-right ms-2"></i>
           <% end %>
-        </div>
+        <% else %>
+          <%= link_to new_user_registration_path, class: "btn hero-v2-cta" do %>
+            Obtenir mon estimation <i class="fa fa-arrow-right ms-2"></i>
+          <% end %>
+        <% end %>
       </div>
 
-      <div class="col-lg-6">
-        <div class="hero-card-float">
-        <div class="hero-card-stack"
-             data-controller="card-tilt"
-             data-action="mousemove->card-tilt#mousemove mouseleave->card-tilt#mouseleave mouseenter->card-tilt#mouseenter">
-          <div class="card shadow hero-card-back">
-            <div class="card-body p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <div class="text-muted small mb-1">Projet</div>
-                  <h5 class="mb-0">Appartement 75012</h5>
-                </div>
-                <span class="badge text-bg-success">Accepté</span>
+      <%# Colonne droite : carte mock UI %>
+      <div class="col-lg-6 d-flex justify-content-center justify-content-lg-end">
+        <div class="hero-v2-card-wrap">
+          <div class="hero-v2-card-float">
+          <div class="hero-v2-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <p class="hero-v2-card-label">Projet en cours</p>
+                <p class="hero-v2-card-title">Appartement Paris 11e</p>
               </div>
-              <div class="d-flex gap-4 text-muted small">
-                <span><i class="fa fa-door-open me-1"></i>4 pièces</span>
-                <span><i class="fa fa-ruler-combined me-1"></i>87 m²</span>
+              <div class="hero-v2-card-icon">
+                <i class="fa fa-home fa-lg text-primary"></i>
+              </div>
+            </div>
+
+            <div class="hero-v2-items">
+              <div class="hero-v2-item">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="hero-v2-item-icon hero-v2-item-icon--orange">
+                    <i class="fa fa-utensils fa-sm"></i>
+                  </div>
+                  <div>
+                    <p class="hero-v2-item-name">Cuisine complète</p>
+                    <p class="hero-v2-item-sub">12m² • Dépose + Pose</p>
+                  </div>
+                </div>
+                <p class="hero-v2-item-price">6 450 €</p>
+              </div>
+
+              <div class="hero-v2-item">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="hero-v2-item-icon hero-v2-item-icon--cyan">
+                    <i class="fa fa-bath fa-sm"></i>
+                  </div>
+                  <div>
+                    <p class="hero-v2-item-name">Salle de bain</p>
+                    <p class="hero-v2-item-sub">5m² • Rafraîchissement</p>
+                  </div>
+                </div>
+                <p class="hero-v2-item-price">3 200 €</p>
+              </div>
+            </div>
+
+            <div class="hero-v2-card-footer">
+              <div>
+                <p class="hero-v2-footer-label">Enveloppe globale estimée</p>
+                <p class="hero-v2-footer-total">9 650 € <span class="hero-v2-footer-ttc">TTC</span></p>
+              </div>
+              <div class="hero-v2-check-btn">
+                <i class="fa fa-check"></i>
               </div>
             </div>
           </div>
-
-          <div class="card shadow-lg hero-card-front">
-            <div class="card-body p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <div class="text-muted small mb-1">Résumé du devis</div>
-                  <h5 class="mb-0">Salon — Plomberie</h5>
-                </div>
-                <span class="badge text-bg-primary">Brouillon</span>
-              </div>
-              <table class="table table-sm mb-3">
-                <tbody>
-                  <tr>
-                    <td class="text-muted">Radiateur acier</td>
-                    <td class="text-end">2 × 185,00 €</td>
-                  </tr>
-                  <tr>
-                    <td class="text-muted">Robinet thermostatique</td>
-                    <td class="text-end">4 × 42,50 €</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="d-flex justify-content-between fw-bold">
-                <span>Total HT</span>
-                <span class="text-primary">540,00 €</span>
-              </div>
-            </div>
           </div>
         </div>
-        </div>
       </div>
+
     </div>
   </div>
 </section>
