@@ -11,6 +11,11 @@ export default class extends Controller {
     this.justSelected = false
     this.handleClickOutside = this.clickOutside.bind(this)
     document.addEventListener("click", this.handleClickOutside)
+
+    // Sync hidden field from visible input on page load (handles pre-filled "City (XXXXX)" values)
+    if (this.inputTarget.value.trim()) {
+      this.hiddenTarget.value = this.inputTarget.value.trim()
+    }
   }
 
   disconnect() {
@@ -130,6 +135,29 @@ export default class extends Controller {
   hideResults() {
     this.resultsTarget.hidden = true
     this.resultsTarget.innerHTML = ""
+  }
+
+  handleKeydown(event) {
+    if (event.key !== "Enter") return
+
+    event.preventDefault()
+
+    // If dropdown is visible with suggestions, select the first one
+    if (!this.resultsTarget.hidden) {
+      const firstItem = this.resultsTarget.querySelector(".autocomplete-item")
+      if (firstItem) {
+        this.justSelected = true
+        this.inputTarget.value = firstItem.dataset.value
+        this.hiddenTarget.value = firstItem.dataset.value
+        this.hideResults()
+        this.inputTarget.dispatchEvent(new Event("input", { bubbles: true }))
+        return
+      }
+    }
+
+    // No dropdown — accept current raw input
+    this.hiddenTarget.value = this.inputTarget.value.trim()
+    this.hideResults()
   }
 
   clickOutside(event) {

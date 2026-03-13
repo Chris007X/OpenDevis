@@ -1,4 +1,5 @@
 <% content_for :head do %>
+<meta name="turbo-cache-control" content="no-cache">
 <style>
   .import-mode-btn {
     border: 1px solid #C8C4BC;
@@ -438,11 +439,9 @@
             <input type="text" class="form-control"
                    placeholder="<%= @project_type == "construction" ? "ex : 75001" : "ex. 75001" %>"
                    inputmode="numeric"
-                   pattern="[0-9]*"
-                   maxlength="5"
                    value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"
                    data-city-autocomplete-target="input"
-                   data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits input->wizard-form#validate"
+                   data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits keydown->city-autocomplete#handleKeydown input->wizard-form#validate"
                    data-required="true"
                    data-field-name="location_zip"
                    autocomplete="off">

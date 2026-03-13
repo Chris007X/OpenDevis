@@ -39,10 +39,12 @@ module Projects
 
     PRESET_ROOMS = %w[Salon Cuisine Chambre SDB WC Entrée Bureau Cave Garage].freeze
 
+    helper_method :wizard_max_step
+
     # ── Choose – Rénovation or Construction ──────────────────────────────────
     def choose
       # Clear previous wizard state when starting fresh
-      %i[wizard_project_id wizard_project_type wizard_renovation_type wizard_categories wizard_rooms wizard_room_categories wizard_custom_needs].each do |k|
+      %i[wizard_project_id wizard_project_type wizard_renovation_type wizard_categories wizard_rooms wizard_room_categories wizard_custom_needs wizard_max_step].each do |k|
         session.delete(k)
       end
     end
@@ -56,6 +58,7 @@ module Projects
     def step1
       redirect_to(wizard_choose_path) && return unless session[:wizard_project_type]
 
+      track_wizard_step(1)
       @project_type = session[:wizard_project_type]
       if (id = session[:wizard_project_id])
         @project = current_user.projects.find_by(id: id) || Project.new
@@ -114,6 +117,7 @@ module Projects
     # ── Step 2 – Renovation type ──────────────────────────────────────────────
     def step2
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      track_wizard_step(2)
       @project_type    = session[:wizard_project_type]
       @renovation_type = session[:wizard_renovation_type]
       @selected_rooms  = session[:wizard_rooms] || []
@@ -140,6 +144,17 @@ module Projects
           return
         end
 
+        # Validate sum of room surfaces does not exceed total project surface
+        surface_sum = room_data.sum { |r| r["surface"].to_f }
+        if @project.total_surface_sqm.present? && surface_sum > @project.total_surface_sqm.to_f
+          @renovation_type = params[:renovation_type]
+          @selected_rooms = room_data
+          @errors = [:surface_total]
+          @project_type = session[:wizard_project_type]
+          render :step2, status: :unprocessable_entity
+          return
+        end
+
         session[:wizard_rooms] = room_data
       end
       # Note: when switching to renovation_complete, we keep wizard_rooms in session
@@ -155,6 +170,7 @@ module Projects
     # ── Step 3 – Work categories ──────────────────────────────────────────────
     def step3
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      track_wizard_step(3)
       @project_type        = session[:wizard_project_type]
       @renovation_type     = session[:wizard_renovation_type]
       @is_maison           = @project.property_url == "maison"
@@ -271,6 +287,7 @@ module Projects
     # ── Step 4 – Recap + generate ─────────────────────────────────────────────
     def step4
       @project          = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      track_wizard_step(4)
       @project_type     = session[:wizard_project_type]
       @renovation_type  = session[:wizard_renovation_type]
       @selected_rooms   = session[:wizard_rooms] || []
@@ -298,7 +315,7 @@ module Projects
       # Clear wizard session state
       %i[wizard_project_id wizard_project_type wizard_renovation_type
          wizard_categories wizard_rooms wizard_room_categories
-         wizard_custom_needs].each { |k| session.delete(k) }
+         wizard_custom_needs wizard_max_step].each { |k| session.delete(k) }
 
       redirect_to project_path(@project, standing: 2)
     end
@@ -339,6 +356,15 @@ module Projects
       filename = "#{SecureRandom.hex(12)}#{ext}"
       FileUtils.cp(file.tempfile.path, dir.join(filename))
       "/uploads/wizard_photos/#{filename}"
+    end
+
+    def track_wizard_step(step_num)
+      current = session[:wizard_max_step].to_i
+      session[:wizard_max_step] = [ current, step_num ].max
+    end
+
+    def wizard_max_step
+      session[:wizard_max_step].to_i
     end
 
     def find_wizard_project
