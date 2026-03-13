@@ -439,6 +439,7 @@
                    placeholder="<%= @project_type == "construction" ? "ex : 75001" : "ex. 75001" %>"
                    inputmode="numeric"
                    pattern="[0-9]*"
+                   maxlength="5"
                    value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"
                    data-city-autocomplete-target="input"
                    data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits input->wizard-form#validate"
@@ -447,8 +448,7 @@
                    autocomplete="off">
             <input type="hidden" name="project[location_zip]"
                    value="<%= @project.location_zip %>"
-                   data-city-autocomplete-target="hidden"
-                   data-required="true">
+                   data-city-autocomplete-target="hidden">
             <div data-city-autocomplete-target="results" hidden class="autocomplete-results"></div>
           </div>
           <% if @errors&.include?(:location_zip) %>

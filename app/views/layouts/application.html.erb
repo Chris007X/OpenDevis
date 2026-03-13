@@ -28,8 +28,8 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <style><%= render "shared/od_styles" %></style>
-    <%= yield :head %>
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
@@ -38,8 +38,8 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <style><%= render "shared/od_styles" %></style>
+    <%= yield :head %>
     <%= javascript_importmap_tags %>
   </head>
 

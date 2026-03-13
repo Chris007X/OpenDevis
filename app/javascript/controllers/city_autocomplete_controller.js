@@ -24,12 +24,14 @@ export default class extends Controller {
 
     const pos = this.inputTarget.selectionStart
     const before = this.inputTarget.value
-    const filtered = before.replace(/\D/g, "")
+    const filtered = before.replace(/\D/g, "").slice(0, 5)
     if (before !== filtered) {
       this.inputTarget.value = filtered
-      const diff = before.length - filtered.length
-      this.inputTarget.setSelectionRange(pos - diff, pos - diff)
+      const newPos = Math.min(pos, filtered.length)
+      this.inputTarget.setSelectionRange(newPos, newPos)
     }
+    // Always keep hidden field in sync with visible input
+    this.hiddenTarget.value = this.inputTarget.value
   }
 
   search() {

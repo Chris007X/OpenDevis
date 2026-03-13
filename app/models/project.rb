@@ -10,6 +10,11 @@ class Project < ApplicationRecord
 
   validates :status, presence: true
 
+  def total_incVAT_for_standing(level)
+    work_items.select { |i| i.standing_level == level }
+              .sum { |i| (i.quantity || 0) * (i.unit_price_exVAT || 0) * (1 + ((i.vat_rate || 0) / 100.0)) }
+  end
+
   def recompute_totals!
     items = work_items.to_a
     self.total_exVAT = items.sum { |i| (i.quantity || 0) * (i.unit_price_exVAT || 0) }

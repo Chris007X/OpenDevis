@@ -21,13 +21,13 @@ body { background-color: #FFFFFF; }
   border-radius: 50px; font-weight: 500; padding: 0.65rem 1.8rem;
   font-size: 0.95rem;
   display: inline-flex; align-items: center; gap: 0.45rem;
-  transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.2s;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .btn-ghost-od:hover {
-  border-color: #2C2A25; color: #2C2A25; background: rgba(44,42,37,0.05);
-  transform: translateY(-1px);
+  border-color: #2563eb; color: #fff; background: #2563eb;
+  transform: translateY(-2px); box-shadow: 0 4px 14px rgba(37,99,235,0.30);
 }
-.btn-ghost-od:active { transform: translateY(0); }
+.btn-ghost-od:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(37,99,235,0.2); }
 
 /* Override Bootstrap's btn-primary & btn-outline-secondary everywhere */
 .btn-primary, .btn.btn-primary {

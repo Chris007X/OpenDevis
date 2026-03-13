@@ -3,10 +3,10 @@
 
 
   .summary-card {
-    border: 1px solid #C8C4BC;
+    border: 1px solid #2563eb;
     border-radius: 10px;
     padding: 1.25rem 1.5rem;
-    background: #2C2A25;
+    background: #2563eb;
     color: #fff;
     height: 100%;
   }
@@ -33,7 +33,7 @@
     text-align: center;
     transition: border-color 0.12s, background 0.12s, color 0.12s;
   }
-  .standing-toggle-btn.active { border-color: #2C2A25; background: #2C2A25; color: #fff; }
+  .standing-toggle-btn.active { border-color: #2563eb; background: #2563eb; color: #fff; }
   .standing-toggle-btn:hover:not(.active) { border-color: #4A4640; color: #2C2A25; }
 
   .cat-card {
@@ -226,7 +226,7 @@ status_label, status_class = case @project.status
         </div>
       </div>
       <%= link_to "Demander des devis →", new_project_bidding_round_path(@project, standing: @standing),
-            style: "background: #2C2A25; color: #fff; border-radius: 8px; padding: 10px 20px;
+            style: "background: #2563eb; color: #fff; border-radius: 8px; padding: 10px 20px;
                     font-size: 0.9rem; font-weight: 600; text-decoration: none; white-space: nowrap;" %>
     </div>
   <% else %>

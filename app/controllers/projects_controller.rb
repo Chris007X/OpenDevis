@@ -2,7 +2,9 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: %i[show edit update destroy archive]
 
   def index
-    @projects = policy_scope(Project).order(updated_at: :desc)
+    all = policy_scope(Project).order(updated_at: :desc).includes(rooms: :work_items)
+    @projects          = all.reject(&:archived?)
+    @archived_projects = all.select(&:archived?)
   end
 
   def show
