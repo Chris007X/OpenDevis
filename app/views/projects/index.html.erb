@@ -93,7 +93,7 @@
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
         <div class="page-title">Mes projets</div>
-        <div class="project-count"><%= pluralize(@projects.size, "projet") %></div>
+        <div class="project-count"><%= pluralize(@projects.size, "projet(s)") %></div>
       </div>
       <%= link_to wizard_choose_path, class: "btn btn-primary-dark" do %>
         + Nouveau projet

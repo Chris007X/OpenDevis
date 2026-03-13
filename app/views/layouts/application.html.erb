@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
-    <title><%= content_for(:title) || "Open Devis" %></title>
+    <title><%= page_title %></title>
+    <meta name="description" content="<%= page_description %>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Open Devis">
+    <meta name="application-name" content="OpenDevis">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <%# Open Graph %>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OpenDevis">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="<%= page_title %>">
+    <meta property="og:description" content="<%= page_description %>">
+    <meta property="og:url" content="<%= canonical_url %>">
+
+    <%# Twitter Card %>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= page_title %>">
+    <meta name="twitter:description" content="<%= page_description %>">
+
+    <%# Canonical %>
+    <link rel="canonical" href="<%= canonical_url %>">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
