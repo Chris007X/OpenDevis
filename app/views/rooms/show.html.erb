@@ -43,6 +43,24 @@
     background: #EDEAE4;
     border-top: 2px solid #C8C4BC;
   }
+  .category-separator td {
+    background: #F5F3EE;
+    border-bottom: 2px solid #D8D4CA;
+    border-top: 1px solid #D8D4CA;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2C2A25;
+    letter-spacing: 0.02em;
+  }
+  .category-separator .cat-color-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
 </style>
 <% end %>
 
@@ -98,8 +116,7 @@
         <table class="w-100 items-table" style="border-collapse: collapse; border: 1px solid #C8C4BC; border-radius: 10px; overflow: hidden;">
           <thead>
             <tr>
-              <th>Désignation</th>
-              <th>Catégorie</th>
+              <th colspan="2">Désignation</th>
               <th class="text-end">Qté</th>
               <th>Unité</th>
               <th class="text-end">P.U. HT</th>
@@ -109,37 +126,47 @@
             </tr>
           </thead>
           <tbody>
-            <% @work_items.each do |item| %>
-              <tr>
-                <td><%= item.label %></td>
-                <td>
-                  <span style="font-size: 0.8rem; background: #EDE9E0; color: #4A4640;
-                        border-radius: 20px; padding: 0.2em 0.6em;">
-                    <%= item.work_category&.name %>
+            <%
+              category_colors = %w[#2663EB #E07A3A #2E7D32 #8E44AD #C0392B #16A085 #D4A017 #6C5B7B]
+              grouped = @work_items.group_by(&:work_category)
+              color_idx = 0
+            %>
+            <% grouped.each do |cat, items| %>
+              <% color = category_colors[color_idx % category_colors.length]; color_idx += 1 %>
+              <tr class="category-separator">
+                <td colspan="8">
+                  <span class="cat-color-dot" style="background: <%= color %>;"></span>
+                  <%= cat&.name || "Autre" %>
+                  <span style="font-weight: 400; color: #4A4640; margin-left: 0.5rem;">
+                    (<%= pluralize(items.size, "poste") %>)
                   </span>
                 </td>
-                <td class="text-end"><%= item.quantity %></td>
-                <td><%= item.unit %></td>
-                <td class="text-end">
-                  <% if item.unit_price_exVAT %>
-                    <%= number_to_currency(item.unit_price_exVAT, unit: "€", format: "%n %u",
-                          separator: ",", delimiter: "\u202F") %>
-                  <% end %>
-                </td>
-                <td class="text-end"><%= item.vat_rate ? "#{item.vat_rate}%" : "—" %></td>
-                <td class="text-end">
-                  <% line_total = (item.quantity || 0) * (item.unit_price_exVAT || 0) %>
-                  <%= number_to_currency(line_total, unit: "€", format: "%n %u",
-                        separator: ",", delimiter: "\u202F") %>
-                </td>
-                <td class="text-end" style="white-space: nowrap;">
-                  <%= link_to "✏️", edit_work_item_path(item),
-                        style: "text-decoration: none; font-size: 0.9rem;" %>
-                  <%= button_to "✕", item, method: :delete,
-                        data: { turbo_confirm: "Supprimer ce poste ?" },
-                        style: "background: none; border: none; color: #4A4640; cursor: pointer; font-size: 0.9rem; padding: 0;" %>
-                </td>
               </tr>
+              <% items.each do |item| %>
+                <tr>
+                  <td style="padding-left: 1.5rem;"><%= item.label %></td>
+                  <td></td>
+                  <td class="text-end"><%= item.quantity %></td>
+                  <td><%= item.unit %></td>
+                  <td class="text-end">
+                    <% if item.unit_price_exVAT %>
+                      <%= number_to_currency(item.unit_price_exVAT, unit: "€", format: "%n %u",
+                            separator: ",", delimiter: "\u202F") %>
+                    <% end %>
+                  </td>
+                  <td class="text-end"><%= item.vat_rate ? "#{item.vat_rate}%" : "—" %></td>
+                  <td class="text-end">
+                    <% line_total = (item.quantity || 0) * (item.unit_price_exVAT || 0) %>
+                    <%= number_to_currency(line_total, unit: "€", format: "%n %u",
+                          separator: ",", delimiter: "\u202F") %>
+                  </td>
+                  <td class="text-end" style="white-space: nowrap;">
+                    <%= button_to "✕", item, method: :delete,
+                          data: { turbo_confirm: "Supprimer ce poste ?" },
+                          style: "background: none; border: none; color: #4A4640; cursor: pointer; font-size: 0.9rem; padding: 0;" %>
+                  </td>
+                </tr>
+              <% end %>
             <% end %>
           </tbody>
           <tfoot>

@@ -19,6 +19,10 @@ class ProjectPolicy < ApplicationPolicy
     record.user == user
   end
 
+  def archive?
+    record.user == user
+  end
+
   class Scope < ApplicationPolicy::Scope
     def resolve
       scope.where(user: user)

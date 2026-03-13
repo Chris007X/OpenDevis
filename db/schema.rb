@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_162030) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_13_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -142,6 +142,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_162030) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "reference_prices", force: :cascade do |t|
+    t.string "applicable_rooms"
+    t.string "category_slug", null: false
+    t.datetime "created_at", null: false
+    t.string "label", null: false
+    t.decimal "labor_price_exVAT", precision: 10, scale: 2, default: "0.0", null: false
+    t.string "quantity_formula", default: "surface", null: false
+    t.integer "sort_order", default: 0, null: false
+    t.decimal "supply_price_exVAT", precision: 10, scale: 2, default: "0.0", null: false
+    t.string "unit", null: false
+    t.datetime "updated_at", null: false
+    t.integer "vat_rate", default: 10, null: false
+    t.index ["category_slug", "sort_order"], name: "idx_ref_prices_cat_sort"
+    t.index ["category_slug"], name: "index_reference_prices_on_category_slug"
   end
 
   create_table "rooms", force: :cascade do |t|
