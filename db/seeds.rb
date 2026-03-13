@@ -373,7 +373,49 @@ artisan_data = [
   # Chauffage (additional)
   { name: "Sophie Mercier", email: "s.mercier@mercier-thermique.fr", company_name: "Mercier Thermique",
     postcode: "75014", phone: "06 89 01 23 45", rating: 4.6, certifications: "RGE, Qualibat",
-    categories: ["chauffage", "plomberie"] }
+    categories: ["chauffage", "plomberie"] },
+
+  # Lyon (69*) — pour le projet 69003
+  { name: "Baptiste Faure", email: "b.faure@faure-renovation.fr", company_name: "Faure Rénovation",
+    postcode: "69003", phone: "04 72 11 22 33", rating: 4.7, certifications: "Qualibat",
+    categories: ["maconnerie", "carrelage"] },
+  { name: "Claire Dupuis", email: "c.dupuis@dupuis-elec-lyon.fr", company_name: "Dupuis Électricité Lyon",
+    postcode: "69007", phone: "04 72 33 44 55", rating: 4.5, certifications: "Qualifelec",
+    categories: ["electricite"] },
+  { name: "Rachid Hamidi", email: "r.hamidi@hamidi-plomberie.fr", company_name: "Hamidi Plomberie",
+    postcode: "69008", phone: "04 72 55 66 77", rating: 4.6, certifications: "RGE",
+    categories: ["plomberie", "chauffage"] },
+  { name: "Nathalie Perrin", email: "n.perrin@perrin-peinture.fr", company_name: "Perrin Décoration",
+    postcode: "69003", phone: "06 11 22 44 88", rating: 4.8, certifications: nil,
+    categories: ["peinture", "menuiserie"] },
+
+  # Bordeaux (33*) — pour le projet 33000
+  { name: "Julien Lacoste", email: "j.lacoste@lacoste-btp.fr", company_name: "Lacoste BTP",
+    postcode: "33000", phone: "05 56 11 22 33", rating: 4.6, certifications: "Qualibat",
+    categories: ["maconnerie", "menuiserie"] },
+  { name: "Isabelle Aubert", email: "i.aubert@aubert-chauffage.fr", company_name: "Aubert Thermique",
+    postcode: "33300", phone: "05 56 33 44 55", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["chauffage", "plomberie"] },
+  { name: "Éric Bonnet", email: "e.bonnet@bonnet-isolation.fr", company_name: "Bonnet Isolation",
+    postcode: "33200", phone: "05 56 55 66 77", rating: 4.7, certifications: "RGE",
+    categories: ["isolation", "chauffage"] },
+  { name: "Sandra Leroy", email: "s.leroy@leroy-carrelage.fr", company_name: "Leroy Carrelage",
+    postcode: "33000", phone: "06 44 55 66 88", rating: 4.5, certifications: nil,
+    categories: ["carrelage", "peinture"] },
+
+  # Marseille (13*) — pour le projet 13008
+  { name: "Youssef Aït", email: "y.ait@ait-construction.fr", company_name: "Aït Construction",
+    postcode: "13008", phone: "04 91 11 22 33", rating: 4.7, certifications: "Qualibat",
+    categories: ["maconnerie", "isolation"] },
+  { name: "Marie Castellan", email: "m.castellan@castellan-elec.fr", company_name: "Castellan Électricité",
+    postcode: "13005", phone: "04 91 33 44 55", rating: 4.6, certifications: "Qualifelec",
+    categories: ["electricite", "menuiserie"] },
+  { name: "Omar Bensouda", email: "o.bensouda@bensouda-plomb.fr", company_name: "Bensouda Sanitaire",
+    postcode: "13013", phone: "04 91 55 66 77", rating: 4.5, certifications: "RGE",
+    categories: ["plomberie", "carrelage"] },
+  { name: "Céline Roux", email: "c.roux@roux-peinture-marseille.fr", company_name: "Roux Peinture",
+    postcode: "13008", phone: "06 22 33 55 99", rating: 4.8, certifications: nil,
+    categories: ["peinture", "menuiserie"] }
 ]
 
 artisan_data.each do |ad|
