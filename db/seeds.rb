@@ -89,7 +89,7 @@ puts "Seeding projects..."
 
 projects_data = [
   {
-    user: alice, location_zip: "75011", status: "draft",
+    user: alice, location_zip: "75011", status: "in_progress",
     room_count: 4, total_surface_sqm: 65.0, energy_rating: "D",
     property_url: "https://example.com/annonce/123",
     rooms: [
@@ -129,7 +129,7 @@ projects_data = [
     ]
   },
   {
-    user: alice, location_zip: "69003", status: "sent",
+    user: alice, location_zip: "69003", status: "quote_requested",
     room_count: 2, total_surface_sqm: 38.0, energy_rating: "E",
     property_url: nil,
     rooms: [
@@ -152,7 +152,7 @@ projects_data = [
     ]
   },
   {
-    user: alice, location_zip: "33000", status: "accepted",
+    user: alice, location_zip: "33000", status: "quote_received",
     room_count: 5, total_surface_sqm: 110.0, energy_rating: "C",
     property_url: "https://example.com/annonce/456",
     rooms: [
@@ -182,7 +182,7 @@ projects_data = [
     ]
   },
   {
-    user: bob, location_zip: "13008", status: "draft",
+    user: bob, location_zip: "13008", status: "in_progress",
     room_count: 3, total_surface_sqm: 55.0, energy_rating: "F",
     property_url: nil,
     rooms: [
@@ -371,7 +371,7 @@ weber_mat = Material.find_by!(brand: "Weber", reference: "weber.rep 767")
 parex_mat = Material.find_by!(brand: "Parex", reference: "Parexlanko 260")
 
 bidding_project = Project.find_or_create_by!(user: alice, location_zip: "75010") do |p|
-  p.status            = "sent"
+  p.status            = "quote_requested"
   p.room_count        = 3
   p.total_surface_sqm = 72.0
   p.energy_rating     = "E"
@@ -431,7 +431,7 @@ end
 
 # Project 2 — Réfection murs humides, Paris 75018
 project2 = Project.find_or_create_by!(user: bob, location_zip: "75018") do |p|
-  p.status            = "sent"
+  p.status            = "quote_requested"
   p.room_count        = 2
   p.total_surface_sqm = 48.0
   p.energy_rating     = "F"
@@ -497,7 +497,7 @@ end
 
 # Project 3 — Extension et maçonnerie lourde, Paris 75019
 project3 = Project.find_or_create_by!(user: alice, location_zip: "75019") do |p|
-  p.status            = "sent"
+  p.status            = "quote_requested"
   p.room_count        = 4
   p.total_surface_sqm = 95.0
   p.energy_rating     = "D"
@@ -563,7 +563,7 @@ end
 
 # Project 4 — Rénovation complète immeuble Haussmann, Paris 75002
 project4 = Project.find_or_create_by!(user: bob, location_zip: "75002") do |p|
-  p.status            = "sent"
+  p.status            = "quote_requested"
   p.room_count        = 6
   p.total_surface_sqm = 130.0
   p.energy_rating     = "E"
@@ -627,6 +627,27 @@ BiddingRequest.find_or_create_by!(bidding_round: round4, work_category: maconner
   req.status = "sent"
 end
 
+# Ensure all wizard work categories exist in DB
+wizard_categories = {
+  "demolition_maconnerie" => "Démolition & maçonnerie",
+  "isolation" => "Isolation",
+  "fenetres" => "Fenêtres",
+  "toiture" => "Toiture & étanchéité",
+  "electricite" => "Électricité",
+  "plomberie" => "Plomberie",
+  "ventilation_chauffage" => "Ventilation & chauffage",
+  "menuiseries_interieures" => "Menuiseries intérieures",
+  "peintures" => "Peintures",
+  "cuisine" => "Cuisine",
+  "salle_de_bain_wc" => "Salle de bain & WC"
+}
+wizard_categories.each do |slug, name|
+  WorkCategory.find_or_create_by!(slug: slug) { |c| c.name = name }
+end
+
+load Rails.root.join("db/seeds/reference_prices.rb")
+
 puts "Done! #{WorkCategory.count} categories, #{Material.count} materials, #{User.count} users, " \
      "#{Project.count} projects, #{Room.count} rooms, #{WorkItem.count} work items, " \
-     "#{Document.count} documents, #{Artisan.count} artisans, #{BiddingRound.count} bidding rounds."
+     "#{Document.count} documents, #{Artisan.count} artisans, #{BiddingRound.count} bidding rounds, " \
+     "#{ReferencePrice.count} reference prices."

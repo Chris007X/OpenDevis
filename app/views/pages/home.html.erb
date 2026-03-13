@@ -1,4 +1,26 @@
-<% content_for :title, "OpenDevis — Vos devis de construction en quelques minutes" %>
+<% content_for :title, "OpenDevis — Devis de rénovation gratuit et instantané" %>
+<% content_for :description, "Estimez le coût de vos travaux de rénovation en quelques minutes. OpenDevis génère des devis détaillés par pièce, gratuit et sans inscription." %>
+
+<% content_for :head do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "OpenDevis",
+    "url": "https://opendevis.com",
+    "description": "Estimez le coût de vos travaux de rénovation en quelques minutes. OpenDevis génère des devis détaillés par pièce, gratuit et sans inscription.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "fr-FR",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "description": "Gratuit pour toujours. Sans carte bancaire."
+    }
+  }
+  </script>
+<% end %>
 
 <%# ── HERO ──────────────────────────────────────────────────────────────── %>
 <section class="hero-v2">

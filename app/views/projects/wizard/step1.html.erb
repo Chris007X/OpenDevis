@@ -39,6 +39,11 @@
     border-color: #2C2A25;
     box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
   }
+  /* Blue border for filled fields — applied via JS, ensure focus doesn't override */
+  .form-control[style*="border-color"]:focus,
+  .form-select[style*="border-color"]:focus {
+    box-shadow: 0 0 0 2px rgba(38,99,235,0.15);
+  }
 
   /* Property type radio cards */
   .property-type-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
@@ -360,7 +365,7 @@
 
   <%# Manual fields %>
   <%= form_with model: @project, url: wizard_step1_path, method: :post,
-      data: { controller: "wizard-form", action: "input->wizard-form#validate change->wizard-form#validate" } do |f| %>
+      data: { controller: "wizard-form", action: "submit->wizard-form#showErrors input->wizard-form#validate input->wizard-form#clearError change->wizard-form#validate change->wizard-form#clearError" } do |f| %>
     <div class="field-section">
       <div class="small fw-semibold mb-3" style="color: #4A4640;">
         Informations du bien
@@ -380,19 +385,19 @@
           <div class="property-type-options">
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_appartement" value="appartement"
-                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate change->wizard-form#clearError"
                      <%= "checked" if property_type_value == "appartement" %>>
               <label for="property_type_appartement">Appartement</label>
             </div>
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_maison" value="maison"
-                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate change->wizard-form#clearError"
                      <%= "checked" if property_type_value == "maison" %>>
               <label for="property_type_maison">Maison</label>
             </div>
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_autre" value="autre"
-                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate"
+                     data-required="true" data-action="change->property-type#toggle change->wizard-form#validate change->wizard-form#clearError"
                      <%= "checked" if property_type_value == "autre" %>>
               <label for="property_type_autre">Autre</label>
             </div>
@@ -402,7 +407,7 @@
                    placeholder="Veuillez préciser..." value="<%= property_type_autre %>">
           </div>
           <% if @errors&.include?(:property_type) %>
-            <div class="field-error">Ce champ est obligatoire</div>
+            <div class="field-error">Veuillez sélectionner un type de bien</div>
           <% end %>
         </div>
         <% end %>
@@ -413,7 +418,7 @@
           <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78", step: 0.5,
               min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>
-            <div class="field-error">Ce champ est obligatoire</div>
+            <div class="field-error">Veuillez renseigner la surface (nombre positif)</div>
           <% end %>
         </div>
 
@@ -435,6 +440,7 @@
                    data-city-autocomplete-target="input"
                    data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits input->wizard-form#validate"
                    data-required="true"
+                   data-field-name="location_zip"
                    autocomplete="off">
             <input type="hidden" name="project[location_zip]"
                    value="<%= @project.location_zip %>"
@@ -443,7 +449,7 @@
             <div data-city-autocomplete-target="results" hidden class="autocomplete-results"></div>
           </div>
           <% if @errors&.include?(:location_zip) %>
-            <div class="field-error">Veuillez saisir un code postal et sélectionner une ville dans la liste</div>
+            <div class="field-error">Veuillez saisir un code postal valide (5 chiffres)</div>
           <% end %>
         </div>
 
@@ -469,8 +475,14 @@
     <%= f.hidden_field :photo_url, value: @project.photo_url.to_s %>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", wizard_choose_path, class: "btn btn-ghost-od" %>
-      <%= f.submit "Suivant →", class: "btn btn-dark-od", data: { wizard_form_target: "submit" } %>
+      <%= link_to wizard_choose_path, class: "btn btn-ghost-od" do %>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retour
+      <% end %>
+      <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
+        Suivant
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   <% end %>
 </div>

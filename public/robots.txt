@@ -1,1 +1,15 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+User-agent: *
+Allow: /
+
+Disallow: /projects/
+Disallow: /rooms/
+Disallow: /work_items/
+Disallow: /work_categories/
+Disallow: /materials/
+Disallow: /profile
+Disallow: /notifications/
+Disallow: /artisan/
+Disallow: /artisan_dashboard/
+Disallow: /users/
+
+Sitemap: https://opendevis.com/sitemap.xml

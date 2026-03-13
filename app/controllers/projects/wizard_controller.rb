@@ -3,8 +3,6 @@ module Projects
     skip_after_action :verify_authorized
     skip_after_action :verify_policy_scoped
 
-    STANDING_MULTIPLIERS = { 1 => 0.75, 2 => 1.0, 3 => 1.40 }.freeze
-
     # Wizard category reference — slugs used in session, mapped to DB WorkCategory at generation time
     CATEGORY_GROUPS = [
       { name: "Gros œuvre & Structure", slugs: %w[demolition_maconnerie isolation fenetres toiture] },
@@ -21,7 +19,7 @@ module Projects
       "plomberie"               => { label: "Plomberie",                icon: "🔧" },
       "ventilation_chauffage"   => { label: "Ventilation & chauffage",  icon: "🌡️" },
       "menuiseries_interieures" => { label: "Menuiseries intérieures",  icon: "🚪" },
-      "peintures"               => { label: "Peintures",                icon: "🖌️" },
+      "peintures"               => { label: "Peintures",                icon: "🎨" },
       "cuisine"                 => { label: "Cuisine",                  icon: "🍳" },
       "salle_de_bain_wc"        => { label: "Salle de bain & WC",      icon: "🚿" }
     }.freeze
@@ -77,14 +75,16 @@ module Projects
       property_url = resolve_property_type
       # For construction flow, property type is not shown — use a default
       property_url = "construction" if property_url.blank? && session[:wizard_project_type] == "construction"
-      @project.assign_attributes(step1_params.merge(status: :draft, property_url: property_url))
+      @project.assign_attributes(step1_params.merge(status: :in_progress, property_url: property_url))
 
       # Server-side validation for required fields
       @errors = []
       @errors << :property_type if property_url.blank?
       @errors << :total_surface_sqm if @project.total_surface_sqm.blank? || @project.total_surface_sqm <= 0
-      @errors << :total_surface_sqm if @project.total_surface_sqm.present? && @project.total_surface_sqm < 0
-      @errors << :location_zip if @project.location_zip.blank? || !@project.location_zip.match?(/\A.+\(\d{5}\)\z/)
+      # Accept "75001" or "Paris (75001)" — extract and validate the 5-digit postal code
+      zip = @project.location_zip.to_s.strip
+      zip_digits = zip[/(\d{5})/, 1]
+      @errors << :location_zip if zip.blank? || zip_digits.nil?
       @errors.uniq!
 
       if @errors.any?
@@ -121,10 +121,6 @@ module Projects
 
     def save_step2
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
-      # Reset step 3 selections when renovation type changes
-      if session[:wizard_renovation_type] != params[:renovation_type]
-        session.delete(:wizard_categories)
-      end
 
       session[:wizard_renovation_type] = params[:renovation_type]
 
@@ -138,16 +134,16 @@ module Projects
 
         if room_data.empty?
           @renovation_type = params[:renovation_type]
-          @selected_rooms = []
+          @selected_rooms = session[:wizard_rooms] || []
           @errors = [:rooms]
           render :step2, status: :unprocessable_entity
           return
         end
 
         session[:wizard_rooms] = room_data
-      else
-        session[:wizard_rooms] = []
       end
+      # Note: when switching to renovation_complete, we keep wizard_rooms in session
+      # so room data is restored if user switches back to par_piece.
 
       if session[:wizard_project_type] == "construction"
         redirect_to wizard_step4_path
@@ -286,39 +282,25 @@ module Projects
     def generate
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
 
-      # Clear existing rooms/work_items when re-generating
-      @project.rooms.destroy_all if @project.rooms.any?
-
       renovation_type  = session[:wizard_renovation_type]
       category_slugs   = session[:wizard_categories] || []
       room_categories  = session[:wizard_room_categories] || {}
+      rooms_data       = session[:wizard_rooms] || []
 
-      if renovation_type == "par_piece" && session[:wizard_rooms].present?
-        session[:wizard_rooms].each do |room_data|
-          name    = room_data["name"]
-          base    = room_data["base"] || name
-          surface = room_data["surface"].presence&.to_f
-          cats    = room_categories[base] || room_categories[name] || category_slugs
-
-          room_attrs = { name: name }
-          room_attrs[:surface_sqm] = surface if surface && surface > 0
-          room = @project.rooms.create!(**room_attrs)
-          # Generate work items for all 3 standing levels
-          [1, 2, 3].each { |level| generate_work_items(room, cats, level) }
-        end
-      else
-        room = @project.rooms.create!(name: "Ensemble des travaux")
-        [1, 2, 3].each { |level| generate_work_items(room, category_slugs, level) }
-      end
-
-      @project.recompute_totals!
+      EstimationCalculator.new(@project).generate!(
+        category_slugs:  category_slugs,
+        standing_levels: [1, 2, 3],
+        room_categories: room_categories,
+        rooms_data:      rooms_data,
+        renovation_type: renovation_type || "renovation_complete"
+      )
 
       # Clear wizard session state
-      %i[wizard_project_id wizard_project_type wizard_renovation_type wizard_categories wizard_rooms wizard_room_categories wizard_custom_needs].each do |k|
-        session.delete(k)
-      end
+      %i[wizard_project_id wizard_project_type wizard_renovation_type
+         wizard_categories wizard_rooms wizard_room_categories
+         wizard_custom_needs].each { |k| session.delete(k) }
 
-      redirect_to project_path(@project, standing: 2), notice: "Estimation générée !"
+      redirect_to project_path(@project, standing: 2)
     end
 
     private
@@ -405,32 +387,5 @@ module Projects
       slugs.filter_map { |s| CATEGORY_LABELS[s]&.merge(slug: s) }
     end
 
-    def generate_work_items(room, category_slugs, standing_level)
-      multiplier   = STANDING_MULTIPLIERS[standing_level] || 1.0
-      surface      = @project.total_surface_sqm || 20
-      area_slugs   = %w[peinture carrelage isolation]
-
-      category_slugs.each do |slug|
-        category = WorkCategory.find_by(slug: slug)
-        next unless category
-
-        category.materials.limit(3).each do |material|
-          base_price = material.public_price_exVAT || 50
-          qty        = area_slugs.include?(slug) ? surface : 1
-          unit       = area_slugs.include?(slug) ? "m²" : (material.unit.presence || "u")
-
-          room.work_items.create!(
-            label: [category.name, material.brand, material.reference].compact.join(" — "),
-            material: material,
-            work_category: category,
-            quantity: qty,
-            unit: unit,
-            unit_price_exVAT: (base_price * multiplier).round(2),
-            vat_rate: material.vat_rate || 10,
-            standing_level: standing_level
-          )
-        end
-      end
-    end
   end
 end

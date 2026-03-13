@@ -15,13 +15,8 @@ export default class extends Controller {
     const isParPiece = selected && selected.value === "par_piece"
     this.roomPickerTarget.hidden = !isParPiece
 
-    // Uncheck all rooms when switching away from par_piece
-    if (!isParPiece) {
-      this.roomCheckboxTargets.forEach(cb => {
-        cb.checked = false
-        this._updateRoomUI(cb.dataset.room, false, 1)
-      })
-    }
+    // Don't uncheck rooms when switching away — preserve selections
+    // so they are restored when user switches back to par_piece.
 
     this.validate()
   }

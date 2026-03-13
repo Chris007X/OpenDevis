@@ -3,7 +3,7 @@ require "test_helper"
 class BiddingRequestTest < ActiveSupport::TestCase
   def setup
     @user = User.create!(email: "bireq@test.com", password: "password123")
-    @project = Project.create!(user: @user, status: "draft")
+    @project = Project.create!(user: @user, status: "in_progress")
     @bidding_round = BiddingRound.create!(project: @project, standing_level: 2, status: "draft", deadline: 7.days.from_now)
     @category = WorkCategory.create!(name: "Électricité", slug: "electricite-req")
     @artisan = Artisan.create!(name: "Paul Martin", email: "paul@test.com", password: "password123", postcode: "69001")
