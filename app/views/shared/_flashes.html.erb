@@ -1,10 +1,3 @@
-<% if notice.present? %>
-  <div class="od-flash od-flash-notice" role="alert">
-    <span><%= notice %></span>
-    <button type="button" onclick="this.parentElement.remove()"
-            style="background:none;border:none;cursor:pointer;font-size:1rem;color:inherit;opacity:0.6;padding:0;line-height:1;">✕</button>
-  </div>
-<% end %>
 <% if alert %>
   <div class="od-flash od-flash-alert" role="alert">
     <span><%= alert %></span>

@@ -5,7 +5,7 @@ export default class extends Controller {
   static values  = { uploadUrl: String }
 
   connect() {
-    this._handleExternalPhoto = (e) => this.showPhoto(e.detail.url, false)
+    this._handleExternalPhoto = (e) => this.showPhoto(e.detail.url, true)
     document.addEventListener("photo:received", this._handleExternalPhoto)
   }
 
@@ -82,6 +82,7 @@ export default class extends Controller {
 
   uploadFile(file) {
     this.setStatus("Envoi en cours…")
+    this.setSubmitDisabled(true)
     const formData = new FormData()
     formData.append("photo", file)
     formData.append("authenticity_token", this.csrfToken())
@@ -98,6 +99,9 @@ export default class extends Controller {
       })
       .catch(() => {
         this.setStatus("Erreur réseau lors de l'envoi.", true)
+      })
+      .finally(() => {
+        this.setSubmitDisabled(false)
       })
   }
 
@@ -124,6 +128,11 @@ export default class extends Controller {
     el.classList.toggle("d-none", !msg)
     el.classList.toggle("text-danger", isError)
     el.classList.toggle("text-muted", !isError)
+  }
+
+  setSubmitDisabled(disabled) {
+    const submit = document.querySelector("[data-wizard-form-target='submit']")
+    if (submit) submit.disabled = disabled
   }
 
   get photoUrlInput() {

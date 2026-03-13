@@ -7,6 +7,17 @@ export default class extends Controller {
   static targets = ["input", "btn", "status"]
   static values  = { endpoint: String }
 
+  toggleBtn() {
+    const hasValue = this.inputTarget.value.trim().length > 0
+    const btn = this.btnTarget
+    btn.disabled = !hasValue
+    if (hasValue) {
+      btn.style.cssText = "border-radius:8px;padding:0.375rem 0.85rem;font-size:0.9rem;font-weight:500;white-space:nowrap;background:#2C2A25;color:#fff;border:1px solid #2C2A25;cursor:pointer;"
+    } else {
+      btn.style.cssText = "border-radius:8px;padding:0.375rem 0.85rem;font-size:0.9rem;font-weight:500;white-space:nowrap;background:#C8C4BC;color:#4A4640;border:1px solid #C8C4BC;cursor:not-allowed;"
+    }
+  }
+
   async analyze() {
     const url = this.inputTarget.value.trim()
     if (!url) return
@@ -36,7 +47,7 @@ export default class extends Controller {
       this.showStatus("error", "Impossible d'analyser cette URL.")
     } finally {
       this.btnTarget.disabled = false
-      this.btnTarget.textContent = "Analyser ✨"
+      this.btnTarget.textContent = "Analyser"
     }
   }
 
