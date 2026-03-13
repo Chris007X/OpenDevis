@@ -461,8 +461,9 @@ wizard_category_map.each do |new_slug, related_slugs|
     old_cat = WorkCategory.find_by(slug: old_slug)
     next unless old_cat
 
-    old_cat.artisans.each do |artisan|
-      ArtisanCategory.find_or_create_by!(artisan: artisan, work_category: new_cat)
+    artisan_ids = ArtisanCategory.where(work_category: old_cat).pluck(:artisan_id)
+    artisan_ids.each do |artisan_id|
+      ArtisanCategory.find_or_create_by!(artisan_id: artisan_id, work_category: new_cat)
     end
   end
 end
