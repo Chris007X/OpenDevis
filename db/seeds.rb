@@ -415,7 +415,71 @@ artisan_data = [
     categories: ["plomberie", "carrelage"] },
   { name: "Céline Roux", email: "c.roux@roux-peinture-marseille.fr", company_name: "Roux Peinture",
     postcode: "13008", phone: "06 22 33 55 99", rating: 4.8, certifications: nil,
-    categories: ["peinture", "menuiserie"] }
+    categories: ["peinture", "menuiserie"] },
+
+  # Paris (75) — Démolition & maçonnerie
+  { name: "Bruno Tessier", email: "b.tessier@tessier-demolition.fr", company_name: "Tessier Démolition",
+    postcode: "75011", phone: "06 11 33 55 77", rating: 4.7, certifications: "Qualibat",
+    categories: ["demolition_maconnerie", "maconnerie"] },
+  { name: "Samir Haddad", email: "s.haddad@haddad-btp.fr", company_name: "Haddad BTP",
+    postcode: "75019", phone: "06 22 44 66 88", rating: 4.5, certifications: "Qualibat",
+    categories: ["demolition_maconnerie"] },
+
+  # Paris (75) — Fenêtres
+  { name: "Gilles Perrot", email: "g.perrot@perrot-fenetres.fr", company_name: "Perrot Fenêtres & Volets",
+    postcode: "75015", phone: "06 33 55 77 99", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["fenetres", "menuiseries_interieures"] },
+  { name: "Laure Vidal", email: "l.vidal@vidal-menuiserie.fr", company_name: "Vidal Menuiserie Extérieure",
+    postcode: "75008", phone: "06 44 66 88 00", rating: 4.6, certifications: "Qualibois",
+    categories: ["fenetres"] },
+
+  # Paris (75) — Toiture & étanchéité
+  { name: "Thierry Couvreur", email: "t.couvreur@couvreur-paris.fr", company_name: "Couvreur Paris Toiture",
+    postcode: "75017", phone: "06 55 77 99 11", rating: 4.9, certifications: "Qualibat",
+    categories: ["toiture", "maconnerie"] },
+  { name: "Axel Renaud", email: "a.renaud@renaud-etancheite.fr", company_name: "Renaud Étanchéité",
+    postcode: "75013", phone: "06 66 88 00 22", rating: 4.7, certifications: "Qualibat",
+    categories: ["toiture"] },
+
+  # Paris (75) — Ventilation & chauffage
+  { name: "Cyril Gautier", email: "c.gautier@gautier-clim.fr", company_name: "Gautier Climatisation",
+    postcode: "75016", phone: "06 77 99 11 33", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["ventilation_chauffage", "chauffage"] },
+  { name: "Nadia Khelil", email: "n.khelil@khelil-ventilation.fr", company_name: "Khelil Ventilation",
+    postcode: "75010", phone: "06 88 00 22 44", rating: 4.6, certifications: "RGE",
+    categories: ["ventilation_chauffage"] },
+
+  # Paris (75) — Menuiseries intérieures
+  { name: "Marc-Antoine Levy", email: "m.levy@levy-agencement.fr", company_name: "Lévy Agencement",
+    postcode: "75004", phone: "06 99 11 33 55", rating: 4.9, certifications: "Qualibois",
+    categories: ["menuiseries_interieures", "menuiserie"] },
+  { name: "Amandine Collet", email: "a.collet@collet-interieurs.fr", company_name: "Collet Intérieurs",
+    postcode: "75018", phone: "06 00 22 44 66", rating: 4.7, certifications: nil,
+    categories: ["menuiseries_interieures"] },
+
+  # Paris (75) — Peintures
+  { name: "Régis Morin", email: "r.morin@morin-peintures.fr", company_name: "Morin Peintures Décoration",
+    postcode: "75011", phone: "06 11 44 77 00", rating: 4.8, certifications: nil,
+    categories: ["peintures", "peinture"] },
+  { name: "Fatima Zahra", email: "f.zahra@zahra-deco.fr", company_name: "Zahra Décoration",
+    postcode: "75020", phone: "06 22 55 88 11", rating: 4.6, certifications: nil,
+    categories: ["peintures"] },
+
+  # Paris (75) — Cuisine
+  { name: "Laurent Dupré", email: "l.dupre@dupre-cuisine.fr", company_name: "Dupré Cuisines & Aménagement",
+    postcode: "75009", phone: "06 33 66 99 22", rating: 4.7, certifications: "Qualibat",
+    categories: ["cuisine", "plomberie"] },
+  { name: "Hélène Garnier", email: "h.garnier@garnier-cuisine.fr", company_name: "Garnier Cuisine Design",
+    postcode: "75006", phone: "06 44 77 00 33", rating: 4.9, certifications: nil,
+    categories: ["cuisine", "menuiseries_interieures"] },
+
+  # Paris (75) — Salle de bain & WC
+  { name: "Florian Breton", email: "f.breton@breton-sdb.fr", company_name: "Breton Salle de Bain",
+    postcode: "75007", phone: "06 55 88 11 44", rating: 4.8, certifications: "Qualibat",
+    categories: ["salle_de_bain_wc", "plomberie"] },
+  { name: "Isabelle Nguyen", email: "i.nguyen@nguyen-sanitaire.fr", company_name: "Nguyen Sanitaire & Carrelage",
+    postcode: "75014", phone: "06 66 99 22 55", rating: 4.7, certifications: "RGE",
+    categories: ["salle_de_bain_wc", "carrelage"] }
 ]
 
 artisan_data.each do |ad|
