@@ -188,25 +188,29 @@
 
   <%# Import modes %>
   <div class="mb-4" data-controller="import-mode">
-    <div class="small fw-semibold mb-2" style="color: #4A4640;">Importer automatiquement <span class="fw-normal">(facultatif)</span></div>
+    <% unless @project_type == "construction" %>
+      <div class="small fw-semibold mb-2" style="color: #4A4640;">Importer automatiquement <span class="fw-normal">(facultatif)</span></div>
+    <% end %>
     <div class="d-flex gap-2 mb-2">
-      <button type="button" class="import-mode-btn flex-fill"
-              data-import-mode-target="btn"
-              data-action="click->import-mode#toggle"
-              data-mode="url">
-        🔗<br>URL d'annonce
-      </button>
-      <button type="button" class="import-mode-btn flex-fill"
-              data-import-mode-target="btn"
-              data-action="click->import-mode#toggle"
-              data-mode="pdf">
-        📄<br>PDF / Document
-      </button>
-      <button type="button" class="import-mode-btn flex-fill"
+      <% unless @project_type == "construction" %>
+        <button type="button" class="import-mode-btn flex-fill"
+                data-import-mode-target="btn"
+                data-action="click->import-mode#toggle"
+                data-mode="url">
+          🔗<br>URL d'annonce
+        </button>
+        <button type="button" class="import-mode-btn flex-fill"
+                data-import-mode-target="btn"
+                data-action="click->import-mode#toggle"
+                data-mode="pdf">
+          📄<br>PDF / Document
+        </button>
+      <% end %>
+      <button type="button" class="import-mode-btn <%= @project_type == "construction" ? "w-100" : "flex-fill" %>"
               data-import-mode-target="btn"
               data-action="click->import-mode#toggle"
               data-mode="chat">
-        💬<br>Chat IA
+        💬<%= @project_type == "construction" ? " Chat IA" : "<br>Chat IA".html_safe %>
       </button>
     </div>
 
@@ -304,6 +308,7 @@
   </div>
 
   <%# Photo du bien %>
+  <% unless @project_type == "construction" %>
   <div class="mb-4"
        data-controller="photo-upload"
        data-photo-upload-upload-url-value="<%= wizard_upload_photo_path %>">
@@ -351,6 +356,7 @@
     <%# Message de statut %>
     <div data-photo-upload-target="status" class="mt-2 small d-none"></div>
   </div>
+  <% end %>
 
   <%# Manual fields %>
   <%= form_with model: @project, url: wizard_step1_path, method: :post,
@@ -364,7 +370,7 @@
         <%# Titre du projet — optional %>
         <div class="col-12">
           <div class="field-label">Titre du projet</div>
-          <%= f.text_field :name, class: "form-control", placeholder: "ex. Rénovation appartement Montmartre" %>
+          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
         </div>
 
         <%# Type de bien — required, radio cards (hidden for construction flow) %>
@@ -404,7 +410,7 @@
         <%# Surface — required %>
         <div class="col-md-6">
           <div class="field-label"><%= @project_type == "construction" ? "Surface souhaitée du bien (m²)" : "Surface actuelle du bien (m²)" %> <span class="required">*</span></div>
-          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: "ex. 78", step: 0.5,
+          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78", step: 0.5,
               min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>
             <div class="field-error">Ce champ est obligatoire</div>
@@ -414,7 +420,7 @@
         <%# Nombre de pièces — optional %>
         <div class="col-md-6">
           <div class="field-label">Nombre de pièces</div>
-          <%= f.number_field :room_count, class: "form-control", placeholder: "ex. 4" %>
+          <%= f.number_field :room_count, class: "form-control", placeholder: @project_type == "construction" ? "ex : 4" : "ex. 4" %>
         </div>
 
         <%# Code postal — required, with autocomplete %>
@@ -422,7 +428,7 @@
           <div class="field-label">Code postal <span class="required">*</span></div>
           <div class="autocomplete-wrapper">
             <input type="text" class="form-control"
-                   placeholder="ex. 75001"
+                   placeholder="<%= @project_type == "construction" ? "ex : 75001" : "ex. 75001" %>"
                    inputmode="numeric"
                    pattern="[0-9]*"
                    value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"

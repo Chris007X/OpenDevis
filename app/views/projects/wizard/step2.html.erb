@@ -141,17 +141,19 @@
 %>
 
 <div class="container py-4" style="max-width: 620px;">
-  <%= render "stepper", current_step: 2 %>
+  <%= render "stepper", current_step: 2, project_type: @project_type %>
 
   <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Type de rénovation</h2>
   <p class="mb-4" style="color: #4A4640;">Sélectionnez le type de travaux envisagés.</p>
 
   <%= form_with url: wizard_step2_path, method: :post,
       data: { controller: "renovation-type", action: "change->renovation-type#validate" } do |f| %>
-    <% [
-      ["renovation_complete", "🏗️", "Rénovation complète",  "Estimation rapide"],
-      ["par_piece",           "🚪", "Rénovation par pièce", "Estimation plus détaillée ou pour des pièces spécifiques"]
-    ].each do |value, icon, label, desc| %>
+    <%
+      renovation_types = []
+      renovation_types << ["renovation_complete", "🏗️", "Rénovation complète", "Estimation rapide"] unless @project_type == "construction"
+      renovation_types << ["par_piece", "🚪", "Rénovation par pièce", "Estimation plus détaillée ou pour des pièces spécifiques"]
+    %>
+    <% renovation_types.each do |value, icon, label, desc| %>
       <label class="renovation-card">
         <input type="radio" name="renovation_type" value="<%= value %>"
                <%= "checked" if @renovation_type == value %>

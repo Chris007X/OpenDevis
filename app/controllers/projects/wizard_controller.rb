@@ -98,7 +98,7 @@ module Projects
         if session[:wizard_project_type] == "construction"
           session[:wizard_renovation_type] = "construction"
           session[:wizard_categories] = CATEGORY_GROUPS.flat_map { |g| g[:slugs] }
-          redirect_to wizard_step4_path
+          redirect_to wizard_step2_path
         elsif session[:wizard_project_type] == "extension"
           session[:wizard_renovation_type] = "extension"
           redirect_to wizard_step3_path
@@ -114,6 +114,7 @@ module Projects
     # ── Step 2 – Renovation type ──────────────────────────────────────────────
     def step2
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
+      @project_type    = session[:wizard_project_type]
       @renovation_type = session[:wizard_renovation_type]
       @selected_rooms  = session[:wizard_rooms] || []
     end
@@ -148,7 +149,11 @@ module Projects
         session[:wizard_rooms] = []
       end
 
-      redirect_to wizard_step3_path
+      if session[:wizard_project_type] == "construction"
+        redirect_to wizard_step4_path
+      else
+        redirect_to wizard_step3_path
+      end
     end
 
     # ── Step 3 – Work categories ──────────────────────────────────────────────
