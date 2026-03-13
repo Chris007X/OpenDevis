@@ -2,22 +2,30 @@ import { Controller } from "@hotwired/stimulus"
 
 // Handles Step 2: show/hide room picker, manage room instances with +/- controls,
 // and validate that at least 1 room is checked when "par_piece" is selected.
+// Also validates that room surface sum does not exceed total project surface.
 export default class extends Controller {
   static targets = ["roomPicker", "submit", "roomGroup", "roomCheckbox",
-                     "countControl", "countDisplay", "roomInstances"]
+                     "countControl", "countDisplay", "roomInstances", "surfaceError"]
+  static values = { totalSurface: Number }
 
   connect() {
+    this._savedSurfaces = {}
     this.validate()
   }
 
   toggleRoomPicker() {
     const selected = this.element.querySelector('input[name="renovation_type"]:checked')
     const isParPiece = selected && selected.value === "par_piece"
+
+    // Save surface values when switching away from par_piece
+    if (!isParPiece) {
+      this._saveSurfaces()
+    } else {
+      // Restore surfaces when switching back to par_piece
+      this._restoreSurfaces()
+    }
+
     this.roomPickerTarget.hidden = !isParPiece
-
-    // Don't uncheck rooms when switching away — preserve selections
-    // so they are restored when user switches back to par_piece.
-
     this.validate()
   }
 
@@ -54,13 +62,32 @@ export default class extends Controller {
 
     if (!selected) {
       this.submitTarget.disabled = true
+      this._hideSurfaceError()
       return
     }
 
     if (selected.value === "par_piece") {
       const checkedRooms = this.roomCheckboxTargets.filter(cb => cb.checked)
-      this.submitTarget.disabled = checkedRooms.length === 0
+      if (checkedRooms.length === 0) {
+        this.submitTarget.disabled = true
+        this._hideSurfaceError()
+        return
+      }
+
+      // Validate surface sum vs total project surface
+      if (this.hasTotalSurfaceValue && this.totalSurfaceValue > 0) {
+        const sum = this._computeSurfaceSum()
+        if (sum > this.totalSurfaceValue) {
+          this.submitTarget.disabled = true
+          this._showSurfaceError(sum, this.totalSurfaceValue)
+          return
+        }
+      }
+
+      this._hideSurfaceError()
+      this.submitTarget.disabled = false
     } else {
+      this._hideSurfaceError()
       this.submitTarget.disabled = false
     }
   }
@@ -94,6 +121,7 @@ export default class extends Controller {
     if (!instance) return
     const hiddenSurface = instance.querySelector(".room-field-surface")
     if (hiddenSurface) hiddenSurface.value = event.currentTarget.value
+    this.validate()
   }
 
   _renderInstances(room, count) {
@@ -128,5 +156,52 @@ export default class extends Controller {
 
     container.innerHTML = html
     container.hidden = false
+  }
+
+  _computeSurfaceSum() {
+    let sum = 0
+    this.element.querySelectorAll(".room-field-surface").forEach(field => {
+      const val = parseFloat(field.value)
+      if (!isNaN(val)) sum += val
+    })
+    return sum
+  }
+
+  _showSurfaceError(sum, max) {
+    if (this.hasSurfaceErrorTarget) {
+      this.surfaceErrorTarget.textContent = `La somme des surfaces (${sum} m²) dépasse la surface totale du bien (${max} m²)`
+      this.surfaceErrorTarget.hidden = false
+    }
+  }
+
+  _hideSurfaceError() {
+    if (this.hasSurfaceErrorTarget) {
+      this.surfaceErrorTarget.hidden = true
+    }
+  }
+
+  _saveSurfaces() {
+    this.element.querySelectorAll(".room-instance").forEach(instance => {
+      const nameField = instance.querySelector(".room-field-name")
+      const surfaceInput = instance.querySelector('input[type="number"]')
+      if (nameField && surfaceInput) {
+        this._savedSurfaces[nameField.value] = surfaceInput.value
+      }
+    })
+  }
+
+  _restoreSurfaces() {
+    if (Object.keys(this._savedSurfaces).length === 0) return
+
+    this.element.querySelectorAll(".room-instance").forEach(instance => {
+      const nameField = instance.querySelector(".room-field-name")
+      const surfaceInput = instance.querySelector('input[type="number"]')
+      const hiddenSurface = instance.querySelector(".room-field-surface")
+      if (nameField && this._savedSurfaces[nameField.value] !== undefined) {
+        const val = this._savedSurfaces[nameField.value]
+        if (surfaceInput) surfaceInput.value = val
+        if (hiddenSurface) hiddenSurface.value = val
+      }
+    })
   }
 }

@@ -40,11 +40,12 @@ end
 %>
 
 <div class="d-flex justify-content-center align-items-center mb-5 wizard-stepper">
+  <% max_step = defined?(wizard_max_step) ? wizard_max_step : current_step %>
   <% steps.each_with_index do |(num, label), idx| %>
     <%
       state = if num == current_step
                "active"
-             elsif num < current_step
+             elsif num <= max_step
                "done"
              else
                "pending"
@@ -62,7 +63,8 @@ end
       <% end %>
     </div>
     <% if idx < steps.length - 1 %>
-      <div class="wizard-connector <%= num < current_step ? 'done' : '' %>"></div>
+      <% next_num = steps[idx + 1]&.first %>
+      <div class="wizard-connector <%= (num <= max_step && num != current_step) || (num < current_step) ? 'done' : '' %>"></div>
     <% end %>
   <% end %>
 </div>

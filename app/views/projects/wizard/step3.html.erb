@@ -1,4 +1,5 @@
 <% content_for :head do %>
+<meta name="turbo-cache-control" content="no-cache">
 <style>
   .category-card {
     display: flex;
@@ -112,7 +113,7 @@
 
   <% if @renovation_type.in?(%w[construction extension]) %>
     <%# Free-text fallback for construction %>
-    <%= form_with url: wizard_step3_path, method: :post do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { turbo: false } do |f| %>
       <div class="custom-needs-section">
         <p style="color: #4A4640; font-size: 0.9rem;">
           Décrivez vos besoins spécifiques. Nos conseillers affineront l'estimation.
@@ -142,7 +143,7 @@
 
   <% elsif is_par_piece %>
     <%# Per-room category selection with tabs %>
-    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "room-tabs" } do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "room-tabs", turbo: false } do |f| %>
       <div class="d-flex gap-2 flex-wrap mb-3">
         <% rooms_data.each_with_index do |room, idx| %>
           <% room_name = room["name"] %>
@@ -212,7 +213,7 @@
 
   <% else %>
     <%# Standard category grid (renovation_complete / energetique) %>
-    <%= form_with url: wizard_step3_path, method: :post do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { turbo: false } do |f| %>
       <% @category_groups.each do |group| %>
         <% next if group[:slugs].empty? %>
         <div class="group-title"><%= group[:name] %></div>
