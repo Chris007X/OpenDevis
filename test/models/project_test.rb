@@ -3,7 +3,7 @@ require "test_helper"
 class ProjectTest < ActiveSupport::TestCase
   def setup
     @user = User.create!(email: "project@test.com", password: "password123")
-    @project = Project.new(user: @user, status: "draft")
+    @project = Project.new(user: @user, status: "in_progress")
   end
 
   test "valid project saves successfully" do
@@ -65,9 +65,9 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   # Test 35
-  test "status defaults to draft" do
+  test "status defaults to in_progress" do
     project = Project.create!(user: @user)
-    assert project.draft?
+    assert project.in_progress?
   end
 
   # Test 36

@@ -5,7 +5,8 @@ class Project < ApplicationRecord
   has_many :documents, dependent: :destroy
   has_one :bidding_round, dependent: :destroy
 
-  enum :status, { draft: "draft", sent: "sent", accepted: "accepted", rejected: "rejected" }, default: "draft"
+  enum :status, { in_progress: "in_progress", quote_requested: "quote_requested",
+                   quote_received: "quote_received", archived: "archived" }, default: "in_progress"
 
   validates :status, presence: true
 

@@ -56,15 +56,18 @@
   }
 
   .generate-btn {
-    background: #2C2A25;
+    background: #2663EB;
     color: #fff;
-    border: none;
-    border-radius: 10px;
+    border: 1.5px solid #2663EB;
+    border-radius: 50px;
     font-size: 1.05rem;
     font-weight: 600;
-    padding: 0.85rem 2rem;
+    padding: 0.85rem 2.2rem;
     cursor: pointer;
-    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
   .generate-btn:hover { background: #1a1916; }
 
@@ -202,7 +205,7 @@ reno_labels = {
 %>
 
 <div class="container py-4" style="max-width: 620px;">
-  <%= render "stepper", current_step: 4, project_type: @project_type %>
+  <%= render "stepper", current_step: @project_type == "construction" ? 3 : 4, project_type: @project_type %>
 
   <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Récapitulatif</h2>
   <p class="mb-4" style="color: #4A4640;">Vérifiez vos choix avant de générer l'estimation.</p>

@@ -3,7 +3,7 @@ require "test_helper"
 class WorkItemTest < ActiveSupport::TestCase
   def setup
     @user     = User.create!(email: "wi@test.com", password: "password123")
-    @project  = Project.create!(user: @user, status: "draft")
+    @project  = Project.create!(user: @user, status: "in_progress")
     @room     = Room.create!(project: @project, name: "Salon")
     @category = WorkCategory.create!(name: "Peinture", slug: "peinture-wi")
     @material = Material.create!(work_category: @category, unit: "L", public_price_exVAT: 18.50, vat_rate: 10)

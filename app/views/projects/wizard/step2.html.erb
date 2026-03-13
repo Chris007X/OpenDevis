@@ -3,22 +3,24 @@
   .renovation-card {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.15rem;
     border: 1.5px solid #C8C4BC;
-    border-radius: 10px;
+    border-radius: 12px;
     background: #fff;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.5rem;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
+    min-height: 80px;
   }
+  .renovation-card:hover { border-color: #2C2A25; }
   .renovation-card:has(input:checked) {
     border-color: #2C2A25;
     background: #EDEAE4;
   }
   .renovation-card input[type="radio"] { display: none; }
-  .renovation-card .reno-icon { font-size: 1.5rem; width: 2rem; text-align: center; }
-  .renovation-card .reno-desc { font-size: 0.82rem; color: #4A4640; }
+  .renovation-card .reno-icon { font-size: 1.7rem; width: 2.2rem; text-align: center; flex-shrink: 0; }
+  .renovation-card .reno-desc { font-size: 0.85rem; color: #4A4640; }
 
   .room-picker {
     border: 1px solid #C8C4BC;
@@ -141,17 +143,19 @@
 %>
 
 <div class="container py-4" style="max-width: 620px;">
-  <%= render "stepper", current_step: 2 %>
+  <%= render "stepper", current_step: 2, project_type: @project_type %>
 
   <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Type de rénovation</h2>
   <p class="mb-4" style="color: #4A4640;">Sélectionnez le type de travaux envisagés.</p>
 
   <%= form_with url: wizard_step2_path, method: :post,
       data: { controller: "renovation-type", action: "change->renovation-type#validate" } do |f| %>
-    <% [
-      ["renovation_complete", "🏗️", "Rénovation complète",  "Estimation rapide"],
-      ["par_piece",           "🚪", "Rénovation par pièce", "Estimation plus détaillée ou pour des pièces spécifiques"]
-    ].each do |value, icon, label, desc| %>
+    <%
+      renovation_types = []
+      renovation_types << ["renovation_complete", "🏗️", "Rénovation complète", "Estimation rapide"] unless @project_type == "construction"
+      renovation_types << ["par_piece", "🚪", "Rénovation par pièce", "Estimation plus détaillée ou pour des pièces spécifiques"]
+    %>
+    <% renovation_types.each do |value, icon, label, desc| %>
       <label class="renovation-card">
         <input type="radio" name="renovation_type" value="<%= value %>"
                <%= "checked" if @renovation_type == value %>
@@ -229,10 +233,16 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", wizard_step1_path, class: "btn btn-ghost-od" %>
+      <%= link_to wizard_step1_path, class: "btn btn-ghost-od" do %>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retour
+      <% end %>
       <button type="submit" class="btn btn-dark-od"
               data-renovation-type-target="submit"
-              <%= "disabled" unless @renovation_type.present? %>>Suivant →</button>
+              <%= "disabled" unless @renovation_type.present? %>>
+        Suivant
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   <% end %>
 </div>

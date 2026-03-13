@@ -3,7 +3,7 @@ require "test_helper"
 class RoomTest < ActiveSupport::TestCase
   def setup
     @user = User.create!(email: "user@test.com", password: "password123")
-    @project = Project.create!(user: @user, status: "draft")
+    @project = Project.create!(user: @user, status: "in_progress")
     @room = Room.new(project: @project, name: "Salon", surface_sqm: 20.0, perimeter_lm: 18.0, wall_height_m: 2.5)
   end
 
