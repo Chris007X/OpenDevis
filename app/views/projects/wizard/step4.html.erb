@@ -56,17 +56,24 @@
   }
 
   .generate-btn {
-    background: #2C2A25;
+    background: #2663EB;
     color: #fff;
-    border: none;
-    border-radius: 10px;
+    border: 1.5px solid #2663EB;
+    border-radius: 50px;
     font-size: 1.05rem;
     font-weight: 600;
-    padding: 0.85rem 2rem;
+    padding: 0.85rem 2.2rem;
     cursor: pointer;
-    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-  .generate-btn:hover { background: #1a1916; }
+  .generate-btn:hover {
+    background: #1B4FC2; border-color: #1B4FC2;
+    transform: translateY(-2px); box-shadow: 0 4px 14px rgba(38,99,235,0.30);
+  }
+  .generate-btn:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(38,99,235,0.2); }
 </style>
 <% end %>
 
@@ -189,8 +196,13 @@ reno_labels = {
     <input type="hidden" name="standing" value="2">
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", @project_type == "construction" ? wizard_step1_path : wizard_step3_path, class: "btn btn-ghost-od" %>
-      <button type="submit" class="generate-btn">Générer l'estimation ✨</button>
+      <%= link_to (@project_type == "construction" ? wizard_step1_path : wizard_step3_path), class: "btn btn-ghost-od" do %>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retour
+      <% end %>
+      <button type="submit" class="generate-btn">
+        Générer l'estimation ✨
+      </button>
     </div>
   <% end %>
 </div>

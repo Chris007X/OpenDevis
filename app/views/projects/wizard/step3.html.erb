@@ -25,6 +25,20 @@
   }
   .category-card input[type="checkbox"] { display: none; }
   .category-card .cat-icon { font-size: 1.6rem; line-height: 1; }
+  .category-card .dpe-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-radius: 10px;
+    padding: 0.1em 0.5em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+  }
+  .category-card .dpe-badge svg { flex-shrink: 0; }
 
   .group-title {
     font-size: 0.82rem;
@@ -85,6 +99,9 @@
   # For non-par_piece: selected categories is a flat array
   # For par_piece: we use room_categories from session or compute defaults
   room_categories = session[:wizard_room_categories] || {}
+
+  # Categories that improve DPE (energy performance)
+  dpe_slugs = %w[isolation fenetres ventilation_chauffage]
 %>
 
 <div class="container py-4" style="max-width: 720px;">
@@ -112,8 +129,14 @@
         <% end %>
       </div>
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", wizard_step1_path, class: "btn btn-ghost-od" %>
-        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+        <%= link_to wizard_step1_path, class: "btn btn-ghost-od" do %>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Retour
+        <% end %>
+        <button type="submit" class="btn btn-dark-od">
+          Suivant
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     <% end %>
 
@@ -153,6 +176,9 @@
                            <%= "checked" if saved_cats.include?(slug) %>>
                     <div class="cat-icon"><%= cat[:icon] %></div>
                     <div><%= cat[:label] %></div>
+                    <% if dpe_slugs.include?(slug) %>
+                      <span class="dpe-badge"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 16 16" fill="#2E7D32"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/></svg> DPE</span>
+                    <% end %>
                   </label>
                 </div>
               <% end %>
@@ -173,8 +199,14 @@
       </div>
 
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
-        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+        <%= link_to wizard_step2_path, class: "btn btn-ghost-od" do %>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Retour
+        <% end %>
+        <button type="submit" class="btn btn-dark-od">
+          Suivant
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     <% end %>
 
@@ -193,6 +225,9 @@
                        <%= "checked" if @selected_categories.include?(slug) %>>
                 <div class="cat-icon"><%= cat[:icon] %></div>
                 <div><%= cat[:label] %></div>
+                <% if dpe_slugs.include?(slug) %>
+                  <span class="dpe-badge"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 16 16" fill="#2E7D32"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/></svg> DPE</span>
+                <% end %>
               </label>
             </div>
           <% end %>
@@ -208,8 +243,14 @@
       </div>
 
       <div class="d-flex justify-content-between mt-4">
-        <%= link_to "← Retour", wizard_step2_path, class: "btn btn-ghost-od" %>
-        <button type="submit" class="btn btn-dark-od">Suivant →</button>
+        <%= link_to wizard_step2_path, class: "btn btn-ghost-od" do %>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Retour
+        <% end %>
+        <button type="submit" class="btn btn-dark-od">
+          Suivant
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     <% end %>
   <% end %>

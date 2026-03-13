@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show edit update destroy]
+  before_action :set_project, only: %i[show edit update destroy archive]
 
   def index
     @projects = policy_scope(Project).order(updated_at: :desc)
@@ -55,6 +55,11 @@ class ProjectsController < ApplicationController
   def destroy
     @project.destroy
     redirect_to projects_path, notice: "Projet supprimé."
+  end
+
+  def archive
+    @project.archived!
+    redirect_to @project, notice: "Projet archivé."
   end
 
   private

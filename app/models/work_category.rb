@@ -5,7 +5,7 @@ class WorkCategory < ApplicationRecord
    
    # Validations
   validates :name, presence: true, length: { minimum: 2 }
-  validates :slug, presence: true, uniqueness: true, format: { with: /\A[a-z0-9-]+\z/ }
+  validates :slug, presence: true, uniqueness: true, format: { with: /\A[a-z0-9_-]+\z/ }
 
   # Petit bonus : s'assurer que le slug est toujours en minuscules avant la sauvegarde
   before_validation :lowercase_slug

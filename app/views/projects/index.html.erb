@@ -104,11 +104,11 @@
       <div class="row g-3">
         <% @projects.each do |project| %>
           <% status_label, status_class = case project.status
-             when "draft"     then ["Brouillon", "badge-brouillon"]
-             when "sent"      then ["En cours",  "badge-en-cours"]
-             when "accepted"  then ["Terminé",   "badge-termine"]
-             when "rejected"  then ["Refusé",    "badge-refuse"]
-             else                  ["Brouillon", "badge-brouillon"]
+             when "in_progress"     then ["Projet en cours",  "badge-en-cours"]
+             when "quote_requested" then ["Devis demandé",    "badge-brouillon"]
+             when "quote_received"  then ["Devis reçu",       "badge-termine"]
+             when "archived"        then ["Archivé",           "badge-refuse"]
+             else                        ["Projet en cours",  "badge-en-cours"]
              end %>
           <div class="col-md-4">
             <div class="project-card-wrapper h-100">

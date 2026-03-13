@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Autocomplete for French postal codes using geo.api.gouv.fr
 // Triggers after 2 digits typed. Display format: "Paris (75001)"
+// Also accepts raw 5-digit postal codes without selecting from suggestions.
 export default class extends Controller {
   static targets = ["input", "hidden", "results"]
 
@@ -16,14 +17,16 @@ export default class extends Controller {
     document.removeEventListener("click", this.handleClickOutside)
   }
 
-  // Strip non-digit characters from the input
+  // Allow digits and also "City (XXXXX)" format — only filter when raw typing
   filterDigits() {
+    // If the value contains letters (from a selection like "Paris (75011)"), keep it
+    if (/[a-zA-ZÀ-ÿ]/.test(this.inputTarget.value)) return
+
     const pos = this.inputTarget.selectionStart
     const before = this.inputTarget.value
     const filtered = before.replace(/\D/g, "")
     if (before !== filtered) {
       this.inputTarget.value = filtered
-      // Restore cursor position accounting for removed chars
       const diff = before.length - filtered.length
       this.inputTarget.setSelectionRange(pos - diff, pos - diff)
     }
@@ -40,8 +43,8 @@ export default class extends Controller {
 
     const raw = this.inputTarget.value.trim()
 
-    // Clear hidden field — user must select from suggestions to validate
-    this.hiddenTarget.value = ""
+    // Sync hidden field with current input — allows free-text postal codes
+    this.hiddenTarget.value = raw
 
     // Extract digits only to decide when to trigger search
     const digits = raw.replace(/\D/g, "")
