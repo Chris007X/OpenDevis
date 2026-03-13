@@ -1,11 +1,11 @@
 <%
   req_labels = {
-    "pending"   => ["En attente", "req-pending"],
-    "sent"      => ["Envoyé",     "req-sent"],
-    "responded" => ["Répondu",    "req-responded"],
-    "declined"  => ["Décliné",    "req-declined"],
-    "expired"   => ["Expiré",     "req-expired"],
-    "replaced"  => ["Remplacé",   "req-replaced"]
+    "pending"   => ["En attente",     "req-pending"],
+    "sent"      => ["Devis demandé",  "req-sent"],
+    "responded" => ["Devis reçu",     "req-responded"],
+    "declined"  => ["Décliné",        "req-declined"],
+    "expired"   => ["Expiré",         "req-expired"],
+    "replaced"  => ["Remplacé",       "req-replaced"]
   }
   rl, rc = req_labels[bidding_request.status] || ["?", "req-pending"]
   local_project = local_assigns[:project] || bidding_request.bidding_round.project

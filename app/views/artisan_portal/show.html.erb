@@ -14,19 +14,19 @@
       max-width: 600px;
       margin: 48px auto;
     }
-    .brand { font-weight: 800; color: #2C2A25; font-size: 1.1rem; letter-spacing: -0.3px; }
+    .brand { font-weight: 800; color: #0D6EFD; font-size: 1.1rem; letter-spacing: -0.3px; }
     .info-block { background: #F5F3EE; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
     .price-input {
       border: 2px solid #C8C4BC; border-radius: 8px; font-size: 1.2rem;
       padding: 12px 16px; width: 100%;
     }
-    .price-input:focus { outline: none; border-color: #2C2A25; }
+    .price-input:focus { outline: none; border-color: #0D6EFD; }
     .btn-submit {
-      background: #2C2A25; color: #fff; border: none;
+      background: #0D6EFD; color: #fff; border: none;
       padding: 12px 28px; border-radius: 8px; font-weight: 600;
       font-size: 1rem; cursor: pointer; width: 100%;
     }
-    .btn-submit:hover { background: #1a1916; }
+    .btn-submit:hover { background: #0a58ca; }
     .btn-decline {
       background: transparent; color: #4A4640;
       border: 1px solid #C8C4BC; padding: 10px 20px;
@@ -68,7 +68,7 @@
           </div>
           <div>
             <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Envoyé le</div>
-            <div style="font-weight: 600;"><%= @bidding_request.responded_at.strftime("%d/%m/%Y à %H:%M") %></div>
+            <div style="font-weight: 600;"><%= @bidding_request.responded_at&.strftime("%d/%m/%Y à %H:%M") %></div>
           </div>
           <div>
             <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Date limite</div>
@@ -248,7 +248,7 @@
     <div style="background: #F5F3EE; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px; font-size: 0.85rem; color: #4A4640;">
       💡 Vous avez un compte ?
       <%= link_to "Connectez-vous", new_artisan_session_path,
-            style: "color: #2C2A25; font-weight: 600; text-decoration: underline;" %>
+            style: "color: #0D6EFD; font-weight: 600; text-decoration: underline;" %>
       pour gérer toutes vos demandes depuis votre tableau de bord.
     </div>
   </div>
