@@ -508,6 +508,7 @@ end
 # Link artisans to new wizard categories based on their existing specialisations
 wizard_category_map = {
   "demolition_maconnerie"  => %w[maconnerie],
+  "isolation"              => %w[isolation],
   "toiture"                => %w[maconnerie isolation],
   "fenetres"               => %w[menuiserie isolation],
   "ventilation_chauffage"  => %w[chauffage plomberie],

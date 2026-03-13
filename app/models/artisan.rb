@@ -9,7 +9,10 @@ class Artisan < ApplicationRecord
   validates :rating, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }, allow_nil: true
 
   scope :active, -> { where(active: true) }
-  scope :for_postcode, ->(zip) { where("LEFT(postcode, 2) = ?", zip.to_s.first(2)) if zip.present? }
+  scope :for_postcode, ->(zip) {
+    dept = zip.to_s.scan(/\d+/).join.first(2)
+    dept.present? ? where("LEFT(postcode, 2) = ?", dept) : all
+  }
   scope :for_category, lambda { |category_id|
     joins(:artisan_categories).where(artisan_categories: { work_category_id: category_id })
   }
