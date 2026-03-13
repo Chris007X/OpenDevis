@@ -441,6 +441,32 @@ artisan_data.each do |ad|
   end
 end
 
+# Link artisans to new wizard categories based on their existing specialisations
+wizard_category_map = {
+  "demolition_maconnerie"  => %w[maconnerie],
+  "toiture"                => %w[maconnerie isolation],
+  "fenetres"               => %w[menuiserie isolation],
+  "ventilation_chauffage"  => %w[chauffage plomberie],
+  "menuiseries_interieures" => %w[menuiserie],
+  "peintures"              => %w[peinture],
+  "cuisine"                => %w[plomberie electricite],
+  "salle_de_bain_wc"       => %w[plomberie carrelage]
+}
+
+wizard_category_map.each do |new_slug, related_slugs|
+  new_cat = WorkCategory.find_by(slug: new_slug)
+  next unless new_cat
+
+  related_slugs.each do |old_slug|
+    old_cat = WorkCategory.find_by(slug: old_slug)
+    next unless old_cat
+
+    old_cat.artisans.each do |artisan|
+      ArtisanCategory.find_or_create_by!(artisan: artisan, work_category: new_cat)
+    end
+  end
+end
+
 puts "Seeding bidding rounds for Marc Dubois..."
 
 marc   = Artisan.find_by!(email: "marc.dubois@artisan-maconnerie.fr")
