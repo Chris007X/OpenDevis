@@ -215,11 +215,14 @@
          data-url-analyze-endpoint-value="<%= wizard_analyze_url_path %>">
       <div class="d-flex gap-2">
         <input type="text" class="form-control" placeholder="https://www.seloger.com/annonces/..."
-               data-url-analyze-target="input">
-        <button class="btn btn-outline-secondary" type="button"
+               data-url-analyze-target="input"
+               data-action="input->url-analyze#toggleBtn">
+        <button class="btn" type="button"
+                disabled
                 data-action="click->url-analyze#analyze"
-                data-url-analyze-target="btn">
-          Analyser ✨
+                data-url-analyze-target="btn"
+                style="border-radius: 8px; padding: 0.375rem 0.85rem; font-size: 0.9rem; font-weight: 500; white-space: nowrap; background: #C8C4BC; color: #4A4640; border: 1px solid #C8C4BC; cursor: not-allowed;">
+          Analyser
         </button>
       </div>
       <div data-url-analyze-target="status" hidden></div>

@@ -43,8 +43,12 @@
   <div class="container-fluid d-flex align-items-center justify-content-between">
 
     <%# Brand %>
-    <%= link_to root_path, class: "od-brand me-4" do %>
-      Open<span style="color: #2563eb;">Devis</span>
+    <% if user_signed_in? %>
+      <span class="od-brand me-4">Open<span style="color: #2563eb;">Devis</span></span>
+    <% else %>
+      <%= link_to root_path, class: "od-brand me-4" do %>
+        Open<span style="color: #2563eb;">Devis</span>
+      <% end %>
     <% end %>
 
     <%# Nav links (desktop) %>

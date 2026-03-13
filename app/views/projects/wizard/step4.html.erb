@@ -67,6 +67,127 @@
     transition: background 0.15s;
   }
   .generate-btn:hover { background: #1a1916; }
+
+  /* ── Generation loader overlay ───────────────────────────────────────────── */
+  #generation-loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #fff;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .loader-house {
+    width: 120px;
+    height: 120px;
+  }
+
+  /* House outline draws itself */
+  .house-outline {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 320;
+    stroke-dashoffset: 320;
+    animation: draw-house 1.4s ease forwards;
+  }
+
+  /* Details appear after outline */
+  .house-door {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: fade-in 0.4s ease 1.2s forwards;
+  }
+  .house-window {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: fade-in 0.4s ease 1.4s forwards;
+  }
+  .house-window-2 {
+    animation-delay: 1.55s;
+  }
+  .house-chimney {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: fade-in 0.4s ease 1.0s forwards;
+  }
+
+  /* Smoke puffs */
+  .smoke-puff {
+    fill: #93c5fd;
+    opacity: 0;
+    animation: puff 1.8s ease-in-out 1.8s infinite;
+  }
+  .smoke-puff-2 { animation-delay: 2.4s; }
+  .smoke-puff-3 { animation-delay: 3.0s; }
+
+  /* Ground line with dots (tools) */
+  .ground-line {
+    stroke: #DBEAFE;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 4 4;
+    animation: none;
+  }
+
+  @keyframes draw-house {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes fade-in {
+    to { opacity: 1; }
+  }
+  @keyframes puff {
+    0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+    40%  { opacity: 0.7; transform: translateY(-6px) scale(1); }
+    100% { opacity: 0; transform: translateY(-14px) scale(1.3); }
+  }
+
+  /* Dots loader */
+  .loader-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .loader-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2563eb;
+    animation: bounce-dot 1.2s ease-in-out infinite;
+  }
+  .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40%           { transform: scale(1.0); opacity: 1; }
+  }
+
+  .loader-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2C2A25;
+    letter-spacing: -0.2px;
+  }
+  .loader-subtext {
+    font-size: 0.85rem;
+    color: #9B9588;
+    margin-top: 0.25rem;
+    text-align: center;
+  }
 </style>
 <% end %>
 
@@ -185,12 +306,64 @@ reno_labels = {
   <% end %>
 
   <%# Generate form — standing is set to Standard by default %>
-  <%= form_with url: wizard_generate_path, method: :post do |f| %>
+  <%= form_with url: wizard_generate_path, method: :post, id: "generate-form" do |f| %>
     <input type="hidden" name="standing" value="2">
 
     <div class="d-flex justify-content-between align-items-center mt-4">
       <%= link_to "← Retour", @project_type == "construction" ? wizard_step1_path : wizard_step3_path, class: "btn btn-ghost-od" %>
-      <button type="submit" class="generate-btn">Générer l'estimation ✨</button>
+      <button type="submit" class="generate-btn" id="generate-btn">Générer l'estimation ✨</button>
     </div>
   <% end %>
 </div>
+
+<%# ── Fullscreen generation loader ─────────────────────────────────────── %>
+<div id="generation-loader">
+  <svg class="loader-house" viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ground dashed line -->
+    <line class="ground-line" x1="10" y1="85" x2="90" y2="85" />
+
+    <!-- Chimney -->
+    <polyline class="house-chimney" points="68,42 68,28 78,28 78,42" />
+
+    <!-- House outline: walls + roof as one path -->
+    <path class="house-outline"
+          d="M15,85 L15,50 L50,18 L85,50 L85,85 Z" />
+
+    <!-- Door -->
+    <path class="house-door"
+          d="M42,85 L42,65 Q42,62 45,62 L55,62 Q58,62 58,65 L58,85" />
+
+    <!-- Window left -->
+    <rect class="house-window" x="22" y="55" width="16" height="14" rx="2" />
+    <line class="house-window" x1="30" y1="55" x2="30" y2="69" />
+    <line class="house-window" x1="22" y1="62" x2="38" y2="62" />
+
+    <!-- Window right -->
+    <rect class="house-window house-window-2" x="62" y="55" width="16" height="14" rx="2" />
+    <line class="house-window house-window-2" x1="70" y1="55" x2="70" y2="69" />
+    <line class="house-window house-window-2" x1="62" y1="62" x2="78" y2="62" />
+
+    <!-- Smoke puffs from chimney -->
+    <circle class="smoke-puff" cx="73" cy="23" r="3.5" />
+    <circle class="smoke-puff smoke-puff-2" cx="76" cy="17" r="2.5" />
+    <circle class="smoke-puff smoke-puff-3" cx="71" cy="12" r="2" />
+  </svg>
+
+  <div style="text-align: center;">
+    <div class="loader-text">Génération de l'estimation…</div>
+    <div class="loader-subtext">Calcul des postes et des tarifs en cours</div>
+  </div>
+
+  <div class="loader-dots">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<script>
+  document.getElementById("generate-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var form = this;
+    document.getElementById("generation-loader").style.display = "flex";
+    setTimeout(function() { form.submit(); }, 3000);
+  });
+</script>
