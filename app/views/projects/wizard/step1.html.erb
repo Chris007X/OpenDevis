@@ -379,7 +379,7 @@
         <%# Titre du projet — optional %>
         <div class="col-12">
           <div class="field-label">Titre du projet</div>
-          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
+          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "Ex : La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
         </div>
 
         <%# Type de bien — required, radio cards (hidden for construction flow) %>
@@ -441,7 +441,7 @@
                    inputmode="numeric"
                    value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"
                    data-city-autocomplete-target="input"
-                   data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits keydown->city-autocomplete#handleKeydown input->wizard-form#validate"
+                   data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits keydown->city-autocomplete#handleKeydown input->wizard-form#validate blur->city-autocomplete#handleBlur"
                    data-required="true"
                    data-field-name="location_zip"
                    autocomplete="off">

@@ -101,7 +101,7 @@ module Projects
         if session[:wizard_project_type] == "construction"
           session[:wizard_renovation_type] = "construction"
           session[:wizard_categories] = CATEGORY_GROUPS.flat_map { |g| g[:slugs] }
-          redirect_to wizard_step2_path
+          redirect_to construction_step2_path
         elsif session[:wizard_project_type] == "extension"
           session[:wizard_renovation_type] = "extension"
           redirect_to wizard_step3_path

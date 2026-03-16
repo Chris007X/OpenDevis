@@ -160,6 +160,17 @@ export default class extends Controller {
     this.hideResults()
   }
 
+  handleBlur() {
+    const raw = this.inputTarget.value.trim()
+    const digits = raw.replace(/\D/g, "")
+    if (digits.length === 5) {
+      // Accept raw 5-digit zip without requiring a suggestion click
+      this.hiddenTarget.value = raw
+      this.inputTarget.dispatchEvent(new Event("input", { bubbles: true }))
+    }
+    this.hideResults()
+  }
+
   clickOutside(event) {
     if (!this.element.contains(event.target)) {
       this.hideResults()
