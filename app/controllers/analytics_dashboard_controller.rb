@@ -37,6 +37,18 @@ class AnalyticsDashboardController < ApplicationController
                                       .order(created_at: :desc)
                                       .limit(50)
 
+    @top_clicks = AnalyticsEvent.recent(@days)
+                                .where(event_type: "heatmap_click")
+                                .pluck(
+                                  Arel.sql("properties->>'element'"),
+                                  Arel.sql("properties->>'href'"),
+                                  :page_path
+                                )
+                                .group_by { |el, href, _| [el&.strip&.truncate(50), href] }
+                                .transform_values(&:count)
+                                .sort_by { |_, v| -v }
+                                .first(10)
+
     @recent_events   = AnalyticsEvent.order(created_at: :desc).limit(25)
 
     load_active_users

@@ -323,16 +323,9 @@
       <div class="col-lg-7">
         <div class="od-card p-4 h-100">
           <div class="an-section-title">Éléments les plus cliqués</div>
-          <% top_clicks = AnalyticsEvent.recent(@days)
-                            .where(event_type: "heatmap_click")
-                            .pluck("properties->>'element'", "properties->>'href'", "page_path")
-                            .group_by { |el, href, _page| [el&.truncate(50), href] }
-                            .transform_values(&:count)
-                            .sort_by { |_, v| -v }
-                            .first(10) %>
-          <% if top_clicks.any? %>
-            <% max_cl = top_clicks.map { |_, v| v }.max.to_f %>
-            <% top_clicks.each do |(label, href), count| %>
+          <% if @top_clicks.any? %>
+            <% max_cl = @top_clicks.map { |_, v| v }.max.to_f %>
+            <% @top_clicks.each do |(label, href), count| %>
               <div class="bar-row">
                 <div class="bar-label" style="width: 240px;" title="<%= label %>">
                   <span style="font-size: 0.78rem;"><%= label.presence || "(sans label)" %></span>
@@ -352,6 +345,7 @@
               <span style="font-size: 0.78rem;">Les données apparaîtront après les premières visites.</span>
             </div>
           <% end %>
+
         </div>
       </div>
     </div>
