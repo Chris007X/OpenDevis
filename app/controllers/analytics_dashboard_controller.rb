@@ -5,7 +5,13 @@ class AnalyticsDashboardController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def index
+    @tab  = params[:tab].presence_in(%w[overview users]) || "overview"
     @days = params.fetch(:days, 7).to_i.clamp(1, 365)
+
+    if @tab == "users"
+      load_all_users
+      return
+    end
 
     @total_events    = AnalyticsEvent.recent(@days).count
     @total_sessions  = AnalyticsSession.recent(@days).count
@@ -63,12 +69,60 @@ class AnalyticsDashboardController < ApplicationController
                        .transform_keys { |d| d.to_s }
   end
 
+  def user_detail
+    @user = User.find(params[:user_id])
+    @days = params.fetch(:days, 30).to_i.clamp(1, 365)
+
+    @events = AnalyticsEvent
+                .where(user_id: @user.id.to_s)
+                .where("created_at > ?", @days.days.ago)
+                .order(created_at: :desc)
+
+    @sessions = AnalyticsSession
+                  .where(user_id: @user.id.to_s)
+                  .where("started_at > ?", @days.days.ago)
+                  .order(started_at: :desc)
+
+    @pages_visited = @events.where(event_type: "page_view")
+                             .group(:page_path)
+                             .count
+                             .sort_by { |_, v| -v }
+                             .to_h
+
+    @total_time_s = @sessions.sum(:duration_seconds)
+  end
+
   def active_users
     load_active_users
     render partial: "active_users"
   end
 
   private
+
+  def load_all_users
+    # All users who ever fired an analytics event, newest activity first
+    user_ids = AnalyticsEvent.where.not(user_id: nil).distinct.pluck(:user_id)
+    users_map = User.where(id: user_ids).index_by { |u| u.id.to_s }
+
+    @all_users = user_ids.filter_map do |uid|
+      user = users_map[uid.to_s]
+      next unless user
+
+      last_event   = AnalyticsEvent.where(user_id: uid.to_s).order(created_at: :desc).first
+      last_session = AnalyticsSession.where(user_id: uid.to_s).order(started_at: :desc).first
+      first_seen   = AnalyticsEvent.where(user_id: uid.to_s).order(created_at: :asc).first
+
+      {
+        user:          user,
+        event_count:   AnalyticsEvent.where(user_id: uid.to_s).count,
+        session_count: AnalyticsSession.where(user_id: uid.to_s).count,
+        last_seen:     last_event&.created_at,
+        first_seen:    first_seen&.created_at,
+        last_page:     last_event&.page_path,
+        total_time_s:  AnalyticsSession.where(user_id: uid.to_s).sum(:duration_seconds)
+      }
+    end.sort_by { |r| -(r[:last_seen]&.to_i || 0) }
+  end
 
   def load_active_users
     active_sessions = AnalyticsSession

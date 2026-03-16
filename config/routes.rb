@@ -69,7 +69,8 @@ Rails.application.routes.draw do
 
   post "analytics/events", to: "analytics#create", as: :analytics_events
   get  "analytics",              to: "analytics_dashboard#index",        as: :analytics_dashboard
-  get  "analytics/active_users", to: "analytics_dashboard#active_users", as: :analytics_active_users
+  get  "analytics/active_users",      to: "analytics_dashboard#active_users",  as: :analytics_active_users
+  get  "analytics/users/:user_id",    to: "analytics_dashboard#user_detail",   as: :analytics_user_detail
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

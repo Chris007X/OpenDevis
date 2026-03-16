@@ -96,6 +96,16 @@
 
   <div class="container pb-5" style="max-width: 1200px;">
 
+    <%# ── Tab nav ─────────────────────────────────────────────── %>
+    <div style="display: flex; gap: 0.25rem; border-bottom: 1.5px solid #E8E4DC; margin-bottom: 2rem;">
+      <%= link_to analytics_dashboard_path(days: @days), style: "padding: 0.6rem 1.1rem; font-size: 0.88rem; font-weight: 600; text-decoration: none; border-bottom: 2.5px solid #{@tab == 'overview' ? '#2563EB' : 'transparent'}; color: #{@tab == 'overview' ? '#2563EB' : '#9B9588'}; margin-bottom: -1.5px;" do %>
+        Vue d'ensemble
+      <% end %>
+      <%= link_to analytics_dashboard_path(tab: "users"), style: "padding: 0.6rem 1.1rem; font-size: 0.88rem; font-weight: 600; text-decoration: none; border-bottom: 2.5px solid #{@tab == 'users' ? '#2563EB' : 'transparent'}; color: #{@tab == 'users' ? '#2563EB' : '#9B9588'}; margin-bottom: -1.5px;" do %>
+        Utilisateurs
+      <% end %>
+    </div>
+
     <%# ── KPI row ──────────────────────────────────────────────── %>
     <div class="row g-3 mb-4">
       <div class="col-6 col-lg">
@@ -142,6 +152,73 @@
         </div>
       </div>
     </div>
+
+    <% if @tab == "users" %>
+      <%# ── All users tab ───────────────────────────────────────── %>
+      <div class="od-card">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Utilisateur</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Email</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Première visite</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Dernière visite</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Sessions</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Événements</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Temps total</th>
+                <th style="font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.75rem 1rem; text-align: left;">Dernière page</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @all_users.any? %>
+                <% @all_users.each do |row| %>
+                  <tr style="cursor: pointer;" onclick="window.location='<%= analytics_user_detail_path(row[:user].id) %>'">
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8;">
+                      <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <span style="width: 32px; height: 32px; border-radius: 50%; background: #2C2A25; color: #fff; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                          <%= (row[:user].full_name.presence || row[:user].email).first.upcase %>
+                        </span>
+                        <%= link_to(row[:user].full_name.presence || "Utilisateur ##{row[:user].id}", analytics_user_detail_path(row[:user].id), style: "font-weight: 600; color: #2563EB; text-decoration: none; font-size: 0.88rem;") %>
+                      </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #4A4640;"><%= row[:user].email %></td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #9B9588; white-space: nowrap;"><%= row[:first_seen] ? l(row[:first_seen], format: :short) : "—" %></td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #9B9588; white-space: nowrap;">
+                      <% if row[:last_seen] %>
+                        <% diff = Time.current - row[:last_seen] %>
+                        <span title="<%= l(row[:last_seen], format: :long) %>">
+                          <% if diff < 3600 %>il y a <%= (diff / 60).to_i %>min
+                          <% elsif diff < 86400 %>il y a <%= (diff / 3600).to_i %>h
+                          <% else %><%= l(row[:last_seen], format: :short) %>
+                          <% end %>
+                        </span>
+                      <% else %>—<% end %>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #2C2A25;"><%= row[:session_count] %></td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #2C2A25;"><%= number_with_delimiter(row[:event_count]) %></td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-size: 0.83rem; color: #2C2A25;">
+                      <% s = row[:total_time_s].to_i %>
+                      <% if s >= 3600 %><%= "#{s/3600}h#{(s%3600)/60}m" %>
+                      <% elsif s >= 60 %><%= "#{s/60}m#{s%60}s" %>
+                      <% else %><%= "#{s}s" %>
+                      <% end %>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; border-bottom: 1px solid #F0EDE8; font-family: ui-monospace, monospace; font-size: 0.78rem; color: #4A4640;"><%= row[:last_page].presence || "—" %></td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="8" style="padding: 3rem; text-align: center; color: #9B9588; font-size: 0.88rem;">
+                    Aucun utilisateur connecté enregistré pour le moment.
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% else %>
 
     <%# ── Utilisateurs actifs (live, rafraîchi toutes les 10s) ── %>
     <div class="od-card p-4 mb-4">
@@ -230,14 +307,14 @@
               <% @recent_user_activity.each do |row| %>
                 <tr>
                   <td>
-                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <%= link_to analytics_user_detail_path(row[:user].id), style: "display: flex; align-items: center; gap: 0.6rem; text-decoration: none;" do %>
                       <span style="width: 30px; height: 30px; border-radius: 50%; background: #2C2A25; color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <%= (row[:user].full_name.presence || row[:user].email).first.upcase %>
                       </span>
-                      <span style="font-weight: 600; color: #2C2A25;">
+                      <span style="font-weight: 600; color: #2563EB;">
                         <%= row[:user].full_name.presence || "Utilisateur ##{row[:user].id}" %>
                       </span>
-                    </div>
+                    <% end %>
                   </td>
                   <td class="mono"><%= row[:user].email %></td>
                   <td><%= number_with_delimiter(row[:event_count]) %></td>
@@ -451,6 +528,8 @@
         </table>
       </div>
     </div>
+
+  <% end %><%# /tab %>
 
   </div><%# /container %>
 </div><%# /an-page %>

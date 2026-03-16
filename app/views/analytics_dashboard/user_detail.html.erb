@@ -1,0 +1,188 @@
+<% content_for :head do %>
+<style>
+  .an-page { background: #FAFAF7; min-height: 100vh; }
+  .an-header { border-bottom: 1.5px solid #E8E4DC; background: #fff; padding: 1.25rem 0; margin-bottom: 2rem; }
+  .an-title { font-size: 1.4rem; font-weight: 700; color: #2C2A25; }
+  .an-subtitle { font-size: 0.85rem; color: #9B9588; margin-top: 2px; }
+  .an-section-title { font-size: 0.95rem; font-weight: 700; color: #2C2A25; margin-bottom: 1rem; }
+  .an-table { width: 100%; border-collapse: collapse; }
+  .an-table thead th { font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.5rem 0.75rem; }
+  .an-table tbody td { font-size: 0.85rem; color: #2C2A25; padding: 0.6rem 0.75rem; border-bottom: 1px solid #F0EDE8; vertical-align: middle; }
+  .an-table tbody tr:last-child td { border-bottom: none; }
+  .an-table tbody tr:hover td { background: #FAFAF7; }
+  .mono { font-family: ui-monospace, monospace; font-size: 0.8rem; color: #4A4640; }
+  .ev-pill { display: inline-block; padding: 0.15em 0.65em; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #EDE9E0; color: #4A4640; }
+  .ev-pill.page_view    { background: #DBEAFE; color: #1D4ED8; }
+  .ev-pill.time_on_page { background: #D1FAE5; color: #065F46; }
+  .ev-pill.js_error     { background: #FEE2E2; color: #991B1B; }
+  .ev-pill.form_submit  { background: #FEF9C3; color: #92400E; }
+  .ev-pill.click        { background: #EDE9FE; color: #5B21B6; }
+  .bar-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.55rem; }
+  .bar-label { font-size: 0.8rem; color: #4A4640; width: 220px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, monospace; }
+  .bar-track { flex: 1; height: 8px; background: #F0EDE8; border-radius: 4px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 4px; background: #2563EB; }
+  .bar-count { font-size: 0.8rem; color: #9B9588; width: 44px; text-align: right; flex-shrink: 0; }
+  .kpi-card { background: #fff; border: 1.5px solid #E8E4DC; border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .kpi-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9B9588; margin-bottom: 0.4rem; }
+  .kpi-value { font-size: 1.6rem; font-weight: 700; color: #2C2A25; }
+</style>
+<% end %>
+
+<div class="an-page">
+  <div class="an-header">
+    <div class="container" style="max-width: 1100px;">
+      <div class="d-flex align-items-center gap-3">
+        <%= link_to analytics_dashboard_path, class: "od-back-link" do %>
+          ← Retour au dashboard
+        <% end %>
+        <div>
+          <div class="an-title">
+            <span style="width: 36px; height: 36px; border-radius: 50%; background: #2C2A25; color: #fff; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-right: 0.5rem;">
+              <%= (@user.full_name.presence || @user.email).first.upcase %>
+            </span>
+            <%= @user.full_name.presence || "Utilisateur ##{@user.id}" %>
+          </div>
+          <div class="an-subtitle"><%= @user.email %> · <%= @days %> derniers jours</div>
+        </div>
+        <div class="ms-auto d-flex gap-2">
+          <%= link_to "7j",  analytics_user_detail_path(@user.id, days: 7),  class: "period-tab #{@days == 7  ? 'active' : ''}", style: "padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1.5px solid #C8C4BC; color: #4A4640; text-decoration: none;" %>
+          <%= link_to "30j", analytics_user_detail_path(@user.id, days: 30), class: "period-tab #{@days == 30 ? 'active' : ''}", style: "padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1.5px solid #C8C4BC; color: #4A4640; text-decoration: none;" %>
+          <%= link_to "90j", analytics_user_detail_path(@user.id, days: 90), class: "period-tab #{@days == 90 ? 'active' : ''}", style: "padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1.5px solid #C8C4BC; color: #4A4640; text-decoration: none;" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb-5" style="max-width: 1100px;">
+
+    <%# ── KPIs ── %>
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Événements</div>
+          <div class="kpi-value"><%= number_with_delimiter(@events.count) %></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Sessions</div>
+          <div class="kpi-value"><%= @sessions.count %></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Pages vues</div>
+          <div class="kpi-value"><%= @pages_visited.values.sum %></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Temps total</div>
+          <div class="kpi-value">
+            <% s = @total_time_s.to_i %>
+            <% if s >= 3600 %><%= "#{s / 3600}h#{(s % 3600) / 60}m" %>
+            <% elsif s >= 60 %><%= "#{s / 60}m#{s % 60}s" %>
+            <% else %><%= "#{s}s" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <%# ── Pages visitées ── %>
+      <div class="col-lg-5">
+        <div class="od-card p-4 h-100">
+          <div class="an-section-title">Pages visitées</div>
+          <% if @pages_visited.any? %>
+            <% max_v = @pages_visited.values.max.to_f %>
+            <% @pages_visited.each do |path, count| %>
+              <div class="bar-row">
+                <div class="bar-label" title="<%= path %>"><%= path.presence || "(root)" %></div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width: <%= (count / max_v * 100).round %>%;"></div>
+                </div>
+                <div class="bar-count"><%= count %></div>
+              </div>
+            <% end %>
+          <% else %>
+            <div style="color: #9B9588; font-size: 0.85rem;">Aucune page vue.</div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# ── Sessions ── %>
+      <div class="col-lg-7">
+        <div class="od-card p-4 h-100">
+          <div class="an-section-title">Sessions</div>
+          <% if @sessions.any? %>
+            <table class="an-table">
+              <thead>
+                <tr>
+                  <th>Début</th>
+                  <th>Durée</th>
+                  <th>Pages</th>
+                  <th>Première page</th>
+                  <th>Dernière page</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @sessions.each do |s| %>
+                  <tr>
+                    <td style="white-space: nowrap;"><%= l(s.started_at, format: :short) if s.started_at %></td>
+                    <td>
+                      <% d = s.duration_seconds.to_i %>
+                      <% if d >= 3600 %><%= "#{d/3600}h#{(d%3600)/60}m" %>
+                      <% elsif d >= 60 %><%= "#{d/60}m#{d%60}s" %>
+                      <% else %><%= "#{d}s" %>
+                      <% end %>
+                    </td>
+                    <td><%= s.page_views %></td>
+                    <td class="mono"><%= s.first_page.presence || "—" %></td>
+                    <td class="mono"><%= s.last_page.presence || "—" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div style="color: #9B9588; font-size: 0.85rem;">Aucune session.</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# ── Chronologie complète ── %>
+    <div class="od-card">
+      <div class="p-4 pb-0">
+        <div class="an-section-title">Chronologie complète</div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="an-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Page</th>
+              <th>Chargement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @events.any? %>
+              <% @events.limit(200).each do |ev| %>
+                <tr>
+                  <td style="white-space: nowrap; color: #9B9588; font-size: 0.78rem;"><%= l(ev.created_at, format: :short) %></td>
+                  <td><span class="ev-pill <%= ev.event_type %>"><%= ev.event_type %></span></td>
+                  <td class="mono"><%= ev.page_path.presence || "—" %></td>
+                  <td><%= ev.page_load_time_ms ? "#{ev.page_load_time_ms}ms" : "—" %></td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr><td colspan="4" class="text-center py-4" style="color: #9B9588;">Aucun événement.</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
