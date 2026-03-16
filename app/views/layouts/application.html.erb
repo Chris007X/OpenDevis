@@ -8,21 +8,29 @@
     <meta name="application-name" content="OpenDevis">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="google-site-verification" content="ayDK3rWNHE9R_d4agAi0vVi4us9Kmoihi-avVeRBGZk" />
+    <% if page_keywords.present? %>
+      <meta name="keywords" content="<%= page_keywords %>">
+    <% end %>
 
-    <%# Open Graph %>
+    <%# ── Open Graph (Facebook, LinkedIn, WhatsApp) ── %>
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="OpenDevis">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:title" content="<%= page_title %>">
     <meta property="og:description" content="<%= page_description %>">
     <meta property="og:url" content="<%= canonical_url %>">
+    <meta property="og:image" content="<%= og_image_url %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<%= page_title %>">
 
-    <%# Twitter Card %>
+    <%# ── Twitter Card ── %>
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= page_title %>">
     <meta name="twitter:description" content="<%= page_description %>">
+    <meta name="twitter:image" content="<%= og_image_url %>">
 
-    <%# Canonical %>
+    <%# ── Canonical URL ── %>
     <link rel="canonical" href="<%= canonical_url %>">
 
     <%= csrf_meta_tags %>
