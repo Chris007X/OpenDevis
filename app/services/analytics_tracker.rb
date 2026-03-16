@@ -9,22 +9,19 @@
 #
 # All writes are async via TrackingJob to avoid blocking the request cycle.
 class AnalyticsTracker
-  # Public API — enqueues the event for async processing.
+  # Public API — writes synchronously. Overhead is <5ms and analytics must never
+  # crash the app, so all errors are rescued and logged.
   def self.track(event_type:, session_id: nil, user_id: nil, page_path: nil,
                  referrer: nil, user_agent: nil, ip_address: nil,
                  page_load_time_ms: nil, completed: false, properties: {})
-    TrackingJob.perform_later(
-      event_type,
-      session_id&.to_s,
-      user_id&.to_s,
-      page_path,
-      referrer,
-      user_agent,
-      ip_address,
-      page_load_time_ms,
-      completed,
-      properties.to_h
+    record!(
+      event_type: event_type, session_id: session_id&.to_s, user_id: user_id&.to_s,
+      page_path: page_path, referrer: referrer, user_agent: user_agent,
+      ip_address: ip_address, page_load_time_ms: page_load_time_ms,
+      completed: completed, properties: properties.to_h
     )
+  rescue StandardError => e
+    Rails.logger.warn "[Analytics] Track failed: #{e.message}"
   end
 
   # Called by TrackingJob — actual DB writes happen here.
