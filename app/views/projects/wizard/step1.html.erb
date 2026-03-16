@@ -379,7 +379,7 @@
         <%# Titre du projet — optional %>
         <div class="col-12">
           <div class="field-label">Titre du projet</div>
-          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
+          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "Ex : La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
         </div>
 
         <%# Type de bien — required, radio cards (hidden for construction flow) %>

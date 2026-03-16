@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   get  "projects/wizard/step1",    to: "projects/wizard#step1",      as: :wizard_step1
   post "projects/wizard/step1",    to: "projects/wizard#save_step1"
   get  "projects/wizard/step2",    to: "projects/wizard#step2",      as: :wizard_step2
+
+  # Construction-specific flow
+  get  "projects/construction/step2", to: "projects/construction#step2",      as: :construction_step2
+  post "projects/construction/step2", to: "projects/construction#save_step2"
   post "projects/wizard/step2",    to: "projects/wizard#save_step2"
   get  "projects/wizard/step3",    to: "projects/wizard#step3",      as: :wizard_step3
   post "projects/wizard/step3",    to: "projects/wizard#save_step3"

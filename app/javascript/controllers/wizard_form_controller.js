@@ -22,6 +22,11 @@ export default class extends Controller {
       if (field.type === "number" && field.value !== "" && parseFloat(field.value) < 0) {
         return false
       }
+      // Postal code must have exactly 6 digits
+      if ((field.name || field.dataset.fieldName || "").includes("location_zip")) {
+        const digits = field.value.replace(/\D/g, "")
+        return digits.length === 5
+      }
       return field.value.trim() !== ""
     })
 
@@ -73,6 +78,9 @@ export default class extends Controller {
         if (wrapper.querySelector(".field-error-js")) return
       } else if (field.type === "number") {
         isEmpty = field.value.trim() === "" || parseFloat(field.value) <= 0
+      } else if ((field.name || field.dataset.fieldName || "").includes("location_zip")) {
+        const digits = field.value.replace(/\D/g, "")
+        isEmpty = digits.length !== 5
       } else {
         isEmpty = field.value.trim() === ""
       }

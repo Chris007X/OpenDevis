@@ -314,7 +314,7 @@ reno_labels = {
     <input type="hidden" name="standing" value="2">
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", @project_type == "construction" ? wizard_step1_path : wizard_step3_path, class: "btn btn-ghost-od" %>
+      <%= link_to "← Retour", @project_type == "construction" ? construction_step2_path : wizard_step3_path, class: "btn btn-ghost-od" %>
       <button type="submit" class="generate-btn" id="generate-btn">Générer l'estimation ✨</button>
     </div>
   <% end %>

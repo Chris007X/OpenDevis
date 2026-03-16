@@ -84,10 +84,10 @@ module Projects
       @errors = []
       @errors << :property_type if property_url.blank?
       @errors << :total_surface_sqm if @project.total_surface_sqm.blank? || @project.total_surface_sqm <= 0
-      # Accept "75001" or "Paris (75001)" — extract and validate the 5-digit postal code
+      # Accept raw digits or "Paris (750011)" format — extract digits and require exactly 6
       zip = @project.location_zip.to_s.strip
-      zip_digits = zip[/(\d{5})/, 1]
-      @errors << :location_zip if zip.blank? || zip_digits.nil?
+      zip_digits = zip.gsub(/\D/, "")
+      @errors << :location_zip if zip.blank? || zip_digits.length != 5
       @errors.uniq!
 
       if @errors.any?
@@ -101,7 +101,7 @@ module Projects
         if session[:wizard_project_type] == "construction"
           session[:wizard_renovation_type] = "construction"
           session[:wizard_categories] = CATEGORY_GROUPS.flat_map { |g| g[:slugs] }
-          redirect_to wizard_step2_path
+          redirect_to construction_step2_path
         elsif session[:wizard_project_type] == "extension"
           session[:wizard_renovation_type] = "extension"
           redirect_to wizard_step3_path

@@ -1,0 +1,150 @@
+import { Controller } from "@hotwired/stimulus"
+
+// Handles construction/step2: room picker always open, decimal surfaces, two submit buttons.
+export default class extends Controller {
+  static targets = ["roomGroup", "roomCheckbox", "countControl", "countDisplay",
+                    "roomInstances", "surfaceError", "submit"]
+  static values = { totalSurface: Number }
+
+  connect() {
+    this.validate()
+  }
+
+  toggleRoom(event) {
+    const checkbox = event.currentTarget
+    const room = checkbox.dataset.room
+    this._updateRoomUI(room, checkbox.checked, 1)
+    if (checkbox.checked) {
+      this._renderInstances(room, 1)
+    }
+    this.validate()
+  }
+
+  increment(event) {
+    const room = event.currentTarget.dataset.room
+    const current = this._getCount(room)
+    if (current < 9) {
+      this._setCount(room, current + 1)
+      this._renderInstances(room, current + 1)
+    }
+  }
+
+  decrement(event) {
+    const room = event.currentTarget.dataset.room
+    const current = this._getCount(room)
+    if (current > 1) {
+      this._setCount(room, current - 1)
+      this._renderInstances(room, current - 1)
+    }
+  }
+
+  validate() {
+    const checkedRooms = this.roomCheckboxTargets.filter(cb => cb.checked)
+    const hasRooms = checkedRooms.length > 0
+
+    if (!hasRooms) {
+      this.submitTargets.forEach(btn => { btn.disabled = true })
+      this._hideSurfaceError()
+      return
+    }
+
+    if (this.hasTotalSurfaceValue && this.totalSurfaceValue > 0) {
+      const sum = this._computeSurfaceSum()
+      if (sum > this.totalSurfaceValue) {
+        this.submitTargets.forEach(btn => { btn.disabled = true })
+        this._showSurfaceError(sum, this.totalSurfaceValue)
+        return
+      }
+    }
+
+    this._hideSurfaceError()
+    this.submitTargets.forEach(btn => { btn.disabled = false })
+  }
+
+  syncSurface(event) {
+    const instance = event.currentTarget.closest(".room-instance")
+    if (!instance) return
+    const hiddenSurface = instance.querySelector(".room-field-surface")
+    if (hiddenSurface) hiddenSurface.value = event.currentTarget.value
+    this.validate()
+  }
+
+  // ── Private helpers ──────────────────────────────────────────────────
+
+  _updateRoomUI(room, checked, count) {
+    const countControl = this.countControlTargets.find(el => el.dataset.room === room)
+    const instancesContainer = this.roomInstancesTargets.find(el => el.dataset.room === room)
+
+    if (countControl) countControl.hidden = !checked
+    if (instancesContainer) {
+      instancesContainer.hidden = !checked
+      if (!checked) instancesContainer.innerHTML = ""
+    }
+    if (!checked) this._setCount(room, 1)
+  }
+
+  _getCount(room) {
+    const display = this.countDisplayTargets.find(el => el.dataset.room === room)
+    return display ? parseInt(display.textContent, 10) : 1
+  }
+
+  _setCount(room, count) {
+    const display = this.countDisplayTargets.find(el => el.dataset.room === room)
+    if (display) display.textContent = count
+  }
+
+  _renderInstances(room, count) {
+    const container = this.roomInstancesTargets.find(el => el.dataset.room === room)
+    if (!container) return
+
+    const existingSurfaces = {}
+    container.querySelectorAll(".room-instance").forEach((el, i) => {
+      const input = el.querySelector('input[type="number"]')
+      if (input && input.value) existingSurfaces[i] = input.value
+    })
+
+    let html = ""
+    for (let i = 0; i < count; i++) {
+      const label = count > 1 ? `${room} ${i + 1}` : room
+      const surface = existingSurfaces[i] || ""
+      html += `
+        <div class="room-instance" data-room-index>
+          <div class="room-instance-name">${label}</div>
+          <input type="hidden" class="room-field-name" name="rooms[][name]" value="${label}">
+          <input type="hidden" class="room-field-base" name="rooms[][base]" value="${room}">
+          <input type="hidden" class="room-field-surface" name="rooms[][surface]" value="${surface}">
+          <div class="room-instance-surface">
+            <input type="number" placeholder="—" min="0" step="any"
+                   data-action="input->construction-rooms#syncSurface"
+                   value="${surface}">
+            <span>m²</span>
+          </div>
+        </div>`
+    }
+
+    container.innerHTML = html
+    container.hidden = false
+  }
+
+  _computeSurfaceSum() {
+    let sum = 0
+    this.element.querySelectorAll(".room-field-surface").forEach(field => {
+      const val = parseFloat(field.value)
+      if (!isNaN(val)) sum += val
+    })
+    return sum
+  }
+
+  _showSurfaceError(sum, max) {
+    if (this.hasSurfaceErrorTarget) {
+      this.surfaceErrorTarget.textContent = `La somme des surfaces (${sum} m²) dépasse la surface totale du bien (${max} m²)`
+      this.surfaceErrorTarget.hidden = false
+    }
+  }
+
+  _hideSurfaceError() {
+    if (this.hasSurfaceErrorTarget) {
+      this.surfaceErrorTarget.hidden = true
+    }
+  }
+}
