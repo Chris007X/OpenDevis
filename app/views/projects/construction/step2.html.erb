@@ -1,12 +1,20 @@
+<% content_for :title, "Votre future construction — Estimation OpenDevis" %>
+
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
 <style>
-  .room-picker {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  @keyframes house-float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-4px); }
+  }
+  .house-subtitle-icon { animation: house-float 2.5s ease-in-out infinite; }
+
+.room-picker {
+    border: 1.5px solid #2C2A25;
+    border-radius: 12px;
     padding: 1.25rem;
     background: #FFFFFF;
-    margin-top: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .room-group {
@@ -103,16 +111,87 @@
     color: #4A4640;
   }
 
-  .generate-btn-loader {
-    display: none;
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
+  .generate-btn {
+    background: #2663EB;
+    color: #fff;
+    border: 1.5px solid #2663EB;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.85rem 2.2rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .generate-btn:hover:not(:disabled) { background: #1B4FC2; border-color: #1B4FC2; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(37,99,235,0.30); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Generation loader overlay ───────────────────────────────────────────── */
+  #generation-loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #fff;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .loader-house { width: 120px; height: 120px; }
+
+  .house-outline {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 320;
+    stroke-dashoffset: 320;
+    animation: draw-house 1.4s ease forwards;
+  }
+  .house-door {
+    fill: none; stroke: #2563eb; stroke-width: 2.5; stroke-linecap: round;
+    opacity: 0; animation: fade-in 0.4s ease 1.2s forwards;
+  }
+  .house-window {
+    fill: none; stroke: #2563eb; stroke-width: 2; stroke-linecap: round;
+    opacity: 0; animation: fade-in 0.4s ease 1.4s forwards;
+  }
+  .house-window-2 { animation-delay: 1.55s; }
+  .house-chimney {
+    fill: none; stroke: #2563eb; stroke-width: 2.5; stroke-linecap: round;
+    opacity: 0; animation: fade-in 0.4s ease 1.0s forwards;
+  }
+  .smoke-puff { fill: #93c5fd; opacity: 0; animation: puff 1.8s ease-in-out 1.8s infinite; }
+  .smoke-puff-2 { animation-delay: 2.4s; }
+  .smoke-puff-3 { animation-delay: 3.0s; }
+  .ground-line { stroke: #DBEAFE; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 4 4; }
+
+  @keyframes draw-house { to { stroke-dashoffset: 0; } }
+  @keyframes fade-in    { to { opacity: 1; } }
+  @keyframes puff {
+    0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+    40%  { opacity: 0.7; transform: translateY(-6px) scale(1); }
+    100% { opacity: 0; transform: translateY(-14px) scale(1.3); }
+  }
+
+  .loader-dots { display: flex; gap: 6px; }
+  .loader-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: #2563eb;
+    animation: bounce-dot 1.2s ease-in-out infinite;
+  }
+  .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40%           { transform: scale(1.0); opacity: 1; }
+  }
+  .loader-text { font-size: 1rem; font-weight: 600; color: #2C2A25; letter-spacing: -0.2px; }
+  .loader-subtext { font-size: 0.85rem; color: #9B9588; margin-top: 0.25rem; text-align: center; }
 </style>
 <% end %>
 
@@ -125,14 +204,21 @@
 <div class="container py-4" style="max-width: 620px;">
   <%= render "projects/wizard/stepper", current_step: 2, project_type: "construction" %>
 
-  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre future construction</h2>
-  <p class="mb-4" style="color: #4A4640;">Sélectionnez les pièces que vous souhaitez inclure dans votre maison neuve.</p>
+  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Votre future construction</h2>
+  <p class="mb-4" style="color: #4A4640; display: flex; align-items: center; gap: 0.4rem;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="flex-shrink:0;" class="house-subtitle-icon">
+      <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+    </svg>
+    Sélectionnez les pièces souhaitées :
+  </p>
 
-  <%= form_with url: construction_generate_path, method: :post,
-      data: { controller: "construction-step2" } do |f| %>
+  <%= form_with url: construction_generate_path, method: :post, id: "generate-form",
+      data: { controller: "construction-step2", action: "change->construction-step2#validate",
+              save_url: construction_step2_path } do |f| %>
 
     <input type="hidden" name="standing" value="2">
 
+    <%# Room picker — always open %>
     <div class="room-picker">
       <% Projects::WizardController::PRESET_ROOMS.each do |room| %>
         <%
@@ -185,20 +271,118 @@
           </div>
         </div>
       <% end %>
+
+      <%# Static "Autres" room — label customisable par l'utilisateur %>
+      <%
+        autres_instances = selected_rooms_data.select { |r| r["base"] == "Autres" }
+        autres_checked   = autres_instances.any?
+        autres_count     = [autres_instances.size, 1].max
+      %>
+      <div class="room-group" data-construction-step2-target="roomGroup" data-room="Autres">
+        <div class="room-group-header">
+          <label class="room-checkbox-label">
+            <input type="checkbox"
+                   data-construction-step2-target="roomCheckbox"
+                   data-room="Autres"
+                   <%= "checked" if autres_checked %>
+                   data-action="change->construction-step2#toggleRoom">
+            Autres
+          </label>
+          <div class="room-count-control" <%= "hidden" unless autres_checked %>
+               data-construction-step2-target="countControl" data-room="Autres">
+            <button type="button" class="btn-count"
+                    data-action="click->construction-step2#decrement"
+                    data-room="Autres">−</button>
+            <span class="count-display"
+                  data-construction-step2-target="countDisplay" data-room="Autres"><%= autres_count %></span>
+            <button type="button" class="btn-count"
+                    data-action="click->construction-step2#increment"
+                    data-room="Autres">+</button>
+          </div>
+        </div>
+        <div class="room-instances" <%= "hidden" unless autres_checked %>
+             data-construction-step2-target="roomInstances" data-room="Autres">
+          <% if autres_checked %>
+            <% autres_instances.each do |inst| %>
+              <div class="room-instance" data-room-index>
+                <input type="text" class="room-label-input"
+                       placeholder="Nom de la pièce…"
+                       data-action="input->construction-step2#syncLabel"
+                       value="<%= inst["name"] %>"
+                       style="flex:1;border:1px solid #C8C4BC;border-radius:6px;padding:0.25rem 0.5rem;font-size:0.85rem;color:#2C2A25;min-width:0;background:#fff;">
+                <input type="hidden" class="room-field-name" name="rooms[][name]" value="<%= inst["name"] %>">
+                <input type="hidden" class="room-field-base" name="rooms[][base]" value="Autres">
+                <input type="hidden" class="room-field-surface" name="rooms[][surface]" value="<%= inst["surface"] %>">
+                <div class="room-instance-surface">
+                  <input type="number" placeholder="—" min="0" step="any"
+                         data-action="input->construction-step2#syncSurface"
+                         value="<%= inst["surface"] %>">
+                  <span>m²</span>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Surface total bar %>
+      <div class="d-flex align-items-center justify-content-between mt-3 pt-3" style="border-top: 1px solid #E8E4DC;">
+        <span style="font-size: 0.9rem; color: #4A4640; font-weight: 500;">Surface totale :</span>
+        <span style="font-size: 0.95rem; font-weight: 700; color: #2C2A25;">
+          <span data-construction-step2-target="surfaceTotal">0</span> m²
+        </span>
+      </div>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to wizard_step1_path, class: "btn btn-ghost-od" do %>
+      <button type="button" class="btn btn-ghost-od"
+              data-action="click->construction-step2#goBack">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Retour
-      <% end %>
-      <button type="submit" class="btn btn-dark-od"
+      </button>
+      <button type="submit" class="generate-btn" id="generate-btn"
               data-construction-step2-target="submit"
-              disabled
-              onclick="this.querySelector('.generate-btn-loader').style.display='inline-block'; this.querySelector('.generate-btn-text').style.display='none';">
-        <span class="generate-btn-text">Générer l'estimation ✨</span>
-        <span class="generate-btn-loader"></span>
+              disabled>
+        Générer l'estimation ✨
       </button>
     </div>
   <% end %>
 </div>
+
+<%# ── Fullscreen generation loader ─────────────────────────────────────── %>
+<div id="generation-loader">
+  <svg class="loader-house" viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg">
+    <line class="ground-line" x1="10" y1="85" x2="90" y2="85" />
+    <polyline class="house-chimney" points="68,42 68,28 78,28 78,42" />
+    <path class="house-outline" d="M15,85 L15,50 L50,18 L85,50 L85,85 Z" />
+    <path class="house-door" d="M42,85 L42,65 Q42,62 45,62 L55,62 Q58,62 58,65 L58,85" />
+    <rect class="house-window" x="22" y="55" width="16" height="14" rx="2" />
+    <line class="house-window" x1="30" y1="55" x2="30" y2="69" />
+    <line class="house-window" x1="22" y1="62" x2="38" y2="62" />
+    <rect class="house-window house-window-2" x="62" y="55" width="16" height="14" rx="2" />
+    <line class="house-window house-window-2" x1="70" y1="55" x2="70" y2="69" />
+    <line class="house-window house-window-2" x1="62" y1="62" x2="78" y2="62" />
+    <circle class="smoke-puff" cx="73" cy="23" r="3.5" />
+    <circle class="smoke-puff smoke-puff-2" cx="76" cy="17" r="2.5" />
+    <circle class="smoke-puff smoke-puff-3" cx="71" cy="12" r="2" />
+  </svg>
+
+  <div style="text-align: center;">
+    <div class="loader-text">Génération de l'estimation…</div>
+    <div class="loader-subtext">Calcul des postes et des tarifs en cours</div>
+  </div>
+
+  <div class="loader-dots">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<script>
+  document.getElementById("generate-form").addEventListener("submit", function(e) {
+    if (!this.action.includes("generate")) return;
+    e.preventDefault();
+    var form = this;
+    document.getElementById("generation-loader").style.display = "flex";
+    setTimeout(function() { form.submit(); }, 3000);
+  });
+</script>

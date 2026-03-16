@@ -10,6 +10,12 @@ module Projects
       @selected_rooms = session[:wizard_rooms] || []
     end
 
+    # POST /projects/construction/step2 (save & go back)
+    def save_step2
+      session[:wizard_rooms] = parse_rooms
+      redirect_to wizard_step1_path
+    end
+
     # POST /projects/construction/generate
     def generate
       @project = find_wizard_project || (redirect_to(wizard_step1_path) && return)
@@ -42,7 +48,7 @@ module Projects
         standing_levels: [1, 2, 3],
         room_categories: {},
         rooms_data: session[:wizard_rooms],
-        renovation_type: "construction"
+        renovation_type: "par_piece"
       )
     end
 
