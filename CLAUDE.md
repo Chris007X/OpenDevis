@@ -55,7 +55,9 @@ Artisan
 
 ### Key Model Details
 
+- `Project#status` enum: `{ in_progress: "in_progress", quote_requested: "quote_requested", quote_received: "quote_received", archived: "archived" }` (default: `"in_progress"`)
 - `Project#recompute_totals!` recalculates `total_exVAT` and `total_incVAT` from all work_items
+- `Project#total_incVAT_for_standing(level)` filters work_items in memory by standing_level, sums TTC — used for Éco→Premium price range display
 - `Project#photo_url` stores a local path (`/uploads/wizard_photos/…`) set during wizard step 1
 - `WorkItem` auto-triggers `recompute_totals!` on Project after save/destroy
 - `WorkCategory#slug` used for identification and wizard category filtering
@@ -105,6 +107,7 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 - Photo upload zone (drag/drop or click) → AJAX POST to `upload_photo` → saves to `/public/uploads/wizard_photos/` → stores URL in hidden `project[photo_url]`
 - Photo extraction from PDF is **not supported** (PDF::Reader extracts text only, not embedded images)
 - Project `name` field auto-fills on import with pattern: "Type Ville SURFACEm²" (e.g., "Appartement Paris 122m²")
+- Postal code: max 5 digits, letters blocked, does not block "Suivant" if not confirmed via autocomplete
 - Routes: construction → step4, extension → step3, renovation → step2
 
 **Step 2 — Type de rénovation** (`/projects/wizard/step2`):
@@ -119,19 +122,21 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 
 **Step 4 — Récapitulatif** (`/projects/wizard/step4`):
 - Summary of all selections + standing level selector (Éco/Standard/Premium)
-- "Générer l'estimation ✨" → creates rooms + work items (3 per category × standing level) → redirects to `projects#show`
+- "Générer l'estimation ✨" → shows fullscreen SVG house loader (3 seconds), then creates rooms + work items (3 per category × standing level) → redirects to `projects#show`
 - Standing multipliers: Éco × 0.75, Standard × 1.0, Premium × 1.40
 
 ### Project Dashboard (`projects#index`)
-- 3-column card grid with: photo banner (if `photo_url` present, 130px cover), project name/zip, status badge, total TTC, room count, surface, last updated
-- Delete button with confirmation modal (Stimulus `delete-confirm` controller)
-- Empty state with CTA
+- Active projects and archived projects displayed separately; archives shown below with opacity 0.65 and grayscale photo filter
+- Project card: 130px photo banner (or gray placeholder with house SVG), name/zip, status badge, Éco→Premium price range (integer, no cents), room count, surface, last updated
+- Delete button triggers custom confirmation modal (Stimulus `delete-confirm` controller)
 
 ### Results Page (`projects#show`)
-- Summary bar: Total HT, Total TTC, standing toggle
+- Summary bar: Total HT, Total TTC, standing toggle (active state: blue #2563eb)
 - Work categories grid (3 columns): icon, name, item count, subtotal HT
 - Rooms section (conditional, only for "par pièce" projects)
 - Standing toggle via Stimulus → AJAX → Turbo Frame refresh
+- Action buttons: "Modifier", "Archiver" (custom modal via `archive-confirm` controller), "Supprimer" (custom modal via `delete-confirm` controller)
+- When status is `archived`: "Désarchiver" button appears → `PATCH /projects/:id/unarchive` → resets status to `in_progress`
 
 ### Room Detail (`rooms#show`)
 - Room tabs (Turbo Frames, no page reload)
@@ -173,18 +178,19 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 | `photo-upload` | Drag/drop photo in wizard step 1, instant preview, AJAX upload |
 | `renovation-type` | Show/hide room picker in step 2, manage room instances (+/-) |
 | `import-mode` | Toggle URL/PDF/Chat panels in step 1 |
-| `url-analyze` | AJAX property URL analysis |
+| `url-analyze` | AJAX property URL analysis; button disabled when empty, black when text present |
 | `pdf-upload` | Drag/drop PDF upload and analysis |
 | `chat-property` | AI chat for property info |
 | `property-type` | Show/hide `property_type_autre` field |
 | `room-tabs` | Switch room tabs in room detail + wizard step 3 |
 | `artisan-select` | Multi-select artisans by category in bidding flow |
 | `bidding-step1` | Standing level + category selection for bidding round |
-| `delete-confirm` | Confirmation modal for deletions |
+| `delete-confirm` | Custom confirmation modal for DELETE actions |
+| `archive-confirm` | Custom confirmation modal for archive PATCH action |
 | `notification-badge` | Update notification unread count |
-| `city-autocomplete` | Autocomplete city/zip in step 1 |
+| `city-autocomplete` | Autocomplete city/zip in step 1 via geo.api.gouv.fr; max 5 digits, no letters |
 | `card-tilt` | Hover tilt effect on cards |
-| `wizard-form` | Form submission handling in wizard |
+| `wizard-form` | Form submission handling in wizard; validates required fields |
 
 ## Turbo Frames
 
@@ -197,6 +203,8 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 - `PropertyUrlAnalyzer` — HTTP scrape of property listing URL, extracts fields + `photo_url`
 - `PdfPropertyAnalyzer` — PDF::Reader text extraction, extracts fields (no image extraction)
 - `PropertyChatAnalyzer` — AI chat interface, returns structured property fields
+- `EstimationCalculator` — calculates work item prices per standing level
+- `FinalQuotePdfGenerator` — generates PDF for final quote
 
 ## Jobs
 
@@ -208,11 +216,16 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 
 ## Design System
 
-- **Colors:** Primary dark `#2C2A25` · Background `#FAFAF7` · Borders `#E8E4DC` · Muted text `#9B9588`
-- **Cards:** 8-10px radius, subtle border, hover → border darkens + translateY(-2px)
-- **Status badges:** Brouillon (warm gray) · En cours (soft green) · Terminé (soft blue) · Refusé (red)
-- **Buttons:** Primary (dark fill `#2C2A25`) · Secondary (light border) · Ghost (transparent)
-- **Photo in project card:** 130px banner at top, `object-fit: cover`, rounded top corners only
+Styles live in `app/views/shared/_od_styles.html.erb` (inline `<style>` block, included in layout).
+
+- **Colors:** Primary dark `#2C2A25` · Primary blue `#2563eb` · Background `#FAFAF7` · Borders `#C8C4BC` / `#E8E4DC` · Muted text `#9B9588` / `#4A4640`
+- **Cards:** 10px radius, 1.5px border `#C8C4BC`, hover → border darkens + `translateY(-2px)` + shadow
+- **Status badges:** `.badge-brouillon` (warm gray) · `.badge-en-cours` (soft green) · `.badge-termine` (soft blue) · `.badge-refuse` (soft red, also used for archived)
+- **Buttons:** `.btn-dark-od` (blue `#2563eb`, pill shape) · `.btn-ghost-od` (transparent border, pill shape)
+- **Photo banner in project card:** 130px height, `object-fit: cover`, top corners rounded only
+- **Placeholder (no photo):** 130px height, `#F0EDE8` background, centered house SVG
+- **Flash messages:** Only `alert` (error) flash is shown — `notice` (green) flash is suppressed in `_flashes.html.erb`
+- **Navbar logo:** Non-clickable (`<span>`) when user is signed in; links to `/` when signed out
 
 ## What NOT to Do
 

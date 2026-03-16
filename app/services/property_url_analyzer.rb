@@ -1,29 +1,13 @@
-require "net/http"
-require "uri"
+require "resolv"
 
 class PropertyUrlAnalyzer
-  GITHUB_MODELS_ENDPOINT = "https://models.inference.ai.azure.com/chat/completions"
-  MODEL = "gpt-4o-mini"
+  include LlmClient
+
   MAX_TEXT_LENGTH = 8000
 
-  def initialize(url)
-    @url = url
-  end
-
-  def analyze
-    html  = fetch_html
-    doc   = Nokogiri::HTML(html)
-    photo = extract_photo(doc)
-    text  = extract_text_from_doc(doc)
-    result = query_llm(text)
-    result["photo_url"] = photo if photo
-    result
-  end
-
-  private
-
   BROWSER_HEADERS = {
-    "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) " \
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language" => "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
     "Accept-Encoding" => "identity",
@@ -36,7 +20,49 @@ class PropertyUrlAnalyzer
     "Sec-Fetch-User" => "?1"
   }.freeze
 
+  ALLOWED_SCHEMES = %w[http https].freeze
+  BLOCKED_IP_RANGES = [
+    /\A127\./, # loopback
+    /\A10\./, # RFC1918
+    /\A172\.(1[6-9]|2\d|3[01])\./, # RFC1918
+    /\A192\.168\./, # RFC1918
+    /\A169\.254\./, # AWS/GCP/Azure metadata
+    /\A::1\z/, # IPv6 loopback
+    /\Afc00:/i, # IPv6 ULA
+    /\Afd/i # IPv6 ULA
+  ].freeze
+
+  def initialize(url)
+    @url = url
+  end
+
+  def analyze
+    html   = fetch_html
+    doc    = Nokogiri::HTML(html)
+    photo  = extract_photo(doc)
+    text   = extract_text_from_doc(doc)
+    result = query_llm_for_listing(text)
+    result["photo_url"] = photo if photo
+    result
+  end
+
+  private
+
+  def validate_url!
+    uri = URI.parse(@url)
+    raise ArgumentError, "URL invalide" unless ALLOWED_SCHEMES.include?(uri.scheme)
+    raise ArgumentError, "URL invalide" if uri.host.blank?
+
+    ip = Resolv.getaddress(uri.host)
+    raise ArgumentError, "URL non autorisée" if BLOCKED_IP_RANGES.any? { |p| ip.match?(p) }
+  rescue URI::InvalidURIError
+    raise ArgumentError, "URL invalide"
+  rescue Resolv::ResolvError
+    raise ArgumentError, "Hôte introuvable"
+  end
+
   def fetch_html
+    validate_url!
     conn = Faraday.new do |f|
       f.options.timeout = 15
       BROWSER_HEADERS.each { |k, v| f.headers[k] = v }
@@ -70,38 +96,12 @@ class PropertyUrlAnalyzer
     doc.text.gsub(/\s+/, " ").strip.first(MAX_TEXT_LENGTH)
   end
 
-  def query_llm(text)
-    uri = URI.parse(GITHUB_MODELS_ENDPOINT)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 20
-
-    request = Net::HTTP::Post.new(uri.path)
-    request["Authorization"] = "Bearer #{ENV.fetch('GITHUB_TOKEN')}"
-    request["Content-Type"] = "application/json"
-    request.body = {
-      model: MODEL,
-      messages: [
-        { role: "system", content: system_prompt },
-        { role: "user", content: "Voici le texte de l'annonce immobilière :\n\n#{text}" }
-      ]
-    }.to_json
-
-    response = http.request(request)
-    raise "LLM API error #{response.code}: #{response.body}" unless response.is_a?(Net::HTTPSuccess)
-
-    content = JSON.parse(response.body).dig("choices", 0, "message", "content").to_s
-    extract_json(content)
-  end
-
-  def extract_json(content)
-    # Handle markdown code blocks (```json ... ```) and plain JSON
-    json_str = content[/```json\s*(.*?)\s*```/m, 1] || content[/\{.*\}/m]
-    return {} unless json_str
-
-    JSON.parse(json_str)
-  rescue JSON::ParserError
-    {}
+  def query_llm_for_listing(text)
+    messages = [
+      { role: "system", content: system_prompt },
+      { role: "user", content: "Voici le texte de l'annonce immobilière :\n\n#{text}" }
+    ]
+    query_llm(messages)
   end
 
   def system_prompt

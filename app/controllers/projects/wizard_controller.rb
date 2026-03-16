@@ -220,6 +220,8 @@ module Projects
       url = params[:url].to_s.strip
       result = ::PropertyUrlAnalyzer.new(url).analyze
       render json: { success: true, data: result }
+    rescue ArgumentError => e
+      render json: { success: false, error: e.message }, status: :unprocessable_entity
     rescue => e
       render json: { success: false, error: friendly_error(e.message) }, status: :unprocessable_entity
     end
@@ -231,8 +233,10 @@ module Projects
 
       validate_photo!(file)
       render json: { photo_url: save_photo(file) }
-    rescue StandardError => e
+    rescue ArgumentError, RuntimeError => e
       render json: { error: e.message }, status: :unprocessable_entity
+    rescue StandardError
+      render json: { error: "Erreur lors de l'upload, veuillez réessayer." }, status: :internal_server_error
     end
 
     # ── PDF analyzer – AJAX endpoint ─────────────────────────────────────────

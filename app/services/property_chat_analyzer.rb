@@ -1,35 +1,34 @@
-require "net/http"
-require "uri"
-
 class PropertyChatAnalyzer
-  ENDPOINT       = "https://models.inference.ai.azure.com/chat/completions"
-  MODEL          = "gpt-4o-mini"
+  include LlmClient
+
   REQUIRED_FIELDS = %w[type_de_bien total_surface_sqm room_count location_zip energy_rating].freeze
 
   def initialize(history)
-    @history = history # Array of { role: "user"|"assistant", content: "..." }
+    @history = sanitize_history(history)
   end
 
   def chat
-    uri  = URI.parse(ENDPOINT)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl      = true
-    http.read_timeout = 20
-
-    req = Net::HTTP::Post.new(uri.path)
-    req["Authorization"] = "Bearer #{ENV.fetch('GITHUB_TOKEN')}"
-    req["Content-Type"]  = "application/json"
-    req.body = { model: MODEL, messages: [ { role: "system", content: system_prompt } ] + @history }.to_json
-
-    res = http.request(req)
-    raise "LLM error #{res.code}" unless res.is_a?(Net::HTTPSuccess)
-
-    content = JSON.parse(res.body).dig("choices", 0, "message", "content").to_s
-    parse_response(content)
+    messages = [{ role: "system", content: system_prompt }] + @history
+    parse_response(fetch_llm_content(messages))
   end
 
   private
 
+  def sanitize_history(raw)
+    return [] unless raw.is_a?(Array)
+
+    raw.first(20).filter_map do |msg|
+      next unless msg.is_a?(Hash)
+
+      role    = msg["role"].to_s
+      content = msg["content"].to_s.strip
+      next unless %w[user assistant].include?(role) && content.present?
+
+      { role: role, content: content.first(2000) }
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
   def parse_response(content)
     if content.include?("---DATA---")
       parts    = content.split("---DATA---", 2)
@@ -44,6 +43,7 @@ class PropertyChatAnalyzer
   rescue JSON::ParserError
     { reply: content.strip, data: {}, complete: false }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def system_prompt
     <<~PROMPT
