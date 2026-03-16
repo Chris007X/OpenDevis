@@ -20,6 +20,21 @@
   .bd-cat-meta { font-size: 0.8rem; color: #4A4640; margin-top: 2px; }
   .bd-cat-price { font-size: 0.95rem; font-weight: 700; color: #2C2A25; margin-top: 6px; }
   .info-card { background: #F5F3EE; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px; }
+  .select-all-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4A4640;
+    cursor: pointer;
+  }
+  .select-all-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2C2A25;
+    cursor: pointer;
+  }
 </style>
 <% end %>
 
@@ -46,7 +61,16 @@
         data: { controller: "bidding-step1" } do |f| %>
     <input type="hidden" name="bidding_round[standing_level]" value="<%= @standing_level %>">
 
-    <h5 class="mb-1" style="font-weight: 700; color: #2C2A25;">Catégories à envoyer</h5>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <h5 class="mb-0" style="font-weight: 700; color: #2C2A25;">Catégories à envoyer</h5>
+      <% if @categories_with_items.any? %>
+        <label class="select-all-toggle">
+          <input type="checkbox" data-bidding-step1-target="selectAllToggle"
+                 data-action="change->bidding-step1#selectAll">
+          Tout sélectionner
+        </label>
+      <% end %>
+    </div>
     <p class="mb-3" style="color: #4A4640; font-size: 0.9rem;">
       Sélectionnez les catégories pour lesquelles vous souhaitez recevoir des devis artisans.
     </p>

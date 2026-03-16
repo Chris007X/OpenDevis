@@ -37,6 +37,21 @@
     justify-content: space-between;
   }
   .cat-section-body { padding: 16px 20px; }
+  .select-all-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4A4640;
+    cursor: pointer;
+  }
+  .select-all-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2C2A25;
+    cursor: pointer;
+  }
   .selection-counter { font-size: 0.8rem; color: #4A4640; }
   .selection-counter.has-selection { color: #2D6A4F; font-weight: 600; }
 </style>
@@ -63,9 +78,16 @@
                 (<%= artisans.count %> artisans disponibles)
               </span>
             </div>
-            <span class="selection-counter" data-artisan-select-target="counter">
-              0 / 3 sélectionnés
-            </span>
+            <div class="d-flex align-items-center gap-3">
+              <label class="select-all-toggle">
+                <input type="checkbox" data-artisan-select-target="sectionToggle"
+                       data-action="change->artisan-select#selectAll">
+                Tout sélectionner
+              </label>
+              <span class="selection-counter" data-artisan-select-target="counter">
+                0 / 3 sélectionnés
+              </span>
+            </div>
           </div>
           <div class="cat-section-body">
             <% if artisans.any? %>

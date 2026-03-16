@@ -1,3 +1,5 @@
+<% content_for :title, "Catégories de travaux — Estimation OpenDevis" %>
+
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
 <style>
@@ -82,6 +84,23 @@
   .room-categories-panel { display: none; }
   .room-categories-panel.active { display: block; }
 
+  .select-all-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4A4640;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+  }
+  .select-all-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #2C2A25;
+    cursor: pointer;
+  }
+
   .custom-needs-section {
     border: 1px solid #C8C4BC;
     border-radius: 10px;
@@ -163,7 +182,12 @@
         <% saved_cats = room_categories[room_name] || room_categories[room_base] || [] %>
         <% allowed = @room_allowed_categories[room_base] || @category_groups.flat_map { |g| g[:slugs] } %>
         <div class="room-categories-panel <%= 'active' if idx == 0 %>"
-             data-room-tabs-target="panel" data-room="<%= room_name %>">
+             data-room-tabs-target="panel" data-room="<%= room_name %>"
+             data-controller="select-all">
+          <label class="select-all-toggle">
+            <input type="checkbox" data-select-all-target="toggle" data-action="change->select-all#toggleAll">
+            Tout sélectionner
+          </label>
           <% @category_groups.each do |group| %>
             <% filtered_slugs = group[:slugs].select { |s| allowed.include?(s) } %>
             <% next if filtered_slugs.empty? %>
@@ -174,6 +198,7 @@
                 <div class="col-4 col-md-3">
                   <label class="category-card w-100">
                     <input type="checkbox" name="room_categories[<%= room_name %>][]" value="<%= slug %>"
+                           data-select-all-target="item" data-action="change->select-all#updateToggle"
                            <%= "checked" if saved_cats.include?(slug) %>>
                     <div class="cat-icon"><%= cat[:icon] %></div>
                     <div><%= cat[:label] %></div>
@@ -213,7 +238,11 @@
 
   <% else %>
     <%# Standard category grid (renovation_complete / energetique) %>
-    <%= form_with url: wizard_step3_path, method: :post, data: { turbo: false } do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "select-all", turbo: false } do |f| %>
+      <label class="select-all-toggle">
+        <input type="checkbox" data-select-all-target="toggle" data-action="change->select-all#toggleAll">
+        Tout sélectionner
+      </label>
       <% @category_groups.each do |group| %>
         <% next if group[:slugs].empty? %>
         <div class="group-title"><%= group[:name] %></div>
@@ -223,6 +252,7 @@
             <div class="col-4 col-md-3">
               <label class="category-card w-100">
                 <input type="checkbox" name="categories[]" value="<%= slug %>"
+                       data-select-all-target="item" data-action="change->select-all#updateToggle"
                        <%= "checked" if @selected_categories.include?(slug) %>>
                 <div class="cat-icon"><%= cat[:icon] %></div>
                 <div><%= cat[:label] %></div>
