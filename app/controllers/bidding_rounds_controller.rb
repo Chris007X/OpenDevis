@@ -7,6 +7,7 @@ class BiddingRoundsController < ApplicationController
 
   def new
     authorize :bidding_round, :new?
+    track_funnel_step("bidding_to_contract", 1, "configure_bid", completed: false)
     @bidding_round = BiddingRound.new
     @standing_level = (params[:standing] || 2).to_i.clamp(1, 3)
     @categories_with_items = categories_with_items(@standing_level)
@@ -19,6 +20,7 @@ class BiddingRoundsController < ApplicationController
     @bidding_round.project = @project
 
     if @bidding_round.save
+      track_funnel_step("bidding_to_contract", 2, "bid_configured", completed: false)
       session[:selected_category_ids] = params[:category_ids]&.map(&:to_i)
       redirect_to select_artisans_project_bidding_round_path(@project)
     else
@@ -32,6 +34,7 @@ class BiddingRoundsController < ApplicationController
   # rubocop:disable Metrics/MethodLength
   def select_artisans
     authorize @bidding_round, :select_artisans?
+    track_funnel_step("bidding_to_contract", 3, "select_artisans", completed: false)
     @selected_category_ids = session[:selected_category_ids] || []
     @categories = WorkCategory.where(id: @selected_category_ids)
 
@@ -68,6 +71,7 @@ class BiddingRoundsController < ApplicationController
     end
 
     @bidding_round.update!(status: "sent")
+    track_funnel_step("bidding_to_contract", 4, "requests_sent", completed: false)
     BiddingDeadlineJob.set(wait_until: @bidding_round.deadline).perform_later(@bidding_round.id)
     session.delete(:selected_category_ids)
 
@@ -99,6 +103,7 @@ class BiddingRoundsController < ApplicationController
 
   def review_responses
     authorize @bidding_round, :review_responses?
+    track_funnel_step("bidding_to_contract", 5, "review_responses", completed: false)
 
     unless @bidding_round.ready_for_review?
       redirect_to project_bidding_round_path(@project), alert: "Les réponses ne sont pas encore toutes reçues."
@@ -132,6 +137,7 @@ class BiddingRoundsController < ApplicationController
       @bidding_round.update!(status: "completed")
     end
 
+    track_funnel_step("bidding_to_contract", 6, "contract_confirmed", completed: true)
     redirect_to final_quote_project_bidding_round_path(@project), notice: "Vos sélections ont été confirmées."
   end
   # rubocop:enable Metrics/MethodLength

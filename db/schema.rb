@@ -10,9 +10,82 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_13_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_113130) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "analytics_daily_stats", force: :cascade do |t|
+    t.float "avg_session_duration", default: 0.0
+    t.float "conversion_rate", default: 0.0
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "errors_count", default: 0
+    t.integer "total_events", default: 0
+    t.integer "total_sessions", default: 0
+    t.integer "unique_users", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_analytics_daily_stats_on_date", unique: true
+  end
+
+  create_table "analytics_events", force: :cascade do |t|
+    t.boolean "completed", default: false
+    t.string "country_code"
+    t.datetime "created_at", null: false
+    t.integer "duration_ms"
+    t.string "event_type", null: false
+    t.string "ip_address"
+    t.integer "page_load_time_ms"
+    t.string "page_path"
+    t.jsonb "properties", default: {}
+    t.string "referrer"
+    t.string "session_id"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.string "user_id"
+    t.index ["created_at"], name: "index_analytics_events_on_created_at"
+    t.index ["event_type", "created_at"], name: "index_analytics_events_on_event_type_and_created_at"
+    t.index ["event_type"], name: "index_analytics_events_on_event_type"
+    t.index ["properties"], name: "index_analytics_events_on_properties", using: :gin
+    t.index ["session_id"], name: "index_analytics_events_on_session_id"
+    t.index ["user_id", "created_at"], name: "index_analytics_events_on_user_id_and_created_at"
+  end
+
+  create_table "analytics_funnels", force: :cascade do |t|
+    t.boolean "completed", default: false
+    t.datetime "created_at", null: false
+    t.string "funnel_name", null: false
+    t.string "session_id"
+    t.string "step_name"
+    t.integer "step_number"
+    t.integer "time_to_complete_ms"
+    t.datetime "updated_at", null: false
+    t.string "user_id"
+    t.index ["funnel_name", "step_number", "created_at"], name: "idx_on_funnel_name_step_number_created_at_8b99e022c3"
+    t.index ["funnel_name"], name: "index_analytics_funnels_on_funnel_name"
+    t.index ["session_id"], name: "index_analytics_funnels_on_session_id"
+  end
+
+  create_table "analytics_sessions", force: :cascade do |t|
+    t.string "browser"
+    t.boolean "converted", default: false
+    t.string "country_code"
+    t.datetime "created_at", null: false
+    t.string "device_type"
+    t.string "drop_off_page"
+    t.integer "duration_seconds", default: 0
+    t.datetime "ended_at"
+    t.integer "events_count", default: 0
+    t.string "first_page"
+    t.string "last_page"
+    t.integer "page_views", default: 0
+    t.string "session_id", null: false
+    t.datetime "started_at"
+    t.datetime "updated_at", null: false
+    t.string "user_id"
+    t.index ["session_id"], name: "index_analytics_sessions_on_session_id", unique: true
+    t.index ["started_at"], name: "index_analytics_sessions_on_started_at"
+    t.index ["user_id"], name: "index_analytics_sessions_on_user_id"
+  end
 
   create_table "artisan_categories", force: :cascade do |t|
     t.bigint "artisan_id", null: false
