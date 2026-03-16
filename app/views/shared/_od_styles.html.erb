@@ -1,11 +1,15 @@
 /* ─── Design system globals ───────────────────────────────────── */
-body { background-color: #FFFFFF; }
+/* ── Global font ── */
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
+h1, h2, h3 { font-family: 'DM Serif Display', serif; color: #1C1A16; }
 
 /* Buttons */
 .btn-dark-od {
   background-color: #2663EB; border: 1.5px solid #2663EB; color: #fff;
   border-radius: 50px; font-weight: 600; padding: 0.65rem 1.8rem;
   font-size: 0.95rem; letter-spacing: 0.01em;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   display: inline-flex; align-items: center; gap: 0.45rem;
   transition: background-color 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
@@ -20,6 +24,7 @@ body { background-color: #FFFFFF; }
   background: transparent; border: 1.5px solid #C8C4BC; color: #4A4640;
   border-radius: 50px; font-weight: 500; padding: 0.65rem 1.8rem;
   font-size: 0.95rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   display: inline-flex; align-items: center; gap: 0.45rem;
   transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
@@ -48,7 +53,7 @@ body { background-color: #FFFFFF; }
 
 /* Cards */
 .od-card {
-  border: 1.5px solid #C8C4BC; border-radius: 10px; background: #fff;
+  border: 1.5px solid #E8E4DC; border-radius: 14px; background: #fff;
   transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   box-shadow: 0 1px 4px rgba(44,42,37,0.08);
 }
@@ -59,12 +64,13 @@ body { background-color: #FFFFFF; }
 
 /* Form inputs */
 .form-control, .form-select {
-  border-color: #C8C4BC; border-radius: 8px; font-size: 0.95rem;
+  border-color: #DDD9D1; border-radius: 10px; font-size: 0.95rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .form-control:focus, .form-select:focus {
-  border-color: #2C2A25; box-shadow: 0 0 0 2px rgba(44,42,37,0.2);
+  border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
-label, .form-label, .col-form-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; }
+label, .form-label, .col-form-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; font-family: 'Plus Jakarta Sans', sans-serif; }
 .form-text, .hint { font-size: 0.78rem; color: #6B6560; }
 
 /* Form page layout */
@@ -112,8 +118,9 @@ label, .form-label, .col-form-label { font-size: 0.85rem; font-weight: 600; colo
 .step-circle {
   width: 34px; height: 34px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; font-weight: 600;
-  border: 2px solid #9B9588; background: #fff; color: #6B6560;
+  font-size: 0.82rem; font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 2px solid #DDD9D1; background: #fff; color: #9B9588;
   transition: all 0.2s ease;
 }
 .wizard-step.active .step-circle { border-color: #2C2A25; background: #2C2A25; color: #fff; }

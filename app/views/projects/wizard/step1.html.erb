@@ -2,113 +2,203 @@
 
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  .import-mode-btn {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    background: #fff;
-    padding: 1rem 1.4rem;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #2C2A25;
+  /* ── Scope & typography ────────────────────────────────── */
+  .s1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .import-mode-btn:hover { border-color: #2C2A25; }
-  .import-mode-btn.active { border-color: #2C2A25; background: #F0EDE8; }
-
-  .import-panel {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    background: #FFFFFF;
-    padding: 1.25rem;
-    margin-top: 0.75rem;
+  .s1 .s1-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: #1C1A16;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0;
   }
-
-  .field-section {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    padding: 1.5rem;
-    background: #fff;
+  .s1 .s1-heading em {
+    font-style: italic;
+    color: #4A4640;
   }
-  .field-label { font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem; }
-  .field-label .required { color: #C25E4A; margin-left: 2px; }
-  .form-control, .form-select {
-    border-color: #C8C4BC;
-    border-radius: 8px;
-    font-size: 0.95rem;
-  }
-  .form-control:focus, .form-select:focus {
-    border-color: #2C2A25;
-    box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
-  }
-  /* Blue border for filled fields — applied via JS, ensure focus doesn't override */
-  .form-control[style*="border-color"]:focus,
-  .form-select[style*="border-color"]:focus {
-    box-shadow: 0 0 0 2px rgba(38,99,235,0.15);
+  .s1 .s1-sub {
+    font-size: 0.925rem;
+    color: #6B6560;
+    margin-top: 0.5rem;
+    font-weight: 400;
+    line-height: 1.5;
   }
 
-  /* Property type radio cards */
-  .property-type-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .property-type-option {
+  /* ── Section eyebrow ──────────────────────────────────── */
+  .s1-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    margin-bottom: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .s1-eyebrow::after {
+    content: '';
     flex: 1;
-    min-width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, #E8E4DC, transparent);
   }
-  .property-type-option input[type="radio"] { display: none; }
-  .property-type-option label {
-    display: block;
-    text-align: center;
-    padding: 0.65rem 0.75rem;
-    border: 1.5px solid #C8C4BC;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #2C2A25;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .property-type-option label:hover { border-color: #2C2A25; }
-  .property-type-option input:checked + label {
-    border-color: #2C2A25;
-    background: #F0EDE8;
-    font-weight: 600;
+  .s1-eyebrow .eyebrow-badge {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.7rem;
+    color: #B8B4AC;
   }
 
-  /* City autocomplete */
-  .autocomplete-wrapper { position: relative; }
-  .autocomplete-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 10;
+  /* ── Import mode cards ────────────────────────────────── */
+  .import-grid {
+    display: grid;
+    gap: 0.625rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .import-grid.single { grid-template-columns: 1fr; }
+  .import-grid.double { grid-template-columns: repeat(2, 1fr); }
+
+  .import-mode-btn {
+    position: relative;
+    border: 1.5px solid #DDD9D1;
+    border-radius: 12px;
     background: #fff;
-    border: 1px solid #C8C4BC;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(44,42,37,0.1);
-    margin-top: 4px;
-    max-height: 220px;
-    overflow-y: auto;
-  }
-  .autocomplete-item {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: none;
-    background: none;
+    padding: 0.875rem 1rem 0.875rem;
+    cursor: pointer;
     text-align: left;
-    font-size: 0.9rem;
+    transition: border-color 0.2s ease, background 0.2s ease,
+                box-shadow 0.2s ease, transform 0.15s ease;
+    overflow: hidden;
+  }
+  .import-mode-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2.5px;
+    background: #2563eb;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+    border-radius: 12px 12px 0 0;
+  }
+  .import-mode-btn:hover {
+    border-color: #9B9588;
+    box-shadow: 0 4px 16px rgba(44,42,37,0.09);
+    transform: translateY(-1px);
+  }
+  .import-mode-btn.active {
+    border-color: #2563eb;
+    background: #F4F8FF;
+    box-shadow: 0 4px 18px rgba(37,99,235,0.11);
+  }
+  .import-mode-btn.active::after { transform: scaleX(1); }
+
+  .import-btn-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: #F5F2EC;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.6rem;
+    transition: background 0.2s;
+  }
+  .import-mode-btn.active .import-btn-icon { background: #DBEAFE; }
+  .import-mode-btn.active .import-btn-icon svg { stroke: #2563eb; }
+
+  .import-btn-title {
+    font-size: 0.8rem;
+    font-weight: 700;
     color: #2C2A25;
+    line-height: 1.2;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .import-btn-sub {
+    font-size: 0.7rem;
+    color: #9B9588;
+    margin-top: 0.2rem;
+    line-height: 1.3;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Import panels ─────────────────────────────────────── */
+  .import-panel {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 12px;
+    background: #FAFAF7;
+    padding: 1.25rem 1.375rem;
+    margin-top: 0.625rem;
+    animation: panelIn 0.2s ease;
+  }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .import-panel-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #4A4640;
+    margin-bottom: 0.625rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Analyze button (URL + PDF) ────────────────────────── */
+  .btn-analyze {
+    flex-shrink: 0;
+    border-radius: 9px;
+    padding: 0.42rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.18s ease;
+    border: 1.5px solid;
+  }
+  .btn-analyze[disabled] {
+    background: #F0EDE8;
+    border-color: #E8E4DC;
+    cursor: not-allowed;
+    color: #9B9588;
+  }
+  .btn-analyze:not([disabled]) {
+    background: #2C2A25;
+    color: #fff;
+    border-color: #2C2A25;
     cursor: pointer;
   }
-  .autocomplete-item:hover { background: #F0EDE8; }
-
-  .field-error {
-    font-size: 0.8rem;
-    color: #C25E4A;
-    margin-top: 0.25rem;
+  .btn-analyze:not([disabled]):hover {
+    background: #1a1916;
+    border-color: #1a1916;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44,42,37,0.22);
   }
+
+  /* ── PDF dropzone ──────────────────────────────────────── */
+  .pdf-dropzone {
+    border: 2px dashed #D0CCC4;
+    border-radius: 10px;
+    padding: 1.625rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: #fff;
+  }
+  .pdf-dropzone:hover, .pdf-dropzone.dragover {
+    border-color: #2563eb;
+    background: #F4F8FF;
+  }
+  .pdf-dropzone .upload-icon { font-size: 1.75rem; margin-bottom: 0.4rem; display: block; }
+  .pdf-dropzone .dz-title { font-size: 0.875rem; font-weight: 600; color: #2C2A25; }
+  .pdf-dropzone .dz-hint { font-size: 0.775rem; color: #9B9588; margin-top: 0.25rem; }
+
+  /* ── Chat ──────────────────────────────────────────────── */
   .chat-messages {
-    max-height: 200px;
+    max-height: 210px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -116,53 +206,63 @@
     margin-bottom: 0.75rem;
   }
   .chat-msg {
-    padding: 0.5rem 0.75rem;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    max-width: 85%;
-    line-height: 1.4;
+    padding: 0.55rem 0.875rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    max-width: 88%;
+    line-height: 1.5;
     word-break: break-word;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .chat-msg--user      { background: #2C2A25; color: #fff; align-self: flex-end; }
-  .chat-msg--assistant { background: #F0EDE8; color: #2C2A25; align-self: flex-start; }
-  .mic-btn {
-    border: 1px solid #C8C4BC; border-left: 0; border-radius: 0 8px 8px 0;
-    background: #fff; color: #4A4640; display: flex; align-items: center; justify-content: center;
-    width: 40px; transition: background 0.15s, color 0.15s;
+  .chat-msg--user {
+    background: #2C2A25; color: #fff;
+    align-self: flex-end;
+    border-radius: 12px 12px 3px 12px;
   }
-  .mic-btn:hover { background: #F0EDE8; color: #2C2A25; }
-  .mic-btn canvas { display: block; }
+  .chat-msg--assistant {
+    background: #fff; color: #2C2A25;
+    align-self: flex-start;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 12px 12px 12px 3px;
+  }
+  .chat-input-row { display: flex; gap: 0.5rem; align-items: flex-end; }
   .chat-input {
+    flex: 1;
     resize: none; overflow: hidden;
-    min-height: 38px; max-height: 120px;
-    border-radius: 8px 0 0 8px; line-height: 1.5;
+    min-height: 40px; max-height: 120px;
+    border-radius: 10px !important;
+    line-height: 1.5;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .btn-send-chat {
-    border: 1px solid #C8C4BC; border-radius: 8px;
+  .mic-btn {
+    flex-shrink: 0;
+    border: 1.5px solid #DDD9D1;
+    border-radius: 10px;
     background: #fff; color: #4A4640;
-    padding: 0.375rem 0.85rem; font-size: 0.9rem; font-weight: 500;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mic-btn:hover { background: #F0EDE8; border-color: #2C2A25; color: #2C2A25; }
+  .mic-btn canvas { display: block; }
+  .btn-send-chat {
+    flex-shrink: 0;
+    border: 1.5px solid #DDD9D1;
+    border-radius: 10px;
+    background: #fff; color: #9B9588;
+    padding: 0.42rem 0.875rem;
+    font-size: 0.83rem; font-weight: 600;
+    transition: all 0.15s;
     cursor: default; white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .btn-send-chat.active {
-    background: #2C2A25; color: #fff; border-color: #2C2A25; cursor: pointer;
+    background: #2C2A25; color: #fff;
+    border-color: #2C2A25; cursor: pointer;
   }
-  .pdf-dropzone {
-    border: 2px dashed #C8C4BC;
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    color: #4A4640;
-  }
-  .pdf-dropzone:hover, .pdf-dropzone.dragover {
-    border-color: #2C2A25;
-    background: #F0EDE8;
-  }
-  .pdf-dropzone .upload-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-
-  /* Pulse fallback when getUserMedia is denied */
   .mic-btn canvas[data-pulse="true"] {
     animation: waveform-pulse 0.8s ease-in-out infinite alternate;
   }
@@ -170,11 +270,158 @@
     from { opacity: 0.3; transform: scaleY(0.5); }
     to   { opacity: 1;   transform: scaleY(1); }
   }
+
+  /* ── Photo upload ──────────────────────────────────────── */
+  .photo-dropzone {
+    border: 2px dashed #D5D1C9;
+    border-radius: 12px;
+    cursor: pointer;
+    min-height: 130px;
+    background: #FAFAF7;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+    padding: 1.75rem 2rem;
+  }
+  .photo-dropzone:hover {
+    border-color: #6B6560;
+    background: #F5F2EC;
+  }
+  .photo-dropzone.dragover {
+    border-color: #2563eb;
+    background: #F4F8FF;
+  }
+  .photo-dz-icon {
+    width: 44px; height: 44px;
+    background: #EDE9E2;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+  .photo-dz-title {
+    font-size: 0.875rem; font-weight: 600; color: #2C2A25;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .photo-dz-hint {
+    font-size: 0.775rem; color: #9B9588;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .photo-preview-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    max-height: 240px;
+    border: 1.5px solid #DDD9D1;
+  }
+  .photo-preview-wrap img {
+    width: 100%; object-fit: cover; max-height: 240px; display: block;
+  }
+  .photo-remove-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(28,26,22,0.7); color: #fff;
+    border: none; border-radius: 6px;
+    padding: 4px 10px; font-size: 0.78rem; font-weight: 500;
+    cursor: pointer; backdrop-filter: blur(6px);
+    transition: background 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .photo-remove-btn:hover { background: rgba(28,26,22,0.9); }
+
+  /* ── Form card ─────────────────────────────────────────── */
+  .s1-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    padding: 1.625rem 1.75rem;
+    background: #fff;
+  }
+
+  /* ── Field labels ──────────────────────────────────────── */
+  .s1 .field-label {
+    font-size: 0.78rem; font-weight: 700; color: #2C2A25;
+    margin-bottom: 0.375rem; display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .s1 .field-label .required { color: #C25E4A; margin-left: 2px; }
+  .field-error {
+    font-size: 0.775rem; color: #C25E4A;
+    margin-top: 0.3rem; font-weight: 500;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Property type radio cards ─────────────────────────── */
+  .property-type-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .property-type-option { flex: 1; min-width: 100px; }
+  .property-type-option input[type="radio"] { display: none; }
+  .property-type-option label {
+    display: flex; align-items: center; justify-content: center; gap: 0.375rem;
+    padding: 0.6rem 0.75rem;
+    border: 1.5px solid #DDD9D1;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.83rem; font-weight: 500; color: #4A4640;
+    transition: all 0.15s; background: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .property-type-option label:hover { border-color: #2C2A25; color: #2C2A25; }
+  .property-type-option input:checked + label {
+    border-color: #2563eb;
+    background: #EFF4FF;
+    color: #2563eb;
+    font-weight: 700;
+  }
+
+  /* ── City autocomplete ─────────────────────────────────── */
+  .autocomplete-wrapper { position: relative; }
+  .autocomplete-results {
+    position: absolute; top: 100%; left: 0; right: 0;
+    z-index: 10; background: #fff;
+    border: 1.5px solid #DDD9D1; border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(44,42,37,0.12);
+    margin-top: 4px; max-height: 220px; overflow-y: auto;
+  }
+  .autocomplete-item {
+    display: block; width: 100%;
+    padding: 0.575rem 0.875rem; border: none; background: none;
+    text-align: left; font-size: 0.875rem; color: #2C2A25; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.1s;
+  }
+  .autocomplete-item:hover { background: #F4F8FF; }
+
+  /* ── Input overrides ───────────────────────────────────── */
+  .s1 .form-control,
+  .s1 .form-select {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    border-color: #DDD9D1;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    background: #fff;
+    padding: 0.55rem 0.875rem;
+    color: #1C1A16;
+  }
+  .s1 .form-control::placeholder { color: #B0ACAA; }
+  .s1 .form-control:focus,
+  .s1 .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    outline: none;
+  }
+  .s1 .form-control[style*="border-color"]:focus,
+  .s1 .form-select[style*="border-color"]:focus {
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+  .s1 button { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  /* ── Section spacing ───────────────────────────────────── */
+  .s1-section { margin-bottom: 1.625rem; }
 </style>
 <% end %>
 
 <%
-  # Extract property type from property_url for pre-filling
   property_type_value = case @project.property_url
                         when "appartement", "maison" then @project.property_url
                         when nil, "" then nil
@@ -183,115 +430,133 @@
   property_type_autre = property_type_value == "autre" ? @project.property_url : ""
 %>
 
-<div class="container py-4" style="max-width: 680px;">
+<div class="container py-4 s1" style="max-width: 680px;">
   <%= render "stepper", current_step: 1, project_type: @project_type %>
 
-  <% if @project_type.in?(%w[construction extension]) %>
-    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez le bien souhaité</h2>
-    <p class="mb-4" style="color: #4A4640;">Renseignez les caractéristiques de votre futur bien.</p>
-  <% else %>
-    <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez le bien</h2>
-    <p class="mb-4" style="color: #4A4640;">Importez les infos ou remplissez manuellement.</p>
-  <% end %>
-
-  <%# Import modes %>
-  <div class="mb-4" data-controller="import-mode">
-    <% unless @project_type == "construction" %>
-      <div class="small fw-semibold mb-2" style="color: #4A4640;">Importer automatiquement <span class="fw-normal">(facultatif)</span></div>
+  <%# ── Heading ── %>
+  <div class="s1-section" style="padding-top: 0.25rem;">
+    <% if @project_type.in?(%w[construction extension]) %>
+      <h1 class="s1-heading">Décrivez le bien<br><em>souhaité</em></h1>
+      <p class="s1-sub">Renseignez les caractéristiques de votre futur bien.</p>
+    <% else %>
+      <h1 class="s1-heading">Décrivez<br><em>votre bien</em></h1>
+      <p class="s1-sub">Importez depuis une annonce ou renseignez manuellement.</p>
     <% end %>
-    <div class="d-flex gap-2 mb-2">
+  </div>
+
+  <%# ── Import modes ── %>
+  <div class="s1-section" data-controller="import-mode">
+    <% unless @project_type == "construction" %>
+      <div class="s1-eyebrow">
+        Importer automatiquement
+        <span class="eyebrow-badge">facultatif</span>
+      </div>
+    <% end %>
+
+    <div class="import-grid <%= @project_type == 'construction' ? 'single' : 'three-col' %>">
       <% unless @project_type == "construction" %>
-        <button type="button" class="import-mode-btn flex-fill"
+        <button type="button" class="import-mode-btn"
                 data-import-mode-target="btn"
                 data-action="click->import-mode#toggle"
                 data-mode="url">
-          🔗<br>URL d'annonce
+          <div class="import-btn-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6560" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <div class="import-btn-title">URL d'annonce</div>
+          <div class="import-btn-sub">SeLoger, Leboncoin…</div>
         </button>
-        <button type="button" class="import-mode-btn flex-fill"
+        <button type="button" class="import-mode-btn"
                 data-import-mode-target="btn"
                 data-action="click->import-mode#toggle"
                 data-mode="pdf">
-          📄<br>PDF / Document
+          <div class="import-btn-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6560" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div class="import-btn-title">PDF / Document</div>
+          <div class="import-btn-sub">Diagnostic, acte…</div>
         </button>
       <% end %>
-      <button type="button" class="import-mode-btn <%= @project_type == "construction" ? "w-100" : "flex-fill" %>"
+      <button type="button" class="import-mode-btn <%= @project_type == 'construction' ? 'w-100' : '' %>"
               data-import-mode-target="btn"
               data-action="click->import-mode#toggle"
               data-mode="chat">
-        💬<%= @project_type == "construction" ? " Chat IA" : "<br>Chat IA".html_safe %>
+        <div class="import-btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6560" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="import-btn-title">Chat IA</div>
+        <div class="import-btn-sub">Décrivez librement</div>
       </button>
     </div>
 
+    <%# URL panel %>
     <div data-import-mode-target="panel" data-mode="url" hidden class="import-panel"
          data-controller="url-analyze"
          data-url-analyze-endpoint-value="<%= wizard_analyze_url_path %>">
+      <div class="import-panel-label">Copiez l'URL de l'annonce</div>
       <div class="d-flex gap-2">
         <input type="text" class="form-control" placeholder="https://www.seloger.com/annonces/..."
                data-url-analyze-target="input"
                data-action="input->url-analyze#toggleBtn">
-        <button class="btn" type="button"
+        <button class="btn-analyze" type="button"
                 disabled
                 data-action="click->url-analyze#analyze"
-                data-url-analyze-target="btn"
-                style="border-radius: 8px; padding: 0.375rem 0.85rem; font-size: 0.9rem; font-weight: 500; white-space: nowrap; background: #C8C4BC; color: #4A4640; border: 1px solid #C8C4BC; cursor: not-allowed;">
+                data-url-analyze-target="btn">
           Analyser
         </button>
       </div>
       <div data-url-analyze-target="status" hidden></div>
     </div>
 
+    <%# PDF panel %>
     <div data-import-mode-target="panel" data-mode="pdf" hidden class="import-panel"
          data-controller="pdf-upload"
          data-pdf-upload-endpoint-value="<%= wizard_analyze_pdf_path %>">
-
       <div class="pdf-dropzone"
            data-pdf-upload-target="dropzone"
            data-action="dragover->pdf-upload#dragover dragleave->pdf-upload#dragleave drop->pdf-upload#drop click->pdf-upload#openPicker">
-        <div class="upload-icon">📄</div>
-        <div class="fw-semibold" style="font-size: 0.9rem; color: #2C2A25;">Glissez votre PDF ici</div>
-        <div style="font-size: 0.8rem; margin-top: 0.2rem;">
-          ou <span style="text-decoration: underline;">cliquez pour choisir un fichier</span>
-        </div>
-        <div style="font-size: 0.75rem; color: #4A4640; margin-top: 0.3rem;">PDF uniquement · max 10 Mo</div>
+        <span class="upload-icon">📄</span>
+        <div class="dz-title">Glissez votre PDF ici</div>
+        <div class="dz-hint">ou <u>cliquez pour choisir</u> &middot; PDF uniquement &middot; max 10 Mo</div>
       </div>
-
       <input type="file" accept=".pdf,application/pdf"
              data-pdf-upload-target="fileInput"
              data-action="change->pdf-upload#fileSelected"
              hidden>
-
-      <%# Filename + red X — visible only when a file is selected %>
       <div class="d-flex align-items-center gap-1 mt-2 overflow-hidden" style="min-height: 22px; display: none !important;"
            data-pdf-upload-target="fileRow">
         <span data-pdf-upload-target="filename"
               class="small text-muted text-truncate" style="max-width: 220px;"></span>
-        <button type="button" class="btn p-0 lh-1" style="color: #dc3545; font-size: 1.1rem; flex-shrink: 0;"
-                data-action="click->pdf-upload#remove"
-                title="Retirer le fichier">
-          &times;
-        </button>
+        <button type="button" class="btn p-0 lh-1" style="color: #C25E4A; font-size: 1.1rem; flex-shrink: 0;"
+                data-action="click->pdf-upload#remove" title="Retirer le fichier">&times;</button>
       </div>
-
-      <%# Analyser button — always visible, disabled until a file is selected %>
       <div class="mt-2">
-        <button type="button" disabled
-                style="border-radius: 8px; padding: 0.35rem 0.85rem; font-size: 0.9rem; font-weight: 500; white-space: nowrap; background: #C8C4BC; color: #4A4640; border: 1px solid #C8C4BC; cursor: not-allowed;"
+        <button type="button" disabled class="btn-analyze"
                 data-pdf-upload-target="analyzeBtn"
                 data-action="click->pdf-upload#analyze">
           Analyser ✨
         </button>
       </div>
-
       <div data-pdf-upload-target="status" hidden></div>
     </div>
 
+    <%# Chat panel %>
     <div data-import-mode-target="panel" data-mode="chat" hidden class="import-panel"
          data-controller="chat-property"
          data-chat-property-endpoint-value="<%= wizard_chat_property_path %>">
       <div data-chat-property-target="messages" class="chat-messages"></div>
-      <div class="input-group">
+      <div class="chat-input-row">
         <textarea class="form-control chat-input" rows="1"
-                  placeholder="Décrivez votre bien en quelques mots..."
+                  placeholder="Décrivez votre bien en quelques mots…"
                   data-chat-property-target="input"
                   data-action="keydown->chat-property#handleKeydown input->chat-property#inputChanged"></textarea>
         <button type="button" class="mic-btn"
@@ -299,17 +564,16 @@
                 data-action="click->chat-property#toggleMic"
                 title="Dicter">
           <span data-chat-property-target="micIcon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="none">
               <rect x="9" y="2" width="6" height="11" rx="3" fill="currentColor"/>
               <path d="M5 11a7 7 0 0 0 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
               <line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
               <line x1="8"  y1="22" x2="16" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
           </span>
-          <canvas data-chat-property-target="waveform"
-                  width="34" height="24" hidden></canvas>
+          <canvas data-chat-property-target="waveform" width="34" height="24" hidden></canvas>
         </button>
-        <button type="button" class="btn-send-chat ms-1"
+        <button type="button" class="btn-send-chat"
                 data-chat-property-target="sendBtn"
                 data-action="click->chat-property#send">
           Envoyer
@@ -318,88 +582,89 @@
     </div>
   </div>
 
-  <%# Photo du bien %>
+  <%# ── Photo du bien ── %>
   <% unless @project_type == "construction" %>
-  <div class="mb-4"
+  <div class="s1-section"
        data-controller="photo-upload"
        data-photo-upload-upload-url-value="<%= wizard_upload_photo_path %>">
+    <div class="s1-eyebrow">
+      Photo du bien
+      <span class="eyebrow-badge">facultatif</span>
+    </div>
 
-    <div class="small fw-semibold mb-2" style="color: #4A4640;">Photo du bien <span class="fw-normal">(facultatif)</span></div>
-
-    <%# Aperçu (masqué par défaut, affiché quand photo disponible) %>
     <div data-photo-upload-target="preview"
-         class="position-relative <%= @project.photo_url.present? ? '' : 'd-none' %>"
-         style="border-radius:8px; overflow:hidden; max-height:220px;">
+         class="photo-preview-wrap <%= @project.photo_url.present? ? '' : 'd-none' %>">
       <img data-photo-upload-target="previewImage"
            src="<%= @project.photo_url.to_s %>"
-           class="w-100"
-           style="object-fit:cover; max-height:220px; display:block;"
            alt="Photo du bien" />
       <button type="button"
               data-action="click->photo-upload#remove"
-              class="btn btn-sm btn-light position-absolute top-0 end-0 m-2"
-              style="border-radius:6px; padding:2px 8px; font-size:0.85rem;"
-              title="Retirer la photo">✕</button>
+              class="photo-remove-btn">✕ Retirer</button>
     </div>
 
-    <%# Zone de dépôt (masquée si photo déjà présente) %>
     <div data-photo-upload-target="dropzone"
          data-action="dragover->photo-upload#dragover dragleave->photo-upload#dragleave drop->photo-upload#drop click->photo-upload#openPicker"
-         class="<%= @project.photo_url.present? ? 'd-none' : '' %> d-flex flex-column align-items-center justify-content-center gap-1 p-4 text-center"
-         style="border:2px dashed #D0CCC4; border-radius:8px; cursor:pointer; min-height:120px; background:#FAFAF7; transition:border-color .15s, background .15s;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#9B9588" viewBox="0 0 16 16">
-        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
-      </svg>
-      <span style="color:#2C2A25; font-size:0.9rem;">
-        Déposer une photo ou <u>cliquer pour sélectionner</u>
-      </span>
-      <small style="color:#9B9588;">JPG, PNG, WEBP · max 5 Mo</small>
+         class="photo-dropzone <%= @project.photo_url.present? ? 'd-none' : '' %>">
+      <div class="photo-dz-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#9B9588" viewBox="0 0 16 16">
+          <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+          <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+        </svg>
+      </div>
+      <div class="photo-dz-title">Déposer une photo ou <u>cliquer pour sélectionner</u></div>
+      <div class="photo-dz-hint">JPG, PNG, WEBP &middot; max 5 Mo</div>
     </div>
 
-    <%# Input file caché %>
     <input type="file"
            accept="image/jpeg,image/png,image/webp,image/gif"
            data-photo-upload-target="fileInput"
            data-action="change->photo-upload#fileSelected"
            class="d-none" />
-
-    <%# Message de statut %>
     <div data-photo-upload-target="status" class="mt-2 small d-none"></div>
   </div>
   <% end %>
 
-  <%# Manual fields %>
+  <%# ── Form ── %>
   <%= form_with model: @project, url: wizard_step1_path, method: :post,
       data: { controller: "wizard-form", action: "submit->wizard-form#showErrors input->wizard-form#validate input->wizard-form#clearError change->wizard-form#validate change->wizard-form#clearError" } do |f| %>
-    <div class="field-section">
-      <div class="small fw-semibold mb-3" style="color: #4A4640;">
-        Informations du bien
-      </div>
+
+    <div class="s1-card s1-section">
+      <div class="s1-eyebrow" style="margin-bottom: 1.25rem;">Informations du bien</div>
 
       <div class="row g-3">
-        <%# Titre du projet — optional %>
+        <%# Titre du projet %>
         <div class="col-12">
-          <div class="field-label">Titre du projet</div>
-          <%= f.text_field :name, class: "form-control", placeholder: @project_type == "construction" ? "Ex : La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
+          <label class="field-label">Titre du projet</label>
+          <%= f.text_field :name, class: "form-control",
+              placeholder: @project_type == "construction" ? "Ex : La maison de mes rêves…" : "ex. Rénovation appartement Montmartre" %>
         </div>
 
-        <%# Type de bien — required, radio cards (hidden for construction flow) %>
+        <%# Type de bien %>
         <% unless @project_type == "construction" %>
         <div class="col-12" data-controller="property-type">
-          <div class="field-label">Type de bien <span class="required">*</span></div>
+          <label class="field-label">Type de bien <span class="required">*</span></label>
           <div class="property-type-options">
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_appartement" value="appartement"
                      data-required="true" data-action="change->property-type#toggle change->wizard-form#validate change->wizard-form#clearError"
                      <%= "checked" if property_type_value == "appartement" %>>
-              <label for="property_type_appartement">Appartement</label>
+              <label for="property_type_appartement">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+                Appartement
+              </label>
             </div>
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_maison" value="maison"
                      data-required="true" data-action="change->property-type#toggle change->wizard-form#validate change->wizard-form#clearError"
                      <%= "checked" if property_type_value == "maison" %>>
-              <label for="property_type_maison">Maison</label>
+              <label for="property_type_maison">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Maison
+              </label>
             </div>
             <div class="property-type-option">
               <input type="radio" name="project[property_type]" id="property_type_autre" value="autre"
@@ -418,25 +683,29 @@
         </div>
         <% end %>
 
-        <%# Surface — required %>
+        <%# Surface %>
         <div class="col-md-6">
-          <div class="field-label"><%= @project_type == "construction" ? "Surface souhaitée du bien (m²)" : "Surface actuelle du bien (m²)" %> <span class="required">*</span></div>
-          <%= f.number_field :total_surface_sqm, class: "form-control", placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78", step: 0.5,
-              min: 0, data: { required: true } %>
+          <label class="field-label">
+            <%= @project_type == "construction" ? "Surface souhaitée (m²)" : "Surface actuelle (m²)" %>
+            <span class="required">*</span>
+          </label>
+          <%= f.number_field :total_surface_sqm, class: "form-control",
+              placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78",
+              step: 0.5, min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>
             <div class="field-error">Veuillez renseigner la surface (nombre positif)</div>
           <% end %>
         </div>
 
-        <%# Nombre de pièces — optional %>
+        <%# Nombre de pièces %>
         <div class="col-md-6">
-          <div class="field-label">Nombre de pièces</div>
-          <%= f.number_field :room_count, class: "form-control", placeholder: @project_type == "construction" ? "ex : 4" : "ex. 4" %>
+          <label class="field-label">Nombre de pièces</label>
+          <%= f.number_field :room_count, class: "form-control", placeholder: "ex. 4" %>
         </div>
 
-        <%# Code postal — required, with autocomplete %>
+        <%# Code postal %>
         <div class="col-md-6" data-controller="city-autocomplete">
-          <div class="field-label">Code postal <span class="required">*</span></div>
+          <label class="field-label">Code postal <span class="required">*</span></label>
           <div class="autocomplete-wrapper">
             <input type="text" class="form-control"
                    placeholder="<%= @project_type == "construction" ? "ex : 75001" : "ex. 75001" %>"
@@ -457,9 +726,11 @@
           <% end %>
         </div>
 
-        <%# DPE — optional %>
+        <%# DPE %>
         <div class="col-md-6">
-          <div class="field-label"><%= @project_type.in?(%w[construction extension]) ? "DPE souhaité" : "DPE / Classe énergétique" %></div>
+          <label class="field-label">
+            <%= @project_type.in?(%w[construction extension]) ? "DPE souhaité" : "DPE / Classe énergétique" %>
+          </label>
           <%= f.select :energy_rating,
                 options_for_select(%w[A B C D E F G].map { |r| [r, r] }, @project.energy_rating),
                 { include_blank: "— Sélectionner —" },
@@ -468,24 +739,27 @@
       </div>
     </div>
 
-    <%# Commentaire — optional %>
-    <div class="field-section mt-3">
-      <div class="field-label">Commentaire</div>
+    <%# Commentaire %>
+    <div class="s1-card s1-section" style="margin-top: -0.375rem;">
+      <label class="field-label" style="margin-bottom: 0.5rem;">
+        Commentaire
+        <span style="font-weight: 400; color: #9B9588; font-size: 0.75rem;">&nbsp;facultatif</span>
+      </label>
       <%= f.text_area :description, class: "form-control", rows: 3,
-          placeholder: "Ajoutez des précisions sur votre projet..." %>
+          placeholder: "Précisions sur votre projet, contraintes particulières, souhaits spécifiques…",
+          style: "resize: vertical;" %>
     </div>
 
-    <%# Champ caché photo — soumis avec le form %>
     <%= f.hidden_field :photo_url, value: @project.photo_url.to_s %>
 
-    <div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="d-flex justify-content-between align-items-center mt-1 pb-5">
       <%= link_to wizard_choose_path, class: "btn btn-ghost-od" do %>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Retour
       <% end %>
       <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
         Suivant
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
   <% end %>

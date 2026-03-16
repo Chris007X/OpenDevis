@@ -3,76 +3,150 @@
 
 <% content_for :head do %>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
+  .rooms-scope {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
 
-  .room-tab {
+  .rooms-scope .room-tab {
     display: inline-block;
-    padding: 0.4rem 1rem;
+    padding: 0.38rem 1rem;
     border-radius: 20px;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 500;
     text-decoration: none;
-    border: 1.5px solid #C8C4BC;
+    border: 1.5px solid #E8E4DC;
     color: #4A4640;
     background: #fff;
     transition: border-color 0.12s, background 0.12s, color 0.12s;
     white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .room-tab:hover { border-color: #2C2A25; color: #2C2A25; }
-  .room-tab.active { border-color: #2C2A25; background: #2C2A25; color: #fff; }
+  .rooms-scope .room-tab:hover { border-color: #DDD9D1; color: #2C2A25; }
+  .rooms-scope .room-tab.active { border-color: #2563eb; background: #2563eb; color: #fff; }
 
-  .items-table th {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #4A4640;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid #C8C4BC;
-    padding: 0.6rem 0.75rem;
-    background: #FFFFFF;
+  .rooms-scope .room-heading {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 1.7rem;
+    color: #1C1A16;
+    margin: 0;
+    line-height: 1.2;
   }
-  .items-table td {
-    font-size: 0.9rem;
+
+  .rooms-scope .eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rooms-scope .eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #E8E4DC, transparent);
+  }
+
+  .rooms-scope .items-table-wrap {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .rooms-scope .items-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .rooms-scope .items-table th {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9B9588;
+    border-bottom: 1.5px solid #E8E4DC;
+    padding: 0.65rem 0.85rem;
+    background: #FAFAF7;
+  }
+  .rooms-scope .items-table td {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
     color: #2C2A25;
-    padding: 0.75rem;
-    border-bottom: 1px solid #EDEAE4;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid #F0EDE8;
     vertical-align: middle;
   }
-  .items-table tr:last-child td { border-bottom: none; }
-  .items-table tbody tr:hover td { background: #FFFFFF; }
-  .total-row td {
+  .rooms-scope .items-table tr:last-child td { border-bottom: none; }
+  .rooms-scope .items-table tbody tr:hover td { background: #FAFAF7; }
+  .rooms-scope .total-row td {
     font-weight: 700;
-    color: #2C2A25;
-    background: #EDEAE4;
-    border-top: 2px solid #C8C4BC;
-  }
-  .category-separator td {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1C1A16;
     background: #F5F3EE;
-    border-bottom: 2px solid #D8D4CA;
-    border-top: 1px solid #D8D4CA;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #2C2A25;
-    letter-spacing: 0.02em;
+    border-top: 1.5px solid #E8E4DC;
   }
-  .category-separator .cat-color-dot {
+  .rooms-scope .category-separator td {
+    background: #F8F6F2;
+    border-bottom: 1px solid #E8E4DC;
+    border-top: 1px solid #E8E4DC;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #4A4640;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .rooms-scope .category-separator .cat-color-dot {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     margin-right: 0.5rem;
     vertical-align: middle;
   }
+  .rooms-scope .back-link {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    color: #9B9588;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .rooms-scope .back-link:hover { color: #4A4640; }
+
+  .rooms-scope .delete-btn {
+    background: none;
+    border: none;
+    color: #9B9588;
+    cursor: pointer;
+    font-size: 0.82rem;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: color 0.12s;
+  }
+  .rooms-scope .delete-btn:hover { color: #842029; }
+
+  .rooms-scope .empty-state {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    background: #fff;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
 </style>
 <% end %>
 
-<div class="container py-4" style="max-width: 1000px;">
+<div class="container py-4 rooms-scope" style="max-width: 1000px;">
 
   <%# ── Back link ───────────────────────────────────────────────────────── %>
   <%= link_to "← #{@room.project.location_zip.presence || "Projet"}",
         @room.project,
-        style: "color: #4A4640; font-size: 0.85rem; text-decoration: none;" %>
+        class: "back-link" %>
 
   <%# ── Room tabs ───────────────────────────────────────────────────────── %>
   <% if @all_rooms.size > 1 %>
@@ -91,10 +165,8 @@
   <%= turbo_frame_tag "room_content" do %>
     <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
       <div>
-        <h2 style="font-size: 1.3rem; font-weight: 700; color: #2C2A25; margin: 0;">
-          <%= @room.name %>
-        </h2>
-        <div style="font-size: 0.85rem; color: #4A4640; margin-top: 3px;">
+        <h2 class="room-heading"><%= @room.name %></h2>
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.83rem; color: #9B9588; margin-top: 5px;">
           <% dim = [@room.surface_sqm&.then { |v| "#{v.to_i} m²" },
                     @room.perimeter_lm&.then { |v| "périmètre #{v} ml" },
                     @room.wall_height_m&.then { |v| "h. #{v} m" }].compact %>
@@ -115,8 +187,11 @@
           exvat * (1 + (i.vat_rate || 0) / 100.0)
         }
       %>
-      <div class="table-responsive">
-        <table class="w-100 items-table" style="border-collapse: collapse; border: 1px solid #C8C4BC; border-radius: 10px; overflow: hidden;">
+
+      <div class="eyebrow">Postes de travaux</div>
+
+      <div class="table-responsive items-table-wrap">
+        <table class="items-table">
           <thead>
             <tr>
               <th colspan="2">Désignation</th>
@@ -140,7 +215,7 @@
                 <td colspan="8">
                   <span class="cat-color-dot" style="background: <%= color %>;"></span>
                   <%= cat&.name || "Autre" %>
-                  <span style="font-weight: 400; color: #4A4640; margin-left: 0.5rem;">
+                  <span style="font-weight: 400; color: #9B9588; margin-left: 0.5rem;">
                     (<%= pluralize(items.size, "poste") %>)
                   </span>
                 </td>
@@ -166,7 +241,7 @@
                   <td class="text-end" style="white-space: nowrap;">
                     <%= button_to "✕", item, method: :delete,
                           data: { turbo_confirm: "Supprimer ce poste ?" },
-                          style: "background: none; border: none; color: #4A4640; cursor: pointer; font-size: 0.9rem; padding: 0;" %>
+                          class: "delete-btn" %>
                   </td>
                 </tr>
               <% end %>
@@ -178,8 +253,8 @@
               <td class="text-end">
                 <%= number_to_currency(room_total_ht, unit: "€", format: "%n %u",
                       separator: ",", delimiter: "\u202F") %>
-                <div style="font-size: 0.75rem; font-weight: 400; color: #4A4640;">
-                  TTC:
+                <div style="font-size: 0.75rem; font-weight: 400; color: #9B9588;">
+                  TTC :
                   <%= number_to_currency(room_total_ttc, unit: "€", format: "%n %u",
                         separator: ",", delimiter: "\u202F") %>
                 </div>
@@ -190,9 +265,8 @@
         </table>
       </div>
     <% else %>
-      <div class="text-center py-5"
-           style="border: 1px solid #C8C4BC; border-radius: 10px; background: #fff;">
-        <div style="color: #4A4640; font-size: 0.9rem; margin-bottom: 1rem;">
+      <div class="empty-state">
+        <div style="color: #9B9588; font-size: 0.88rem; margin-bottom: 1rem;">
           Aucun poste de travaux pour cette pièce.
         </div>
         <%= link_to "+ Ajouter le premier poste", new_room_work_item_path(@room),

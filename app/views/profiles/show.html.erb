@@ -2,73 +2,131 @@
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
 <style>
-  body { background-color: #FFFFFF; }
-  .profile-card {
-    background: #fff;
-    border: 1px solid #C8C4BC;
-    border-radius: 12px;
-    padding: 2rem;
-  }
-  .avatar-circle {
-    width: 64px; height: 64px;
+  body { background-color: #FAFAF7; }
+  .profile-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .profile-page { max-width: 620px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+  .profile-avatar {
+    width: 80px; height: 80px;
     border-radius: 50%;
-    background: #2C2A25;
+    background: linear-gradient(135deg, #2C2A25 0%, #4A4640 100%);
     color: #fff;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    font-family: 'DM Serif Display', Georgia, serif;
+    box-shadow: 0 4px 16px rgba(44,42,37,0.18);
   }
-  .info-row { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.6rem 0; border-bottom: 1px solid #EDEAE4; }
+  .profile-name {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: #1C1A16;
+    line-height: 1.15;
+  }
+  .profile-email { font-size: 0.88rem; color: #9B9588; margin-top: 2px; }
+  .profile-card {
+    background: #fff;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 2px 12px rgba(44,42,37,0.06);
+    overflow: hidden;
+  }
+  .info-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 1.75rem;
+    border-bottom: 1px solid #F0EDE8;
+  }
   .info-row:last-child { border-bottom: none; }
-  .info-label { font-size: 0.82rem; color: #4A4640; width: 110px; flex-shrink: 0; }
-  .info-value { font-size: 0.92rem; color: #2C2A25; }
-  .btn-edit {
-    background: #2C2A25; color: #fff; border: none;
-    border-radius: 8px; font-weight: 500; font-size: 0.9rem;
-    padding: 0.5rem 1.25rem; cursor: pointer; text-decoration: none;
-    display: inline-block; transition: background 0.12s;
+  .info-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    width: 110px;
+    flex-shrink: 0;
+    padding-top: 2px;
   }
-  .btn-edit:hover { background: #1a1916; color: #fff; }
+  .info-value { font-size: 0.93rem; color: #1C1A16; font-weight: 500; }
+  .info-value.muted { color: #C8C4BC; font-weight: 400; font-style: italic; }
+  .btn-edit-profile {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .btn-edit-profile:hover {
+    background: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    color: #fff;
+  }
 </style>
 <% end %>
 
-<div class="container py-5" style="max-width: 620px;">
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <div class="d-flex align-items-center gap-3">
-      <div class="avatar-circle">
-        <%= (@user.full_name&.first || @user.email.first).upcase %>
-      </div>
-      <div>
-        <div style="font-size: 1.3rem; font-weight: 700; color: #2C2A25;">
-          <%= @user.full_name.presence || "Mon profil" %>
+<div class="profile-scope">
+  <div class="profile-page">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="profile-avatar">
+          <%= (@user.full_name&.first || @user.email.first).upcase %>
         </div>
-        <div style="font-size: 0.88rem; color: #4A4640;"><%= @user.email %></div>
+        <div>
+          <div class="profile-name">
+            <%= @user.full_name.presence || "Mon profil" %>
+          </div>
+          <div class="profile-email"><%= @user.email %></div>
+        </div>
       </div>
+      <%= link_to "Modifier le profil", edit_profile_path, class: "btn-edit-profile" %>
     </div>
-    <%= link_to "Modifier", edit_profile_path, class: "btn-edit" %>
-  </div>
 
-  <div class="profile-card">
-    <div class="info-row">
-      <span class="info-label">Nom complet</span>
-      <span class="info-value"><%= @user.full_name.presence || "—" %></span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Email</span>
-      <span class="info-value"><%= @user.email %></span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Téléphone</span>
-      <span class="info-value"><%= @user.phone.presence || "—" %></span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Localisation</span>
-      <span class="info-value"><%= @user.location.presence || "—" %></span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Membre depuis</span>
-      <span class="info-value"><%= @user.created_at.strftime("%B %Y") %></span>
+    <div class="profile-card">
+      <div class="info-row">
+        <span class="info-label">Nom complet</span>
+        <% if @user.full_name.present? %>
+          <span class="info-value"><%= @user.full_name %></span>
+        <% else %>
+          <span class="info-value muted">Non renseigné</span>
+        <% end %>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= @user.email %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Téléphone</span>
+        <% if @user.phone.present? %>
+          <span class="info-value"><%= @user.phone %></span>
+        <% else %>
+          <span class="info-value muted">Non renseigné</span>
+        <% end %>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Localisation</span>
+        <% if @user.location.present? %>
+          <span class="info-value"><%= @user.location %></span>
+        <% else %>
+          <span class="info-value muted">Non renseignée</span>
+        <% end %>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Membre depuis</span>
+        <span class="info-value"><%= @user.created_at.strftime("%B %Y") %></span>
+      </div>
     </div>
   </div>
 </div>

@@ -2,80 +2,137 @@
 
 <% content_for :head do %>
 <style>
-  .notif-row {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  body { background-color: #FAFAF7; }
+  .notif-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .notif-page { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+  .notif-heading {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #1C1A16;
+    line-height: 1.15;
+    margin-bottom: 0.2rem;
+  }
+  .notif-count { color: #9B9588; font-size: 0.88rem; }
+  .notif-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 12px;
     background: #fff;
-    padding: 16px 20px;
-    margin-bottom: 10px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-    transition: border-color 0.15s;
+    gap: 1rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .notif-row.unread { border-color: #2C2A25; background: #FFFFFF; }
-  .notif-row:hover { border-color: #4A4640; }
+  .notif-card:hover { border-color: #DDD9D1; box-shadow: 0 2px 8px rgba(44,42,37,0.06); }
+  .notif-card.unread {
+    background: #F4F8FF;
+    border-color: #DBEAFE;
+  }
+  .notif-card.unread:hover { border-color: #BFDBFE; }
+  .notif-card.read { background: #fff; opacity: 0.75; }
   .notif-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: #2C2A25;
-    flex-shrink: 0; margin-top: 6px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #2563eb;
+    flex-shrink: 0; margin-top: 7px;
   }
-  .notif-dot.read { background: transparent; border: 1px solid #C8C4BC; }
-  .notif-title { font-weight: 600; color: #2C2A25; font-size: 0.9rem; }
-  .notif-body { color: #4A4640; font-size: 0.85rem; margin-top: 2px; }
-  .notif-time { font-size: 0.78rem; color: #4A4640; white-space: nowrap; }
-  .kind-badge { font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-  .kind-artisan_responded  { background: #D4EDDA; color: #2D6A4F; }
-  .kind-all_responded      { background: #D0E8F5; color: #1A5C80; }
-  .kind-final_quote_ready  { background: #EDE9E0; color: #4A4640; }
-  .kind-manual_review      { background: #FFF3CD; color: #856404; }
+  .notif-dot.read {
+    background: transparent;
+    border: 1.5px solid #DDD9D1;
+  }
+  .notif-title { font-weight: 700; color: #1C1A16; font-size: 0.9rem; }
+  .notif-body { color: #4A4640; font-size: 0.85rem; margin-top: 3px; line-height: 1.5; }
+  .notif-link { font-size: 0.82rem; color: #2563eb; text-decoration: none; font-weight: 600; }
+  .notif-link:hover { text-decoration: underline; }
+  .notif-time { font-size: 0.75rem; color: #9B9588; white-space: nowrap; }
+  .kind-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .kind-artisan_responded  { background: #DCFCE7; color: #15803D; }
+  .kind-all_responded      { background: #DBEAFE; color: #1D4ED8; }
+  .kind-final_quote_ready  { background: #F5F0E8; color: #4A4640; }
+  .kind-manual_review      { background: #FEF3C7; color: #92400E; }
+  .btn-mark-read {
+    background: transparent;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 50px;
+    color: #9B9588;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    white-space: nowrap;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .btn-mark-read:hover { border-color: #C8C4BC; color: #4A4640; }
+  .notif-empty {
+    text-align: center;
+    padding: 3.5rem 2rem;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(44,42,37,0.04);
+  }
+  .notif-empty-icon { font-size: 2.25rem; margin-bottom: 1rem; opacity: 0.6; }
+  .notif-empty-title { font-weight: 700; color: #1C1A16; margin-bottom: 0.35rem; font-size: 1rem; }
+  .notif-empty-desc { color: #9B9588; font-size: 0.88rem; }
 </style>
 <% end %>
 
-<div class="container py-4" style="max-width: 800px;">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 style="font-weight: 700; color: #2C2A25; margin-bottom: 2px;">Notifications</h2>
-      <div style="color: #4A4640; font-size: 0.9rem;">
-        <%= @notifications.count { |n| !n.read } %> non lue<%= @notifications.count { |n| !n.read } > 1 ? "s" : "" %>
+<div class="notif-scope">
+  <div class="notif-page">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+      <div>
+        <h1 class="notif-heading">Notifications</h1>
+        <div class="notif-count">
+          <%= @notifications.count { |n| !n.read } %> non lue<%= @notifications.count { |n| !n.read } > 1 ? "s" : "" %>
+        </div>
       </div>
     </div>
-  </div>
 
-  <% if @notifications.any? %>
-    <% @notifications.each do |notification| %>
-      <div class="notif-row <%= "unread" unless notification.read %>">
-        <div class="notif-dot <%= "read" if notification.read %>"></div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="notif-title">
-            <%= notification.title %>
-            <span class="kind-badge kind-<%= notification.kind %>"><%= notification.kind.humanize %></span>
-          </div>
-          <% if notification.body.present? %>
-            <div class="notif-body"><%= notification.body %></div>
-          <% end %>
-          <% if notification.project.present? %>
-            <div style="margin-top: 4px;">
-              <%= link_to "Voir le projet →", project_path(notification.project),
-                    style: "font-size: 0.82rem; color: #2C2A25; text-decoration: none; font-weight: 500;" %>
+    <% if @notifications.any? %>
+      <% @notifications.each do |notification| %>
+        <div class="notif-card <%= notification.read ? "read" : "unread" %>">
+          <div class="notif-dot <%= "read" if notification.read %>"></div>
+          <div style="flex: 1; min-width: 0;">
+            <div class="notif-title">
+              <%= notification.title %>
+              <span class="kind-badge kind-<%= notification.kind %>"><%= notification.kind.humanize %></span>
             </div>
-          <% end %>
+            <% if notification.body.present? %>
+              <div class="notif-body"><%= notification.body %></div>
+            <% end %>
+            <% if notification.project.present? %>
+              <div style="margin-top: 6px;">
+                <%= link_to "Voir le projet →", project_path(notification.project), class: "notif-link" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
+            <span class="notif-time"><%= time_ago_in_words(notification.created_at) %></span>
+            <% unless notification.read %>
+              <%= button_to "Marquer lu", mark_read_notification_path(notification), method: :post,
+                    class: "btn-mark-read" %>
+            <% end %>
+          </div>
         </div>
-        <div class="d-flex flex-column align-items-end gap-2">
-          <span class="notif-time"><%= time_ago_in_words(notification.created_at) %> ago</span>
-          <% unless notification.read %>
-            <%= button_to "Marquer lu", mark_read_notification_path(notification), method: :post,
-                  style: "background: transparent; border: 1px solid #C8C4BC; color: #4A4640; font-size: 0.78rem;
-                          padding: 3px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap;" %>
-          <% end %>
-        </div>
+      <% end %>
+    <% else %>
+      <div class="notif-empty">
+        <div class="notif-empty-icon">🔔</div>
+        <div class="notif-empty-title">Aucune notification</div>
+        <div class="notif-empty-desc">Vous serez notifié quand des artisans répondront à vos demandes.</div>
       </div>
     <% end %>
-  <% else %>
-    <div class="text-center py-5" style="border: 1px solid #C8C4BC; border-radius: 10px; background: #fff;">
-      <div style="font-size: 2.5rem; margin-bottom: 12px;">🔔</div>
-      <div style="font-weight: 600; color: #2C2A25; margin-bottom: 4px;">Aucune notification</div>
-      <div style="color: #4A4640; font-size: 0.9rem;">Vous serez notifié quand des artisans répondront à vos demandes.</div>
-    </div>
-  <% end %>
+  </div>
 </div>
