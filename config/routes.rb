@@ -67,5 +67,8 @@ Rails.application.routes.draw do
   resources :work_categories, only: [:index, :show]
   resources :materials,       only: [:index, :show]
 
+  post "analytics/events", to: "analytics#create", as: :analytics_events
+  get  "analytics",        to: "analytics_dashboard#index", as: :analytics_dashboard
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

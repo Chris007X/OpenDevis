@@ -15,4 +15,9 @@ class User < ApplicationRecord
   # Associations
   has_many :projects, dependent: :destroy
   has_many :notifications, dependent: :destroy
+
+  def admin?
+    admin_emails = ENV.fetch("ADMIN_EMAILS", "").split(",").map(&:strip)
+    admin_emails.include?(email)
+  end
 end

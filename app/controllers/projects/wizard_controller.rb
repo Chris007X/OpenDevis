@@ -312,6 +312,8 @@ module Projects
         renovation_type: renovation_type || "renovation_complete"
       )
 
+      track_funnel_step("wizard_to_estimate", 5, "estimate_generated", completed: true)
+
       # Clear wizard session state
       %i[wizard_project_id wizard_project_type wizard_renovation_type
          wizard_categories wizard_rooms wizard_room_categories
@@ -358,9 +360,22 @@ module Projects
       "/uploads/wizard_photos/#{filename}"
     end
 
+    WIZARD_STEP_NAMES = {
+      1 => "property_info",
+      2 => "renovation_type",
+      3 => "work_categories",
+      4 => "recap_standing"
+    }.freeze
+
     def track_wizard_step(step_num)
       current = session[:wizard_max_step].to_i
       session[:wizard_max_step] = [ current, step_num ].max
+
+      # Only record first visit to each step to avoid duplicate funnel entries on refreshes
+      return if current >= step_num
+
+      step_name = WIZARD_STEP_NAMES[step_num] || "step_#{step_num}"
+      track_funnel_step("wizard_to_estimate", step_num, step_name, completed: false)
     end
 
     def wizard_max_step

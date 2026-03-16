@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include Trackable
   before_action :authenticate_user!, unless: :artisan_route?
   include Pundit::Authorization # <-- Cette ligne doit être présente
 
