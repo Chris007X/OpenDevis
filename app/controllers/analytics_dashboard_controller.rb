@@ -84,6 +84,7 @@ class AnalyticsDashboardController < ApplicationController
                   .order(started_at: :desc)
 
     @pages_visited = @events.where(event_type: "page_view")
+                             .reorder(nil)
                              .group(:page_path)
                              .count
                              .sort_by { |_, v| -v }
