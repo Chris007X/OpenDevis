@@ -68,7 +68,8 @@ Rails.application.routes.draw do
   resources :materials,       only: [:index, :show]
 
   post "analytics/events", to: "analytics#create", as: :analytics_events
-  get  "analytics",        to: "analytics_dashboard#index", as: :analytics_dashboard
+  get  "analytics",              to: "analytics_dashboard#index",        as: :analytics_dashboard
+  get  "analytics/active_users", to: "analytics_dashboard#active_users", as: :analytics_active_users
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

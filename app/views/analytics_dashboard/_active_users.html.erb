@@ -1,0 +1,28 @@
+<% if @active_users.any? %>
+  <div class="d-flex flex-wrap gap-2">
+    <% @active_users.each do |row| %>
+      <div style="display: flex; align-items: center; gap: 0.6rem; background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 12px; padding: 0.5rem 0.85rem;">
+        <span style="width: 32px; height: 32px; border-radius: 50%; background: #059669; color: #fff; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <%= (row[:user].full_name.presence || row[:user].email).first.upcase %>
+        </span>
+        <div>
+          <div style="font-size: 0.83rem; font-weight: 600; color: #065F46; line-height: 1.2;">
+            <%= row[:user].full_name.presence || "Utilisateur ##{row[:user].id}" %>
+          </div>
+          <div style="font-size: 0.75rem; color: #6B7280; margin-top: 1px; display: flex; align-items: center; gap: 0.4rem;">
+            <span style="font-family: ui-monospace, monospace;"><%= row[:current_page].presence || "—" %></span>
+            <span style="color: #9B9588;">&middot;</span>
+            <span>
+              <% s = row[:seconds_ago] %>
+              <% if s < 60 %>il y a <%= s %>s
+              <% else %>il y a <%= s / 60 %>min
+              <% end %>
+            </span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div style="color: #9B9588; font-size: 0.85rem;">Aucun utilisateur actif en ce moment.</div>
+<% end %>

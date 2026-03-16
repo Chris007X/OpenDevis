@@ -27,12 +27,7 @@ class AnalyticsDashboardController < ApplicationController
 
     @recent_events   = AnalyticsEvent.order(created_at: :desc).limit(25)
 
-    # Active now: sessions with event activity in the last 10 minutes
-    active_user_ids = AnalyticsSession
-                        .where("ended_at > ?", 10.minutes.ago)
-                        .where.not(user_id: nil)
-                        .pluck(:user_id)
-    @active_users = User.where(id: active_user_ids).to_a
+    load_active_users
 
     # Recent user activity: one row per logged-in user for the selected period
     recent_user_ids = AnalyticsEvent.recent(@days).where.not(user_id: nil).distinct.pluck(:user_id)
@@ -68,7 +63,30 @@ class AnalyticsDashboardController < ApplicationController
                        .transform_keys { |d| d.to_s }
   end
 
+  def active_users
+    load_active_users
+    render partial: "active_users"
+  end
+
   private
+
+  def load_active_users
+    active_sessions = AnalyticsSession
+                        .where("ended_at > ?", 10.minutes.ago)
+                        .where.not(user_id: nil)
+                        .order(ended_at: :desc)
+
+    user_ids = active_sessions.pluck(:user_id).uniq
+    users_map = User.where(id: user_ids).index_by { |u| u.id.to_s }
+
+    @active_users = active_sessions.map do |s|
+      user = users_map[s.user_id.to_s]
+      next unless user
+
+      seconds_ago = (Time.current - s.ended_at).to_i
+      { user: user, current_page: s.last_page, seconds_ago: seconds_ago }
+    end.compact.uniq { |r| r[:user].id }
+  end
 
   def require_admin!
     redirect_to root_path, alert: "Accès non autorisé." unless current_user&.admin?

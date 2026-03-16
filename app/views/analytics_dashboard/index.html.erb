@@ -143,36 +143,24 @@
       </div>
     </div>
 
-    <%# ── Utilisateurs actifs ─────────────────────────────────── %>
+    <%# ── Utilisateurs actifs (live, rafraîchi toutes les 10s) ── %>
     <div class="od-card p-4 mb-4">
       <div class="d-flex align-items-center gap-2 mb-3">
-        <span style="width: 9px; height: 9px; border-radius: 50%; background: #059669; display: inline-block; box-shadow: 0 0 0 3px rgba(5,150,105,0.2);"></span>
+        <span style="width: 9px; height: 9px; border-radius: 50%; background: #059669; display: inline-block; box-shadow: 0 0 0 3px rgba(5,150,105,0.2); animation: pulse 2s infinite;"></span>
         <div class="an-section-title mb-0">Actifs maintenant</div>
-        <span style="font-size: 0.8rem; color: #9B9588;">(activité dans les 10 dernières minutes)</span>
+        <span style="font-size: 0.8rem; color: #9B9588;">· live, rafraîchi toutes les 10s</span>
       </div>
-
-      <% if @active_users.any? %>
-        <div class="d-flex flex-wrap gap-2">
-          <% @active_users.each do |user| %>
-            <div style="display: flex; align-items: center; gap: 0.6rem; background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 20px; padding: 0.35rem 0.85rem;">
-              <span style="width: 28px; height: 28px; border-radius: 50%; background: #059669; color: #fff; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <%= (user.full_name.presence || user.email).first.upcase %>
-              </span>
-              <div>
-                <div style="font-size: 0.82rem; font-weight: 600; color: #065F46; line-height: 1.2;">
-                  <%= user.full_name.presence || "Utilisateur ##{user.id}" %>
-                </div>
-                <div style="font-size: 0.72rem; color: #6B7280;">
-                  <%= user.email %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div style="color: #9B9588; font-size: 0.85rem;">Aucun utilisateur actif en ce moment.</div>
-      <% end %>
+      <div data-controller="analytics-live"
+           data-analytics-live-url-value="<%= analytics_active_users_path %>">
+        <%= render "active_users" %>
+      </div>
     </div>
+    <style>
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 3px rgba(5,150,105,0.2); }
+        50%       { box-shadow: 0 0 0 6px rgba(5,150,105,0.0); }
+      }
+    </style>
 
     <%# ── Sparkline + Top pages (2-col) ──────────────────────── %>
     <div class="row g-3 mb-4">
