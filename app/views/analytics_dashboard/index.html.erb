@@ -69,6 +69,7 @@
   .ev-pill.js_error     { background: #FEE2E2; color: #991B1B; }
   .ev-pill.form_submit  { background: #FEF9C3; color: #92400E; }
   .ev-pill.click        { background: #EDE9FE; color: #5B21B6; }
+  .ev-pill.server_error { background: #FEE2E2; color: #991B1B; }
 </style>
 <% end %>
 
@@ -489,6 +490,57 @@
             Aucune donnée de funnel pour cette période.
           </div>
         <% end %>
+      </div>
+    <% end %>
+
+    <%# ── Errors ───────────────────────────────────────────────── %>
+    <% if @recent_errors.any? %>
+      <div class="od-card mb-4" style="border-color: #FCA5A5;">
+        <div class="p-4 pb-0 d-flex align-items-center gap-2">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #EF4444; flex-shrink: 0;"></span>
+          <div class="an-section-title mb-0" style="color: #991B1B;">Erreurs récentes</div>
+          <span class="ms-auto" style="font-size: 0.8rem; color: #9B9588;"><%= @recent_errors.size %> erreur<%= @recent_errors.size > 1 ? 's' : '' %> sur <%= @days %>j</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="an-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Exception</th>
+                <th>Page / Action</th>
+                <th>User</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_errors.each do |ev| %>
+                <tr>
+                  <td>
+                    <span class="ev-pill" style="background: #FEE2E2; color: #991B1B;">
+                      <%= ev.event_type %>
+                    </span>
+                  </td>
+                  <td style="max-width: 320px;">
+                    <div style="font-size: 0.78rem; font-weight: 600; color: #7F1D1D; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<%= ev.properties['exception_class'] %>">
+                      <%= ev.properties["exception_class"] %>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #4A4640; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;" title="<%= ev.properties['exception_message'] %>">
+                      <%= ev.properties["exception_message"]&.truncate(120) %>
+                    </div>
+                  </td>
+                  <td class="mono">
+                    <div><%= ev.page_path.presence || "—" %></div>
+                    <% if ev.properties["controller"].present? %>
+                      <div style="font-size: 0.72rem; color: #9B9588;"><%= ev.properties["controller"] %></div>
+                    <% end %>
+                  </td>
+                  <td class="mono"><%= ev.user_id.presence || "anon" %></td>
+                  <td style="white-space: nowrap;"><%= l(ev.created_at, format: :short) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     <% end %>
 

@@ -31,6 +31,11 @@ class AnalyticsDashboardController < ApplicationController
     @drop_off_pages  = AnalyticsSession.drop_off_pages(@days).first(10).to_h
     @avg_load_times  = AnalyticsEvent.avg_load_times(@days).first(10).to_h
 
+    @recent_errors   = AnalyticsEvent.recent(@days)
+                                      .where(event_type: %w[server_error js_error])
+                                      .order(created_at: :desc)
+                                      .limit(50)
+
     @recent_events   = AnalyticsEvent.order(created_at: :desc).limit(25)
 
     load_active_users

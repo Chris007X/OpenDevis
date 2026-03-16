@@ -7,7 +7,35 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized, unless: -> { skip_pundit? || action_name == "index" }
   after_action :verify_policy_scoped, unless: :skip_pundit?, if: -> { action_name == "index" }
 
+  rescue_from StandardError, with: :track_and_reraise
+
   private
+
+  def track_and_reraise(exception)
+    # Skip common non-bug exceptions (auth redirects, missing records that render 404, etc.)
+    ignorable = [
+      ActionController::RoutingError,
+      ActionController::UnknownFormat,
+      Pundit::NotAuthorizedError,
+      ActiveRecord::RecordNotFound
+    ]
+    unless ignorable.any? { |klass| exception.is_a?(klass) }
+      AnalyticsTracker.track(
+        event_type:  "server_error",
+        session_id:  analytics_session_id,
+        user_id:     current_analytics_user_id,
+        page_path:   request.path,
+        user_agent:  request.user_agent,
+        ip_address:  anonymized_ip,
+        properties:  {
+          exception_class:   exception.class.name,
+          exception_message: exception.message.truncate(300),
+          controller:        "#{params[:controller]}##{params[:action]}"
+        }
+      )
+    end
+    raise exception
+  end
 
   def after_sign_in_path_for(resource)
     resource.is_a?(User) ? projects_path : super

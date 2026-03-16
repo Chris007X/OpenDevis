@@ -115,6 +115,15 @@ const Analytics = (() => {
     })
   }
 
+  function handleUnhandledRejection(event) {
+    const reason = event.reason
+    send('js_error', {
+      message: reason instanceof Error ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      stack: reason instanceof Error ? (reason.stack ?? null) : null,
+    })
+  }
+
   // ── Turbo-aware lifecycle ─────────────────────────────────────────────────
 
   function init() {
@@ -132,8 +141,9 @@ const Analytics = (() => {
     // Click tracking — single delegated listener on the document
     document.addEventListener('click', handleClick)
 
-    // Unhandled JS errors
+    // Unhandled JS errors and promise rejections
     window.addEventListener('error', handleError)
+    window.addEventListener('unhandledrejection', handleUnhandledRejection)
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
