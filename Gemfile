@@ -56,6 +56,11 @@ gem "prawn-table"
 gem "faraday"
 gem "pdf-reader"
 
+# Error monitoring
+gem "stackprof"       # Ruby profiling (must be loaded before sentry-ruby)
+gem "sentry-ruby"
+gem "sentry-rails"
+
 group :development, :test do
   gem "dotenv-rails"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
