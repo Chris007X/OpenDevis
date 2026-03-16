@@ -290,6 +290,72 @@
       </div>
     </div>
 
+    <%# ── Traffic sources + Top clicks (2-col) ───────────────── %>
+    <div class="row g-3 mb-4">
+
+      <%# Traffic sources %>
+      <div class="col-lg-5">
+        <div class="od-card p-4 h-100">
+          <div class="an-section-title">Sources de trafic</div>
+          <% if @traffic_sources.any? %>
+            <% source_colors = { "Google" => "#4285F4", "Bing" => "#008373", "Facebook" => "#1877F2", "Instagram" => "#E1306C", "LinkedIn" => "#0A66C2", "Twitter / X" => "#000", "TikTok" => "#010101", "Reddit" => "#FF4500", "Yahoo" => "#6001D2", "Direct" => "#059669", "Autre" => "#9B9588" } %>
+            <% total_src = @traffic_sources.values.sum.to_f %>
+            <% max_src = @traffic_sources.values.max.to_f %>
+            <% @traffic_sources.each do |source, count| %>
+              <div class="bar-row">
+                <div class="bar-label" style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: <%= source_colors[source] || '#9B9588' %>; flex-shrink: 0;"></span>
+                  <%= source %>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width: <%= (count / max_src * 100).round %>%; background: <%= source_colors[source] || '#9B9588' %>;"></div>
+                </div>
+                <div class="bar-count" style="width: 60px;"><%= count %> · <%= (count / total_src * 100).round %>%</div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center py-4" style="color: #9B9588; font-size: 0.85rem;">Aucune donnée de trafic</div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Top clicked elements %>
+      <div class="col-lg-7">
+        <div class="od-card p-4 h-100">
+          <div class="an-section-title">Éléments les plus cliqués</div>
+          <% top_clicks = AnalyticsEvent.recent(@days)
+                            .where(event_type: "heatmap_click")
+                            .pluck("properties->>'element'", "properties->>'href'", "page_path")
+                            .group_by { |el, href, _page| [el&.truncate(50), href] }
+                            .transform_values(&:count)
+                            .sort_by { |_, v| -v }
+                            .first(10) %>
+          <% if top_clicks.any? %>
+            <% max_cl = top_clicks.map { |_, v| v }.max.to_f %>
+            <% top_clicks.each do |(label, href), count| %>
+              <div class="bar-row">
+                <div class="bar-label" style="width: 240px;" title="<%= label %>">
+                  <span style="font-size: 0.78rem;"><%= label.presence || "(sans label)" %></span>
+                  <% if href.present? && !href.start_with?("#") %>
+                    <span style="font-size: 0.7rem; color: #9B9588; font-family: ui-monospace, monospace;"> → <%= href.truncate(30) %></span>
+                  <% end %>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width: <%= (count / max_cl * 100).round %>%; background: #7C3AED;"></div>
+                </div>
+                <div class="bar-count"><%= count %></div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center py-4" style="color: #9B9588; font-size: 0.85rem;">
+              Aucun clic enregistré.<br>
+              <span style="font-size: 0.78rem;">Les données apparaîtront après les premières visites.</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <%# ── Utilisateurs récents ────────────────────────────────── %>
     <div class="od-card mb-4">
       <div class="p-4 pb-0">

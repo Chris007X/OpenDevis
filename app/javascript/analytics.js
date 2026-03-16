@@ -83,25 +83,47 @@ const Analytics = (() => {
     pageEnteredAt = null
   }
 
-  // ── Click tracking via data-track-event ───────────────────────────────────
+  // ── Click tracking ────────────────────────────────────────────────────────
+  // Records ALL clicks with coordinates (for heatmap) plus optional
+  // data-track-event attributes for named events.
+
+  function elementLabel(el) {
+    // Build a short human-readable label: text content or tag+class
+    const text = (el.innerText || el.value || el.title || el.alt || '').trim().slice(0, 60)
+    if (text) return text
+    const tag = el.tagName.toLowerCase()
+    const cls = el.className && typeof el.className === 'string'
+      ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.')
+      : ''
+    return `${tag}${cls}`
+  }
 
   function handleClick(event) {
-    const el = event.target.closest('[data-track-event]')
-    if (!el) return
+    const target = event.target
+    const tagged = target.closest('[data-track-event]')
 
-    const eventName = el.dataset.trackEvent
-    const props = {}
-
-    // Collect all data-track-* attributes as properties
-    Object.keys(el.dataset).forEach((key) => {
-      if (key.startsWith('track') && key !== 'trackEvent') {
-        // camelCase → snake_case: trackProjectId → project_id
-        const prop = key.replace('track', '').replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')
-        props[prop] = el.dataset[key]
-      }
+    // Always record a heatmap_click with coordinates and element info
+    send('heatmap_click', {
+      x: event.clientX,
+      y: event.clientY,
+      // Coordinates as percentage of viewport (stable across window sizes)
+      x_pct: Math.round((event.clientX / window.innerWidth)  * 1000) / 10,
+      y_pct: Math.round((event.clientY / window.innerHeight) * 1000) / 10,
+      element: elementLabel(target),
+      tag: target.tagName.toLowerCase(),
+      href: target.closest('a')?.getAttribute('href') ?? null,
     })
 
-    send(eventName, props, { completed: el.dataset.trackCompleted === 'true' })
+    // If a data-track-event element was clicked, also fire the named event
+    if (!tagged) return
+    const props = {}
+    Object.keys(tagged.dataset).forEach((key) => {
+      if (key.startsWith('track') && key !== 'trackEvent') {
+        const prop = key.replace('track', '').replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')
+        props[prop] = tagged.dataset[key]
+      }
+    })
+    send(tagged.dataset.trackEvent, props, { completed: tagged.dataset.trackCompleted === 'true' })
   }
 
   // ── JS error tracking ─────────────────────────────────────────────────────

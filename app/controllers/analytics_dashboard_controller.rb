@@ -28,8 +28,9 @@ class AnalyticsDashboardController < ApplicationController
                                      .first(10)
                                      .to_h
 
-    @drop_off_pages  = AnalyticsSession.drop_off_pages(@days).first(10).to_h
-    @avg_load_times  = AnalyticsEvent.avg_load_times(@days).first(10).to_h
+    @drop_off_pages   = AnalyticsSession.drop_off_pages(@days).first(10).to_h
+    @avg_load_times   = AnalyticsEvent.avg_load_times(@days).first(10).to_h
+    @traffic_sources  = AnalyticsEvent.traffic_sources(@days)
 
     @recent_errors   = AnalyticsEvent.recent(@days)
                                       .where(event_type: %w[server_error js_error])

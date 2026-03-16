@@ -20,6 +20,36 @@ class AnalyticsEvent < ApplicationRecord
                 .to_h
   end
 
+  # Returns { source_label => count } for traffic source breakdown
+  REFERRER_RULES = [
+    [ /google\./i,    "Google" ],
+    [ /bing\./i,      "Bing" ],
+    [ /yahoo\./i,     "Yahoo" ],
+    [ /facebook\.|fb\.com/i, "Facebook" ],
+    [ /instagram\./i, "Instagram" ],
+    [ /linkedin\./i,  "LinkedIn" ],
+    [ /twitter\.|t\.co/i, "Twitter / X" ],
+    [ /tiktok\./i,    "TikTok" ],
+    [ /reddit\./i,    "Reddit" ],
+    [ /opendevis\./i, nil ],  # self-referral → ignore (treat as direct)
+  ].freeze
+
+  def self.traffic_sources(days = 7)
+    rows = recent(days).where(event_type: "page_view").pluck(:referrer)
+    counts = Hash.new(0)
+    rows.each do |ref|
+      label = if ref.blank?
+        "Direct"
+      else
+        rule = REFERRER_RULES.find { |pattern, _| ref.match?(pattern) }
+        rule.nil? ? "Autre" : rule[1]  # nil label = self-referral, mapped to Direct below
+      end
+      next if label.nil?  # skip self-referrals
+      counts[label] += 1
+    end
+    counts.sort_by { |_, v| -v }.to_h
+  end
+
   # Average page load time per path
   def self.avg_load_times(days = 7)
     recent(days)
