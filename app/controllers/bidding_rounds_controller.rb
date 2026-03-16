@@ -105,7 +105,7 @@ class BiddingRoundsController < ApplicationController
       return
     end
 
-    @recommendations = compute_recommendations
+    @recommendations = BiddingRecommendationService.new(@bidding_round).call
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -221,41 +221,6 @@ class BiddingRoundsController < ApplicationController
       .select(select_sql)
       .group("work_categories.id")
       .order("work_categories.name")
-  end
-
-  # rubocop:disable Metrics/MethodLength
-  def compute_recommendations
-    recommendations = {}
-
-    responded = @bidding_round.bidding_requests
-                              .where(status: "responded")
-                              .includes(:artisan, :work_category)
-
-    responded.group_by(&:work_category_id).each do |category_id, requests|
-      next if requests.empty?
-
-      prices = requests.map { |r| r.price_total.to_f }
-      min_price = prices.min
-      max_price = prices.max
-
-      scored = requests.map { |req| score_request(req, min_price, max_price) }
-                       .sort_by { |s| -s[:score] }
-      recommendations[category_id] = scored
-    end
-
-    recommendations
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  def score_request(req, min_price, max_price)
-    price_score = if max_price == min_price
-                    1.0
-                  else
-                    1.0 - ((req.price_total.to_f - min_price) / (max_price - min_price))
-                  end
-    rating_score = (req.artisan.rating || 0).to_f / 5.0
-    weighted = (0.6 * price_score) + (0.4 * rating_score)
-    { request: req, score: weighted, price_score: price_score, rating_score: rating_score }
   end
 end
 # rubocop:enable Metrics/ClassLength
