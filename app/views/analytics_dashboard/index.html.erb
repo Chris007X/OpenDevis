@@ -80,9 +80,9 @@
         <div>
           <div class="an-title">Analytics</div>
           <div class="an-subtitle">
-            <%= @days %> derniers jours &middot;
-            <%= @total_events %> événements &middot;
-            Mis à jour <%= l(Time.current, format: :short) %>
+            <%= @days %> derniers jours
+            <% if @total_events %>&middot; <%= @total_events %> événements<% end %>
+            &middot; Mis à jour <%= l(Time.current, format: :short) %>
           </div>
         </div>
         <div class="period-tabs">
@@ -154,7 +154,9 @@
       </div>
     </div>
 
-    <% else %>
+    <% end %><%# /overview KPI row %>
+
+    <% if @tab == "users" %>
       <%# ── All users tab ───────────────────────────────────────── %>
       <div class="od-card">
         <div style="overflow-x: auto;">
@@ -219,6 +221,9 @@
           </table>
         </div>
       </div>
+    <% end %><%# /users tab %>
+
+    <% if @tab == "overview" %>
     <%# ── Utilisateurs actifs (live, rafraîchi toutes les 10s) ── %>
     <div class="od-card p-4 mb-4">
       <div class="d-flex align-items-center gap-2 mb-3">
@@ -528,7 +533,7 @@
       </div>
     </div>
 
-  <% end %><%# /tab %>
+  <% end %><%# /overview tab %>
 
   </div><%# /container %>
 </div><%# /an-page %>

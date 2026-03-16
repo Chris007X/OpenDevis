@@ -1,6 +1,11 @@
 class AnalyticsController < ApplicationController
   include Trackable
 
+  # Skip CSRF — JS sends events from any page; token is passed in header by analytics.js
+  # but production may reject it if the session cookie differs. Using null_session is safe
+  # because this endpoint only writes analytics data (no state-changing read).
+  protect_from_forgery with: :null_session, only: [:create]
+
   # Skip auth — we receive events from anonymous visitors too.
   skip_before_action :authenticate_user!
 
