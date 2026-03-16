@@ -1,8 +1,38 @@
 <% content_for :head do %>
 <style>
-  .rec-card {
-    border: 2px solid #C8C4BC;
-    border-radius: 10px;
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+  .rr-scope {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .rr-scope .page-heading {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 1.9rem;
+    color: #1C1A16;
+    margin: 0 0 6px;
+    line-height: 1.2;
+  }
+  .rr-scope .eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rr-scope .eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #E8E4DC, transparent);
+  }
+  .rr-scope .rec-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
     padding: 16px;
     background: #fff;
     cursor: pointer;
@@ -10,37 +40,106 @@
     position: relative;
     user-select: none;
   }
-  .rec-card:hover { border-color: #4A4640; }
-  .rec-card.selected { border-color: #2C2A25; background: #F5F3EE; }
-  .rec-card.recommended { border-color: #2D6A4F; }
-  .rec-card.recommended.selected { background: #EAF5EE; }
-  .rec-badge {
+  .rr-scope .rec-card:hover { border-color: #DDD9D1; }
+  .rr-scope .rec-card.selected { border-color: #2563eb; background: #EFF4FF; }
+  .rr-scope .rec-card.recommended { border-color: #2D6A4F; }
+  .rr-scope .rec-card.recommended.selected { background: #EAF5EE; border-color: #2563eb; }
+  .rr-scope .rec-badge {
     display: inline-block;
-    background: #D4EDDA; color: #2D6A4F;
-    font-size: 0.72rem; font-weight: 600;
-    padding: 2px 8px; border-radius: 20px;
+    background: #D4EDDA;
+    color: #2D6A4F;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 20px;
     margin-bottom: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.04em;
   }
-  .rec-radio { position: absolute; top: 14px; right: 14px; accent-color: #2C2A25; }
-  .score-bar-wrap { height: 4px; background: #C8C4BC; border-radius: 2px; margin-top: 8px; }
-  .score-bar { height: 4px; background: #2C2A25; border-radius: 2px; }
-  .cat-section { border: 1px solid #C8C4BC; border-radius: 10px; background: #fff; margin-bottom: 20px; overflow: hidden; }
-  .cat-header { padding: 14px 20px; background: #FFFFFF; border-bottom: 1px solid #C8C4BC; font-weight: 700; color: #2C2A25; }
-  .cat-body { padding: 16px 20px; }
+  .rr-scope .rec-radio {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    accent-color: #2563eb;
+  }
+  .rr-scope .score-bar-wrap {
+    height: 3px;
+    background: #E8E4DC;
+    border-radius: 2px;
+    margin-top: 8px;
+  }
+  .rr-scope .score-bar {
+    height: 3px;
+    background: #2563eb;
+    border-radius: 2px;
+  }
+  .rr-scope .cat-section {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    background: #fff;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .rr-scope .cat-header {
+    padding: 13px 20px;
+    background: #FAFAF7;
+    border-bottom: 1.5px solid #E8E4DC;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #1C1A16;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .rr-scope .cat-body { padding: 16px 20px; }
+  .rr-scope .artisan-comment-block {
+    font-size: 0.78rem;
+    color: #4A4640;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #F8F6F2;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    border: 1px solid #E8E4DC;
+  }
+  .rr-scope .back-link {
+    font-size: 0.82rem;
+    color: #9B9588;
+    text-decoration: none;
+  }
+  .rr-scope .back-link:hover { color: #4A4640; }
+  .rr-scope .submit-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 10px 26px;
+    border-radius: 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .rr-scope .submit-btn:hover { background: #1d4ed8; }
+  .rr-scope .empty-state {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    background: #fff;
+    padding: 3rem;
+    text-align: center;
+  }
 </style>
 <% end %>
 
-<div class="container py-4" style="max-width: 920px;">
-  <%= link_to "← Retour au suivi", project_bidding_round_path(@project),
-        style: "color: #4A4640; text-decoration: none; font-size: 0.9rem;" %>
+<div class="container py-4 rr-scope" style="max-width: 920px;">
+  <%= link_to "← Retour au suivi", project_bidding_round_path(@project), class: "back-link" %>
 
-  <h2 class="mt-3 mb-1" style="font-weight: 700; color: #2C2A25;">Recommandations</h2>
-  <p class="mb-4" style="color: #4A4640;">
+  <h2 class="page-heading mt-3">Recommandations</h2>
+  <p class="mb-4" style="color: #9B9588; font-size: 0.88rem;">
     Sélectionnez l'artisan retenu pour chaque catégorie. La recommandation est basée sur le prix (60%) et la note (40%).
   </p>
 
   <%= form_with url: confirm_selections_project_bidding_round_path(@project), method: :post do |f| %>
     <% if @recommendations.any? %>
+      <div class="eyebrow">Par catégorie</div>
       <% @recommendations.each do |category_id, scored| %>
         <% category = scored.first[:request].work_category %>
         <div class="cat-section">
@@ -66,22 +165,22 @@
                         <span class="rec-badge">✨ Recommandé</span>
                       <% end %>
                     </div>
-                    <div style="font-weight: 700; color: #2C2A25; font-size: 1rem; margin-bottom: 2px;">
+                    <div style="font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #1C1A16; margin-bottom: 2px; font-weight: 400;">
                       <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
                     </div>
-                    <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;"><%= req.artisan.name %></div>
-                    <div style="font-size: 0.8rem; color: #4A4640;">
+                    <div style="font-weight: 600; color: #2C2A25; font-size: 0.88rem; font-family: 'Plus Jakarta Sans', sans-serif;"><%= req.artisan.name %></div>
+                    <div style="font-size: 0.78rem; color: #9B9588; font-family: 'Plus Jakarta Sans', sans-serif;">
                       <%= req.artisan.company_name.presence || req.artisan.postcode %>
                       <% if req.artisan.rating.present? %>
                         · ★ <%= req.artisan.star_rating %>
                       <% end %>
                     </div>
                     <% if req.artisan_comment.present? %>
-                      <div style="font-size: 0.78rem; color: #4A4640; margin-top: 8px; padding: 8px; background: #F5F3EE; border-radius: 6px; white-space: pre-wrap;">
+                      <div class="artisan-comment-block">
                         <%= req.artisan_comment %>
                       </div>
                     <% end %>
-                    <div style="font-size: 0.75rem; color: #4A4640; margin-top: 6px;">
+                    <div style="font-size: 0.72rem; color: #9B9588; margin-top: 6px; font-family: 'Plus Jakarta Sans', sans-serif;">
                       Score : <%= (item[:score] * 100).round %>%
                     </div>
                     <div class="score-bar-wrap">
@@ -96,17 +195,14 @@
       <% end %>
 
       <div class="d-flex justify-content-between align-items-center mt-4">
-        <%= link_to "← Retour", project_bidding_round_path(@project),
-              style: "color: #4A4640; text-decoration: none;" %>
-        <button type="submit"
-                style="background: #2C2A25; color: #fff; border: none; padding: 10px 24px; border-radius: 8px;
-                       font-weight: 600; cursor: pointer;">
+        <%= link_to "← Retour", project_bidding_round_path(@project), class: "back-link" %>
+        <button type="submit" class="submit-btn">
           Confirmer les sélections →
         </button>
       </div>
     <% else %>
-      <div class="text-center py-5" style="border: 1px solid #C8C4BC; border-radius: 10px; background: #fff;">
-        <div style="color: #4A4640;">Aucune réponse reçue pour l'instant.</div>
+      <div class="empty-state">
+        <div style="color: #9B9588; font-size: 0.88rem;">Aucune réponse reçue pour l'instant.</div>
         <%= link_to "← Retour", project_bidding_round_path(@project), class: "btn btn-ghost-od btn-sm mt-3" %>
       </div>
     <% end %>

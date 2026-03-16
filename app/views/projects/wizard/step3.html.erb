@@ -3,14 +3,16 @@
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
 <style>
-  .category-card {
+  .s3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  .s3 .category-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1.5px solid #C8C4BC;
-    border-radius: 10px;
+    border: 1.5px solid #DDD9D1;
+    border-radius: 12px;
     background: #fff;
     padding: 1.2rem 0.8rem;
     cursor: pointer;
@@ -20,15 +22,21 @@
     transition: border-color 0.15s, background 0.15s;
     height: 100%;
     min-height: 110px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .category-card:has(input:checked) {
-    border-color: #2C2A25;
-    background: #F0EDE8;
-    font-weight: 600;
+  .s3 .category-card:has(input:checked) {
+    border-color: #2563eb;
+    background: #EFF4FF;
+    font-weight: 700;
+    color: #1C1A16;
   }
-  .category-card input[type="checkbox"] { display: none; }
-  .category-card .cat-icon { font-size: 1.6rem; line-height: 1; }
-  .category-card .dpe-badge {
+  .s3 .category-card:not(:has(input:checked)):hover {
+    border-color: #2563eb;
+    background: #FAFCFF;
+  }
+  .s3 .category-card input[type="checkbox"] { display: none; }
+  .s3 .category-card .cat-icon { font-size: 1.6rem; line-height: 1; }
+  .s3 .category-card .dpe-badge {
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -41,23 +49,34 @@
     letter-spacing: 0.01em;
     line-height: 1.4;
   }
-  .category-card .dpe-badge svg { flex-shrink: 0; }
+  .s3 .category-card .dpe-badge svg { flex-shrink: 0; }
 
-  .group-title {
-    font-size: 0.82rem;
+  .s3 .group-title {
+    font-size: 0.68rem;
     font-weight: 700;
-    color: #4A4640;
+    color: #9B9588;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.13em;
     margin-bottom: 0.6rem;
     margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .group-title:first-of-type { margin-top: 0; }
+  .s3 .group-title::after {
+    content: '';
+    display: block;
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #DDD9D1, transparent);
+  }
+  .s3 .group-title:first-of-type { margin-top: 0; }
 
-  .room-tab {
+  .s3 .room-tab {
     display: inline-block;
     padding: 0.45rem 1rem;
-    border: 1.5px solid #C8C4BC;
+    border: 1.5px solid #DDD9D1;
     border-radius: 20px;
     background: #fff;
     color: #4A4640;
@@ -65,14 +84,16 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .room-tab:hover { border-color: #2C2A25; }
-  .room-tab.active {
-    border-color: #2C2A25;
-    background: #2C2A25;
+  .s3 .room-tab:hover { border-color: #2563eb; color: #2563eb; }
+  .s3 .room-tab.active {
+    border-color: #2563eb;
+    background: #2563eb;
     color: #fff;
+    font-weight: 600;
   }
-  .room-tab .badge-count {
+  .s3 .room-tab .badge-count {
     display: inline-block;
     background: rgba(255,255,255,0.3);
     border-radius: 10px;
@@ -81,10 +102,10 @@
     margin-left: 0.3em;
   }
 
-  .room-categories-panel { display: none; }
-  .room-categories-panel.active { display: block; }
+  .s3 .room-categories-panel { display: none; }
+  .s3 .room-categories-panel.active { display: block; }
 
-  .select-all-toggle {
+  .s3 .select-all-toggle {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -93,17 +114,18 @@
     color: #4A4640;
     cursor: pointer;
     margin-bottom: 0.75rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .select-all-toggle input[type="checkbox"] {
+  .s3 .select-all-toggle input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: #2C2A25;
+    accent-color: #2563eb;
     cursor: pointer;
   }
 
-  .custom-needs-section {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  .s3 .custom-needs-section {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 12px;
     padding: 1.25rem;
     background: #fff;
     margin-top: 1.5rem;
@@ -124,10 +146,10 @@
   dpe_slugs = %w[isolation fenetres ventilation_chauffage]
 %>
 
-<div class="container py-4" style="max-width: 720px;">
+<div class="container py-4 s3" style="max-width: 720px;">
   <%= render "stepper", current_step: 3, project_type: @project_type %>
 
-  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Travaux souhaités</h2>
+  <h2 class="mb-1" style="font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: #1C1A16;">Travaux souhaités</h2>
   <p class="mb-4" style="color: #4A4640;">Sélectionnez les catégories de travaux à inclure dans l'estimation.</p>
 
   <% if @renovation_type.in?(%w[construction extension]) %>
@@ -139,7 +161,7 @@
         </p>
         <textarea name="custom_needs" class="form-control" rows="4"
                   placeholder="Ex: Extension de 20m² avec création d'une cuisine ouverte..."
-                  style="border-color: #C8C4BC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
+                  style="border-color: #DDD9D1; border-radius: 10px;"><%= session[:wizard_custom_needs] %></textarea>
 
         <%# Include all categories by default %>
         <% @category_groups.each do |group| %>
@@ -218,10 +240,10 @@
 
       <%# Custom needs %>
       <div class="custom-needs-section">
-        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem;">Autres / Besoins spécifiques</div>
+        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem; font-family: 'Plus Jakarta Sans', sans-serif;">Autres / Besoins spécifiques</div>
         <textarea name="custom_needs" class="form-control" rows="3"
                   placeholder="J'aimerais également..."
-                  style="border-color: #C8C4BC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
+                  style="border-color: #DDD9D1; border-radius: 10px;"><%= session[:wizard_custom_needs] %></textarea>
       </div>
 
       <div class="d-flex justify-content-between mt-4">
@@ -267,10 +289,10 @@
 
       <%# Custom needs %>
       <div class="custom-needs-section">
-        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem;">Autres / Besoins spécifiques</div>
+        <div class="field-label" style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.3rem; font-family: 'Plus Jakarta Sans', sans-serif;">Autres / Besoins spécifiques</div>
         <textarea name="custom_needs" class="form-control" rows="3"
                   placeholder="J'aimerais également..."
-                  style="border-color: #C8C4BC; border-radius: 8px;"><%= session[:wizard_custom_needs] %></textarea>
+                  style="border-color: #DDD9D1; border-radius: 10px;"><%= session[:wizard_custom_needs] %></textarea>
       </div>
 
       <div class="d-flex justify-content-between mt-4">

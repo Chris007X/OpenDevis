@@ -4,62 +4,79 @@
 <% content_for :head do %>
 <meta name="turbo-cache-control" content="no-cache">
 <style>
-  .recap-block {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  .s4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  .s4 .recap-block {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
     background: #fff;
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem 1.75rem;
     margin-bottom: 1rem;
   }
-  .recap-block-title {
-    font-size: 0.8rem;
+  .s4 .recap-block-title {
+    font-size: 0.68rem;
     font-weight: 700;
-    color: #4A4640;
+    color: #9B9588;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.13em;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .recap-row { display: flex; gap: 2rem; flex-wrap: wrap; }
-  .recap-item { font-size: 0.9rem; }
-  .recap-item .ri-label { color: #4A4640; font-size: 0.8rem; }
-  .recap-item .ri-value { color: #2C2A25; font-weight: 500; }
+  .s4 .recap-block-title::after {
+    content: '';
+    display: block;
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #E8E4DC, transparent);
+  }
+  .s4 .recap-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .s4 .recap-item { font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+  .s4 .recap-item .ri-label { color: #9B9588; font-size: 0.78rem; font-weight: 500; margin-bottom: 0.1rem; }
+  .s4 .recap-item .ri-value { color: #1C1A16; font-weight: 600; }
 
-  .cat-chip {
+  .s4 .cat-chip {
     display: inline-block;
-    background: #EDE9E0;
-    color: #2C2A25;
+    background: #EFF4FF;
+    color: #2563eb;
+    border: 1px solid #DBEAFE;
     border-radius: 20px;
     padding: 0.25em 0.75em;
     font-size: 0.82rem;
     font-weight: 500;
     margin: 0.2rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
-  .room-recap {
+  .s4 .room-recap {
     padding: 0.65rem 0;
     border-bottom: 1px solid #F0EDE8;
   }
-  .room-recap:last-child { border-bottom: none; }
-  .room-recap-header {
+  .s4 .room-recap:last-child { border-bottom: none; }
+  .s4 .room-recap-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.35rem;
   }
-  .room-recap-name {
+  .s4 .room-recap-name {
     font-size: 0.92rem;
     font-weight: 600;
-    color: #2C2A25;
+    color: #1C1A16;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .room-recap-surface {
+  .s4 .room-recap-surface {
     font-size: 0.82rem;
-    color: #4A4640;
+    color: #9B9588;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .room-recap-cats {
+  .s4 .room-recap-cats {
     padding-left: 0.25rem;
   }
 
-  .generate-btn {
+  .s4 .generate-btn {
     background: #2663EB;
     color: #fff;
     border: 1.5px solid #2663EB;
@@ -71,9 +88,10 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-  .generate-btn:hover { background: #1B4FC2; border-color: #1B4FC2; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(37,99,235,0.30); }
+  .s4 .generate-btn:hover { background: #1B4FC2; border-color: #1B4FC2; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(37,99,235,0.30); }
 
   /* ── Generation loader overlay ───────────────────────────────────────────── */
   #generation-loader {
@@ -81,11 +99,12 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #fff;
+    background: #FAFAF7;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   .loader-house {
@@ -186,14 +205,16 @@
   .loader-text {
     font-size: 1rem;
     font-weight: 600;
-    color: #2C2A25;
+    color: #1C1A16;
     letter-spacing: -0.2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .loader-subtext {
     font-size: 0.85rem;
     color: #9B9588;
     margin-top: 0.25rem;
     text-align: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 </style>
 <% end %>
@@ -208,10 +229,10 @@ reno_labels = {
 }
 %>
 
-<div class="container py-4" style="max-width: 620px;">
+<div class="container py-4 s4" style="max-width: 620px;">
   <%= render "stepper", current_step: @project_type == "construction" ? 3 : 4, project_type: @project_type %>
 
-  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Récapitulatif</h2>
+  <h2 class="mb-1" style="font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: #1C1A16;">Récapitulatif</h2>
   <p class="mb-4" style="color: #4A4640;">Vérifiez vos choix avant de générer l'estimation.</p>
 
   <%# Property info block %>
@@ -260,11 +281,11 @@ reno_labels = {
   <%# Renovation type %>
   <div class="recap-block">
     <div class="recap-block-title">Type de rénovation</div>
-    <div style="font-size: 0.95rem; font-weight: 500; color: #2C2A25;">
+    <div style="font-size: 0.95rem; font-weight: 500; color: #1C1A16; font-family: 'Plus Jakarta Sans', sans-serif;">
       <%= @project_type.in?(%w[construction extension]) ? reno_labels[@project_type] : (reno_labels[@renovation_type] || "—") %>
     </div>
     <% if @renovation_type == "par_piece" && @selected_rooms.any? %>
-      <div class="small mt-1" style="color: #4A4640;">
+      <div class="small mt-1" style="color: #9B9588; font-family: 'Plus Jakarta Sans', sans-serif;">
         <%= @selected_rooms.size %> pièce<%= @selected_rooms.size > 1 ? "s" : "" %> sélectionnée<%= @selected_rooms.size > 1 ? "s" : "" %>
       </div>
     <% end %>
@@ -295,7 +316,7 @@ reno_labels = {
                 <% end %>
               <% end %>
             <% else %>
-              <span class="small" style="color: #4A4640;">Aucun travaux sélectionné</span>
+              <span class="small" style="color: #9B9588; font-family: 'Plus Jakarta Sans', sans-serif;">Aucun travaux sélectionné</span>
             <% end %>
           </div>
         </div>

@@ -1,58 +1,125 @@
 <% content_for :head do %>
 <style>
-  .fq-card {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+  .fq-scope {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .fq-scope .page-heading {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 1.9rem;
+    color: #1C1A16;
+    margin: 0 0 4px;
+    line-height: 1.2;
+  }
+  .fq-scope .eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .fq-scope .eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #E8E4DC, transparent);
+  }
+  .fq-scope .summary-stat {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    padding: 20px 22px;
+    text-align: center;
+    background: #fff;
+  }
+  .fq-scope .summary-stat.dark {
+    background: #1C1A16;
+    color: #fff;
+    border-color: #1C1A16;
+  }
+  .fq-scope .stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .fq-scope .stat-amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .fq-scope .fq-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
     background: #fff;
     overflow: hidden;
     margin-bottom: 20px;
   }
-  .fq-card-header {
-    padding: 14px 20px;
-    background: #FFFFFF;
-    border-bottom: 1px solid #C8C4BC;
-    font-weight: 700;
-    color: #2C2A25;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .fq-row {
-    padding: 16px 20px;
-    border-bottom: 1px solid #EDEAE4;
+  .fq-scope .fq-row {
+    padding: 15px 20px;
+    border-bottom: 1px solid #F0EDE8;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
   }
-  .fq-row:last-child { border-bottom: none; }
-  .ai-badge {
+  .fq-scope .fq-row:last-child { border-bottom: none; }
+  .fq-scope .fq-cat-name {
+    font-weight: 600;
+    color: #1C1A16;
+    font-size: 0.9rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .fq-scope .fq-artisan-meta {
+    font-size: 0.8rem;
+    color: #9B9588;
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .fq-scope .fq-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: #1C1A16;
+    white-space: nowrap;
+  }
+  .fq-scope .ai-badge {
     display: inline-block;
-    background: #D4EDDA; color: #2D6A4F;
-    font-size: 0.72rem; font-weight: 600;
-    padding: 2px 8px; border-radius: 20px;
+    background: #D4EDDA;
+    color: #2D6A4F;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
     margin-left: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.04em;
   }
-  .summary-stat {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    padding: 20px 24px;
-    text-align: center;
+  .fq-scope .back-link {
+    font-size: 0.82rem;
+    color: #9B9588;
+    text-decoration: none;
   }
-  .summary-stat.dark { background: #2C2A25; color: #fff; border-color: #2C2A25; }
-  .stat-label { font-size: 0.8rem; opacity: 0.7; margin-bottom: 4px; }
-  .stat-amount { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+  .fq-scope .back-link:hover { color: #4A4640; }
 </style>
 <% end %>
 
-<div class="container py-4" style="max-width: 1000px;">
-  <%= link_to "← Retour au projet", project_path(@project),
-        style: "color: #4A4640; text-decoration: none; font-size: 0.9rem;" %>
+<div class="container py-4 fq-scope" style="max-width: 1000px;">
+  <%= link_to "← Retour au projet", project_path(@project), class: "back-link" %>
 
   <div class="d-flex justify-content-between align-items-start mt-3 mb-4 flex-wrap gap-2">
     <div>
-      <h2 class="mb-1" style="font-weight: 700; color: #2C2A25;">Devis artisans finalisé</h2>
-      <div style="color: #4A4640; font-size: 0.9rem;">
+      <h2 class="page-heading">Devis artisans finalisé</h2>
+      <div style="color: #9B9588; font-size: 0.85rem; margin-top: 4px;">
         Niveau : <strong style="color: #2C2A25;"><%= @bidding_round.standing_label %></strong>
         · <%= @final_selections.count %> catégorie<%= @final_selections.count > 1 ? "s" : "" %>
       </div>
@@ -74,7 +141,7 @@
     </div>
     <div class="col-md-4">
       <div class="summary-stat">
-        <div class="stat-label" style="color: #4A4640;">Estimation initiale HT</div>
+        <div class="stat-label" style="color: #9B9588;">Estimation initiale HT</div>
         <div class="stat-amount" style="color: #2C2A25;">
           <%= number_to_currency(@original_estimate, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
         </div>
@@ -83,7 +150,7 @@
     <div class="col-md-4">
       <div class="summary-stat">
         <% diff = @total_artisan_price - @original_estimate.to_f %>
-        <div class="stat-label" style="color: #4A4640;">Écart</div>
+        <div class="stat-label" style="color: #9B9588;">Écart</div>
         <div class="stat-amount" style="color: <%= diff > 0 ? "#842029" : "#2D6A4F" %>;">
           <%= diff >= 0 ? "+" : "" %><%= number_to_currency(diff, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
         </div>
@@ -92,19 +159,19 @@
   </div>
 
   <%# Selections by category %>
-  <div style="font-weight: 700; color: #2C2A25; margin-bottom: 12px; font-size: 1rem;">Détail par catégorie</div>
+  <div class="eyebrow">Détail par catégorie</div>
 
   <div class="fq-card">
     <% @final_selections.each do |sel| %>
       <div class="fq-row">
         <div>
-          <div style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;">
+          <div class="fq-cat-name">
             <%= sel.work_category.name %>
             <% if sel.ai_recommended? %>
               <span class="ai-badge">Recommandé</span>
             <% end %>
           </div>
-          <div style="font-size: 0.82rem; color: #4A4640;">
+          <div class="fq-artisan-meta">
             <%= sel.artisan.name %>
             <% if sel.artisan.company_name.present? %>
               · <%= sel.artisan.company_name %>
@@ -114,7 +181,7 @@
             <% end %>
           </div>
         </div>
-        <div style="font-weight: 700; color: #2C2A25; font-size: 1rem; white-space: nowrap;">
+        <div class="fq-price">
           <%= number_to_currency(sel.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
         </div>
       </div>

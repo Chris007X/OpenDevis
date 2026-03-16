@@ -2,64 +2,194 @@
 <% content_for :description, "Inscrivez-vous gratuitement sur OpenDevis pour estimer vos travaux de rénovation en quelques minutes." %>
 <% content_for :keywords, "inscription, créer compte, devis rénovation gratuit, estimation travaux" %>
 
-<div class="container py-5" style="max-width: 440px;">
+<div class="auth-scope" style="min-height: calc(100vh - 56px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: #FAFAF7;">
+  <style>
+    .auth-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .auth-card {
+      background: #fff;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 16px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 2px 12px rgba(44,42,37,0.06);
+      width: 100%;
+      max-width: 440px;
+    }
+    .auth-wordmark {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #2C2A25;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+    .auth-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 400;
+      color: #1C1A16;
+      margin: 0 0 0.25rem;
+      line-height: 1.15;
+    }
+    .auth-subheading {
+      color: #9B9588;
+      font-size: 0.88rem;
+      margin-bottom: 1.75rem;
+    }
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1.25rem 0;
+      color: #9B9588;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .auth-divider span { flex: 1; height: 1px; background: #E8E4DC; }
+    .auth-google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1.5px solid #DDD9D1;
+      border-radius: 50px;
+      padding: 11px 20px;
+      background: #fff;
+      color: #2C2A25;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .auth-google-btn:hover {
+      border-color: #C8C4BC;
+      box-shadow: 0 1px 4px rgba(44,42,37,0.08);
+    }
+    .auth-scope .form-group label,
+    .auth-scope .form-group .control-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #9B9588;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .auth-scope .form-group .form-control,
+    .auth-scope .form-group input[type="email"],
+    .auth-scope .form-group input[type="password"],
+    .auth-scope .form-group input[type="text"] {
+      border-radius: 10px;
+      border: 1.5px solid #DDD9D1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 0.6rem 0.875rem;
+      font-size: 0.92rem;
+      color: #1C1A16;
+      width: 100%;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      box-sizing: border-box;
+    }
+    .auth-scope .form-group .form-control:focus,
+    .auth-scope .form-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      outline: none;
+    }
+    .auth-error {
+      background: #FEF2F2;
+      color: #842029;
+      border: 1.5px solid #FECDD3;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+    }
+    .auth-submit-btn {
+      width: 100%;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.7rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.15s, box-shadow 0.15s;
+      margin-top: 0.5rem;
+    }
+    .auth-submit-btn:hover {
+      background: #1d4ed8;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    }
+    .auth-scope .devise-links a,
+    .auth-links a {
+      color: #4A4640;
+      font-size: 0.83rem;
+      text-decoration: none;
+      transition: color 0.12s;
+    }
+    .auth-scope .devise-links a:hover,
+    .auth-links a:hover { color: #1C1A16; text-decoration: underline; }
+    .auth-scope .hint { font-size: 0.78rem; color: #9B9588; margin-top: 0.2rem; }
+  </style>
 
-  <div class="text-center mb-4">
-    <%= link_to "OpenDevis", root_path,
-          style: "font-size: 1.4rem; font-weight: 800; color: #2C2A25; text-decoration: none; letter-spacing: -0.3px;" %>
-    <div style="color: #4A4640; font-size: 0.9rem; margin-top: 4px;">Créez votre compte gratuit</div>
-  </div>
+  <div style="width: 100%; max-width: 440px;">
+    <div class="text-center mb-4">
+      <%= link_to "OpenDevis", root_path, class: "auth-wordmark" %>
+    </div>
 
-  <%= button_to user_google_oauth2_omniauth_authorize_path, data: { turbo: false },
-        style: "display:flex; align-items:center; justify-content:center; gap:10px;
-                border:1.5px solid #C8C4BC; border-radius:8px; padding:11px 20px;
-                background:#fff; color:#2C2A25; font-size:0.95rem; font-weight:600;
-                text-decoration:none; margin-bottom:20px; transition:border-color 0.15s;
-                width:100%; cursor:pointer;" do %>
-    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-      <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-      <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
-      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
-    </svg>
-    S'inscrire avec Google
-  <% end %>
+    <div class="auth-card">
+      <h1 class="auth-heading">Créer un compte</h1>
+      <p class="auth-subheading">Gratuit pour toujours. Sans carte bancaire.</p>
 
-  <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; color:#4A4640; font-size:0.82rem;">
-    <span style="flex:1; height:1px; background:#C8C4BC;"></span>
-    ou
-    <span style="flex:1; height:1px; background:#C8C4BC;"></span>
-  </div>
+      <%= button_to user_google_oauth2_omniauth_authorize_path, data: { turbo: false },
+            class: "auth-google-btn" do %>
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        S'inscrire avec Google
+      <% end %>
 
-  <div class="od-form-card">
-    <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
-
-      <div class="mb-3">
-        <%= f.input :email,
-                    label: "Adresse e-mail",
-                    required: true,
-                    autofocus: true,
-                    input_html: { autocomplete: "email", placeholder: "vous@exemple.com" } %>
+      <div class="auth-divider">
+        <span></span>ou<span></span>
       </div>
-      <div class="mb-3">
-        <%= f.input :password,
-                    label: "Mot de passe",
-                    required: true,
-                    hint: ("#{@minimum_password_length} caractères minimum" if @minimum_password_length),
-                    input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
-      </div>
-      <div class="mb-3">
-        <%= f.input :password_confirmation,
-                    label: "Confirmer le mot de passe",
-                    required: true,
-                    input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
-      </div>
-      <%= f.button :submit, "Créer mon compte", class: "btn btn-dark-od w-100 mt-2" %>
-    <% end %>
-  </div>
 
-  <div class="text-center mt-3" style="font-size: 0.85rem; color: #4A4640;">
-    <%= render "devise/shared/links" %>
+      <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= f.error_notification class: "auth-error" %>
+
+        <div class="mb-3">
+          <%= f.input :email,
+                      label: "Adresse e-mail",
+                      required: true,
+                      autofocus: true,
+                      input_html: { autocomplete: "email", placeholder: "vous@exemple.com" } %>
+        </div>
+        <div class="mb-3">
+          <%= f.input :password,
+                      label: "Mot de passe",
+                      required: true,
+                      hint: ("#{@minimum_password_length} caractères minimum" if @minimum_password_length),
+                      input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
+        </div>
+        <div class="mb-3">
+          <%= f.input :password_confirmation,
+                      label: "Confirmer le mot de passe",
+                      required: true,
+                      input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
+        </div>
+        <button type="submit" class="auth-submit-btn">Créer mon compte</button>
+      <% end %>
+
+      <div class="text-center mt-3 devise-links">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
   </div>
 </div>

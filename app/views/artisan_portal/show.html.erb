@@ -4,126 +4,278 @@
   <title>Répondre au devis · OpenDevis</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { background: #FFFFFF; font-family: system-ui, sans-serif; color: #2C2A25; }
+    body {
+      background: #FAFAF7;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #2C2A25;
+    }
+    .portal-header {
+      text-align: center;
+      padding: 28px 0 0;
+    }
+    .brand {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      color: #1C1A16;
+      font-size: 1.05rem;
+      letter-spacing: -0.3px;
+    }
     .portal-card {
       background: #fff;
-      border: 1px solid #C8C4BC;
-      border-radius: 12px;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 14px;
       padding: 32px;
       max-width: 600px;
-      margin: 48px auto;
+      margin: 32px auto;
     }
-    .brand { font-weight: 800; color: #0D6EFD; font-size: 1.1rem; letter-spacing: -0.3px; }
-    .info-block { background: #F5F3EE; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
+    .portal-heading {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      color: #1C1A16;
+      margin: 0 0 6px;
+      line-height: 1.2;
+    }
+    .portal-subtext {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #9B9588;
+      font-size: 0.88rem;
+      margin-bottom: 0;
+    }
+    .info-block {
+      background: #FAFAF7;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    .info-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #9B9588;
+      margin-bottom: 3px;
+    }
+    .info-value {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1C1A16;
+    }
+    .form-label-od {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #2C2A25;
+      display: block;
+      margin-bottom: 7px;
+    }
+    .price-input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #DDD9D1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color 0.12s;
+    }
+    .price-input-wrap:focus-within { border-color: #2563eb; }
     .price-input {
-      border: 2px solid #C8C4BC; border-radius: 8px; font-size: 1.2rem;
-      padding: 12px 16px; width: 100%;
+      border: none;
+      padding: 11px 15px;
+      font-size: 1.05rem;
+      flex: 1;
+      outline: none;
+      background: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .price-input:focus { outline: none; border-color: #0D6EFD; }
-    .btn-submit {
-      background: #0D6EFD; color: #fff; border: none;
-      padding: 12px 28px; border-radius: 8px; font-weight: 600;
-      font-size: 1rem; cursor: pointer; width: 100%;
+    .price-unit {
+      padding: 0 15px;
+      color: #9B9588;
+      font-size: 0.9rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .btn-submit:hover { background: #0a58ca; }
-    .btn-decline {
-      background: transparent; color: #4A4640;
-      border: 1px solid #C8C4BC; padding: 10px 20px;
-      border-radius: 8px; font-weight: 500; cursor: pointer; width: 100%;
+    .comment-input {
+      width: 100%;
+      border: 1.5px solid #DDD9D1;
+      border-radius: 10px;
+      padding: 11px 15px;
+      font-size: 0.88rem;
+      resize: vertical;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #2C2A25;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.12s;
     }
-    .btn-decline:hover { border-color: #4A4640; color: #2C2A25; }
-    .status-responded { background: #D4EDDA; color: #2D6A4F; padding: 16px; border-radius: 10px; margin-bottom: 20px; }
-    .status-declined  { background: #F8D7DA; color: #842029; padding: 16px; border-radius: 10px; }
-    .status-expired   { background: #FFF3CD; color: #856404; padding: 16px; border-radius: 10px; }
+    .comment-input:focus { border-color: #2563eb; }
+    .btn-submit-od {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+    }
+    .btn-submit-od:hover { background: #1d4ed8; }
+    .btn-decline-od {
+      background: transparent;
+      color: #4A4640;
+      border: 1.5px solid #E8E4DC;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.88rem;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .btn-decline-od:hover { border-color: #DDD9D1; color: #2C2A25; }
+    .status-responded {
+      background: #EAF5EE;
+      color: #2D6A4F;
+      border: 1.5px solid #D4EDDA;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    .status-declined {
+      background: #FFF0F0;
+      color: #842029;
+      border: 1.5px solid #F8D7DA;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    .status-expired {
+      background: #FFFBEB;
+      color: #856404;
+      border: 1.5px solid #FFF3CD;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    .portal-footer-card {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+      text-align: center;
+    }
+    .portal-footer-card .hint-box {
+      background: #F5F3EE;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 0.83rem;
+      color: #9B9588;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .portal-bottom {
+      text-align: center;
+      padding-bottom: 40px;
+      color: #9B9588;
+      font-size: 0.78rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
   </style>
 </head>
 <body>
-  <div style="text-align: center; padding: 24px 0 0;">
+  <div class="portal-header">
     <span class="brand">OpenDevis</span>
   </div>
 
   <div class="portal-card">
     <% if @bidding_request.status == "responded" %>
-      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">✅ Devis envoyé</h2>
-      <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 0;">
+      <h2 class="portal-heading">Devis envoyé</h2>
+      <p class="portal-subtext">
         Bonjour <%= @bidding_request.artisan.name %>, votre réponse a bien été enregistrée.
       </p>
 
-      <div class="status-responded">
+      <div class="status-responded mt-3">
         <strong>Réponse enregistrée ✓</strong>
       </div>
 
       <div class="info-block">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Catégorie</div>
-            <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+            <div class="info-label">Catégorie</div>
+            <div class="info-value"><%= @bidding_request.work_category.name %></div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Votre prix</div>
-            <div style="font-weight: 600; color: #2D6A4F;">
+            <div class="info-label">Votre prix</div>
+            <div class="info-value" style="color: #2D6A4F;">
               <%= number_to_currency(@bidding_request.price_total, unit: "€", format: "%n %u") %> HT
             </div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Envoyé le</div>
-            <div style="font-weight: 600;"><%= @bidding_request.responded_at&.strftime("%d/%m/%Y à %H:%M") %></div>
+            <div class="info-label">Envoyé le</div>
+            <div class="info-value"><%= @bidding_request.responded_at&.strftime("%d/%m/%Y à %H:%M") %></div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Date limite</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
+            <div class="info-label">Date limite</div>
+            <div class="info-value"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
           </div>
         </div>
         <% if @bidding_request.artisan_comment.present? %>
-          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #C8C4BC;">
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 4px;">Commentaire inclus</div>
-            <div style="font-size: 0.9rem; color: #2C2A25; white-space: pre-wrap;"><%= @bidding_request.artisan_comment %></div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E8E4DC;">
+            <div class="info-label">Commentaire inclus</div>
+            <div style="font-size: 0.88rem; color: #2C2A25; white-space: pre-wrap; margin-top: 4px;"><%= @bidding_request.artisan_comment %></div>
           </div>
         <% end %>
       </div>
 
       <% unless @bidding_request.bidding_round.deadline_passed? %>
-        <p style="color: #4A4640; font-size: 0.85rem; margin-bottom: 16px;">
+        <p style="color: #9B9588; font-size: 0.83rem; margin-bottom: 18px;">
           Vous pouvez modifier votre prix jusqu'à la date limite
           (<%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y à %H:%M") %>).
         </p>
 
         <%= form_with url: artisan_portal_submit_path(@bidding_request.token), method: :post do |f| %>
           <div style="margin-bottom: 16px;">
-            <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
-              Prix total HT (€)
-            </label>
-            <div style="display: flex; align-items: center; border: 2px solid #C8C4BC; border-radius: 8px; overflow: hidden;">
+            <label class="form-label-od">Prix total HT (€)</label>
+            <div class="price-input-wrap">
               <input type="number"
                      name="price_total"
                      step="0.01"
                      min="0.01"
                      value="<%= @bidding_request.price_total %>"
-                     style="border: none; padding: 12px 16px; font-size: 1.1rem; flex: 1; outline: none; background: transparent;">
-              <span style="padding: 0 16px; color: #4A4640; font-size: 1.1rem;">€ HT</span>
+                     class="price-input">
+              <span class="price-unit">€ HT</span>
             </div>
           </div>
-          <div style="margin-bottom: 16px;">
-            <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
-              Commentaire (optionnel)
-            </label>
-            <textarea name="artisan_comment" rows="4" placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
-                      style="width: 100%; border: 2px solid #C8C4BC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"><%= @bidding_request.artisan_comment %></textarea>
+          <div style="margin-bottom: 18px;">
+            <label class="form-label-od">Commentaire (optionnel)</label>
+            <textarea name="artisan_comment" rows="4"
+                      placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
+                      class="comment-input"><%= @bidding_request.artisan_comment %></textarea>
           </div>
-          <button type="submit" class="btn-submit">
+          <button type="submit" class="btn-submit-od">
             Mettre à jour
           </button>
         <% end %>
       <% end %>
 
     <% elsif @bidding_request.status == "declined" %>
-      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
-      <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 0;">
+      <h2 class="portal-heading">Demande de devis</h2>
+      <p class="portal-subtext">
         Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
       </p>
       <div class="info-block" style="margin-top: 20px;">
-        <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+        <div class="info-value"><%= @bidding_request.work_category.name %></div>
       </div>
       <div class="status-declined">
         <strong>Demande déclinée</strong><br>
@@ -131,8 +283,8 @@
       </div>
 
     <% elsif @bidding_request.status == "expired" %>
-      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
-      <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 0;">
+      <h2 class="portal-heading">Demande de devis</h2>
+      <p class="portal-subtext">
         Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
       </p>
       <div class="status-expired" style="margin-top: 20px;">
@@ -141,8 +293,8 @@
       </div>
 
     <% elsif @bidding_request.status == "replaced" %>
-      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
-      <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 0;">
+      <h2 class="portal-heading">Demande de devis</h2>
+      <p class="portal-subtext">
         Bonjour <%= @bidding_request.artisan.name %>.
       </p>
       <div class="status-expired" style="margin-top: 20px;">
@@ -151,46 +303,46 @@
       </div>
 
     <% else %>
-      <h2 style="font-weight: 700; font-size: 1.3rem; margin-bottom: 4px;">Demande de devis</h2>
-      <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 0;">
+      <h2 class="portal-heading">Demande de devis</h2>
+      <p class="portal-subtext">
         Bonjour <%= @bidding_request.artisan.name %>, voici la demande de devis reçue.
       </p>
 
       <div class="info-block">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Catégorie</div>
-            <div style="font-weight: 600;"><%= @bidding_request.work_category.name %></div>
+            <div class="info-label">Catégorie</div>
+            <div class="info-value"><%= @bidding_request.work_category.name %></div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Localisation</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.location_zip %></div>
+            <div class="info-label">Localisation</div>
+            <div class="info-value"><%= @bidding_request.bidding_round.project.location_zip %></div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Standing</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.standing_label %></div>
+            <div class="info-label">Standing</div>
+            <div class="info-value"><%= @bidding_request.bidding_round.standing_label %></div>
           </div>
           <div>
-            <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Date limite</div>
-            <div style="font-weight: 600;"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
+            <div class="info-label">Date limite</div>
+            <div class="info-value"><%= @bidding_request.bidding_round.deadline.strftime("%d/%m/%Y") %></div>
           </div>
           <% if @bidding_request.bidding_round.project.total_surface_sqm.present? %>
             <div>
-              <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Surface</div>
-              <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.total_surface_sqm %> m²</div>
+              <div class="info-label">Surface</div>
+              <div class="info-value"><%= @bidding_request.bidding_round.project.total_surface_sqm %> m²</div>
             </div>
           <% end %>
           <% if @bidding_request.bidding_round.project.room_count.present? %>
             <div>
-              <div style="font-size: 0.75rem; color: #4A4640; margin-bottom: 2px;">Pièces</div>
-              <div style="font-weight: 600;"><%= @bidding_request.bidding_round.project.room_count %></div>
+              <div class="info-label">Pièces</div>
+              <div class="info-value"><%= @bidding_request.bidding_round.project.room_count %></div>
             </div>
           <% end %>
         </div>
       </div>
 
       <% if @error %>
-        <div style="background: #FFF3CD; color: #856404; border: 1px solid #ffe69c; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+        <div style="background: #FFFBEB; color: #856404; border: 1.5px solid #FFF3CD; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.88rem;">
           <%= @error %>
         </div>
       <% end %>
@@ -204,38 +356,35 @@
         <%= form_with url: artisan_portal_submit_path(@bidding_request.token), method: :post,
               style: "margin-top: 24px;" do |f| %>
           <div style="margin-bottom: 16px;">
-            <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
-              Votre prix total HT (€)
-            </label>
-            <div style="display: flex; align-items: center; border: 2px solid #C8C4BC; border-radius: 8px; overflow: hidden;">
+            <label class="form-label-od">Votre prix total HT (€)</label>
+            <div class="price-input-wrap">
               <input type="number"
                      name="price_total"
                      step="0.01"
                      min="0.01"
                      placeholder="Ex : 3500.00"
-                     style="border: none; padding: 12px 16px; font-size: 1.1rem; flex: 1; outline: none; background: transparent;">
-              <span style="padding: 0 16px; color: #4A4640; font-size: 1.1rem;">€ HT</span>
+                     class="price-input">
+              <span class="price-unit">€ HT</span>
             </div>
-            <p style="font-size: 0.78rem; color: #4A4640; margin-top: 6px;">
+            <p style="font-size: 0.76rem; color: #9B9588; margin-top: 6px;">
               Indiquez votre prix de main-d'œuvre et fournitures, hors taxes.
             </p>
           </div>
-          <div style="margin-bottom: 16px;">
-            <label style="font-size: 0.85rem; font-weight: 600; color: #2C2A25; display: block; margin-bottom: 8px;">
-              Commentaire (optionnel)
-            </label>
-            <textarea name="artisan_comment" rows="4" placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
-                      style="width: 100%; border: 2px solid #C8C4BC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"></textarea>
+          <div style="margin-bottom: 18px;">
+            <label class="form-label-od">Commentaire (optionnel)</label>
+            <textarea name="artisan_comment" rows="4"
+                      placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
+                      class="comment-input"></textarea>
           </div>
 
-          <button type="submit" class="btn-submit" style="margin-bottom: 12px;">
+          <button type="submit" class="btn-submit-od" style="margin-bottom: 12px;">
             Envoyer mon devis
           </button>
         <% end %>
 
         <%= form_with url: artisan_portal_submit_path(@bidding_request.token), method: :post do |f| %>
           <input type="hidden" name="decline" value="1">
-          <button type="submit" class="btn-decline"
+          <button type="submit" class="btn-decline-od"
                   onclick="return confirm('Êtes-vous sûr de vouloir décliner cette demande ?');">
             Décliner la demande
           </button>
@@ -244,16 +393,16 @@
     <% end %>
   </div>
 
-  <div style="max-width: 600px; margin: 0 auto 40px; padding: 0 16px; text-align: center;">
-    <div style="background: #F5F3EE; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px; font-size: 0.85rem; color: #4A4640;">
-      💡 Vous avez un compte ?
+  <div class="portal-footer-card">
+    <div class="hint-box">
+      Vous avez un compte ?
       <%= link_to "Connectez-vous", new_artisan_session_path,
-            style: "color: #0D6EFD; font-weight: 600; text-decoration: underline;" %>
+            style: "color: #2563eb; font-weight: 600; text-decoration: underline;" %>
       pour gérer toutes vos demandes depuis votre tableau de bord.
     </div>
   </div>
 
-  <div style="text-align: center; padding-bottom: 40px; color: #4A4640; font-size: 0.8rem;">
+  <div class="portal-bottom">
     OpenDevis · Estimation de travaux
   </div>
 </body>

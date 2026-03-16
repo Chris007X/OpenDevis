@@ -3,64 +3,98 @@
 
 <% content_for :head do %>
 <style>
+  .proj-show { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-
-  .summary-card {
-    border: 1px solid #2563eb;
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
+  /* ── Summary cards ─────────────────────────────────────── */
+  .proj-show .summary-card {
+    border: 1.5px solid #2563eb;
+    border-radius: 14px;
+    padding: 1.375rem 1.5rem;
     background: #2563eb;
     color: #fff;
     height: 100%;
   }
-  .summary-card-light {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
+  .proj-show .summary-card-light {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    padding: 1.375rem 1.5rem;
     background: #fff;
     height: 100%;
   }
-  .summary-label  { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.3rem; }
-  .summary-amount { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+  .proj-show .summary-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 0.4rem;
+  }
+  .proj-show .summary-amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+  .proj-show .summary-amount-light {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    color: #4A4640;
+    line-height: 1.1;
+  }
 
-  .standing-toggle-btn {
+  /* ── Standing toggle ───────────────────────────────────── */
+  .proj-show .standing-toggle-btn {
     flex: 1;
-    border: 1.5px solid #C8C4BC;
+    border: 1.5px solid #DDD9D1;
     border-radius: 8px;
     background: transparent;
     padding: 0.45rem 0.5rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.84rem;
-    font-weight: 500;
+    font-weight: 600;
     color: #4A4640;
     text-decoration: none;
     text-align: center;
     transition: border-color 0.12s, background 0.12s, color 0.12s;
   }
-  .standing-toggle-btn.active { border-color: #2563eb; background: #2563eb; color: #fff; }
-  .standing-toggle-btn:hover:not(.active) { border-color: #4A4640; color: #2C2A25; }
+  .proj-show .standing-toggle-btn.active { border-color: #2563eb; background: #2563eb; color: #fff; }
+  .proj-show .standing-toggle-btn:hover:not(.active) { border-color: #4A4640; color: #2C2A25; }
 
-  .cat-card {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  .proj-show .standing-postes-count {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #9B9588;
+    margin-top: 0.5rem;
+  }
+
+  /* ── Category cards ────────────────────────────────────── */
+  .proj-show .cat-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
     background: #fff;
     padding: 1.25rem;
     text-align: center;
     transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
     height: 100%;
   }
-  .cat-card:hover {
+  .proj-show .cat-card:hover {
     border-color: #2C2A25;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44,42,37,0.08);
+    box-shadow: 0 6px 18px rgba(44,42,37,0.1);
   }
-  .cat-icon  { font-size: 1.8rem; margin-bottom: 0.4rem; line-height: 1; }
-  .cat-name  { font-size: 0.88rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.25rem; }
-  .cat-count { font-size: 0.78rem; color: #4A4640; margin-bottom: 0.5rem; }
-  .cat-total { font-size: 1.05rem; font-weight: 700; color: #2C2A25; }
+  .proj-show .cat-icon  { font-size: 2rem; margin-bottom: 0.45rem; line-height: 1; }
+  .proj-show .cat-name  { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; font-weight: 700; color: #2C2A25; margin-bottom: 0.25rem; }
+  .proj-show .cat-count { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; color: #9B9588; margin-bottom: 0.5rem; }
+  .proj-show .cat-total { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; color: #1C1A16; }
 
-  .room-row {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
+  /* ── Room rows ─────────────────────────────────────────── */
+  .proj-show .room-row {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 12px;
     background: #fff;
     padding: 1rem 1.25rem;
     display: flex;
@@ -71,9 +105,196 @@
     color: inherit;
     transition: border-color 0.15s;
   }
-  .room-row:hover { border-color: #2C2A25; color: inherit; }
+  .proj-show .room-row:hover { border-color: #2C2A25; color: inherit; }
 
-  .section-title { font-size: 1rem; font-weight: 700; color: #2C2A25; margin-bottom: 1rem; }
+  .proj-show .room-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: #1C1A16;
+    margin-bottom: 0.15rem;
+  }
+  .proj-show .room-meta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    color: #9B9588;
+  }
+
+  /* ── Section eyebrow ───────────────────────────────────── */
+  .proj-show .section-eyebrow {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .proj-show .section-eyebrow::after {
+    content: '';
+    display: block;
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(to right, #DDD9D1, transparent);
+  }
+
+  /* ── Bidding CTA ───────────────────────────────────────── */
+  .proj-show .bidding-cta {
+    border: 1.5px solid #E8E4DC;
+    border-left: 4px solid #2563eb;
+    border-radius: 14px;
+    background: #F8FAFF;
+    padding: 1.375rem 1.5rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .proj-show .bidding-cta-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: #1C1A16;
+    margin-bottom: 4px;
+  }
+  .proj-show .bidding-cta-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #4A4640;
+    font-size: 0.88rem;
+  }
+  .proj-show .btn-bidding-cta {
+    background: #2563eb;
+    color: #fff;
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .proj-show .btn-bidding-cta:hover { background: #1B4FC2; color: #fff; }
+
+  .proj-show .bidding-existing {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ── Modals ────────────────────────────────────────────── */
+  .proj-show-modal .modal-content {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(44,42,37,0.12);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-show-modal .modal-title-text {
+    font-weight: 700;
+    color: #2C2A25;
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-show-modal .modal-sub-text {
+    color: #4A4640;
+    font-size: 0.85rem;
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-show-modal .modal-body-text {
+    color: #4A4640;
+    font-size: 0.88rem;
+    margin: 0 0 1.25rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-show-modal .btn-modal-cancel {
+    border: 1px solid #DDD9D1;
+    background: #fff;
+    color: #4A4640;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.45rem 1.15rem;
+    cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .proj-show-modal .btn-modal-cancel:hover { border-color: #2C2A25; }
+  .proj-show-modal .btn-modal-danger {
+    background: #842029;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.45rem 1.15rem;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .proj-show-modal .btn-modal-danger:hover { background: #6d1a22; }
+  .proj-show-modal .btn-modal-dark {
+    background: #2C2A25;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.45rem 1.15rem;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .proj-show-modal .btn-modal-dark:hover { background: #1C1A16; }
+
+  /* ── Back link ─────────────────────────────────────────── */
+  .proj-show .back-link {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #9B9588;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.12s;
+  }
+  .proj-show .back-link:hover { color: #2C2A25; }
+
+  /* ── Page title ────────────────────────────────────────── */
+  .proj-show .project-h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    color: #1C1A16;
+    margin: 0;
+    line-height: 1.15;
+  }
+
+  /* ── Meta line ─────────────────────────────────────────── */
+  .proj-show .project-meta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #9B9588;
+    font-size: 0.875rem;
+    margin-top: 4px;
+  }
+
+  /* ── Status badges ─────────────────────────────────────── */
+  .proj-show .badge-brouillon { background-color: #EDE9E0; color: #4A4640; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-show .badge-en-cours  { background-color: #D4EDDA; color: #2D6A4F; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-show .badge-termine   { background-color: #D0E8F5; color: #1A5C80; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-show .badge-refuse    { background-color: #F8D7DA; color: #842029; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
 </style>
 <% end %>
 
@@ -97,16 +318,20 @@ status_label, status_class = case @project.status
   end
 %>
 
-<div data-controller="delete-confirm archive-confirm">
+<div class="proj-show" data-controller="delete-confirm archive-confirm">
 <div class="container py-4" style="max-width: 1100px;">
 
   <%# ── Header ─────────────────────────────────────────────────────────── %>
   <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
     <div>
-      <%= link_to "← Mes projets", projects_path,
-            style: "color: #4A4640; font-size: 0.85rem; text-decoration: none;" %>
+      <%= link_to projects_path, class: "back-link" do %>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Mes projets
+      <% end %>
       <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
-        <h1 style="font-size: 1.5rem; font-weight: 700; color: #2C2A25; margin: 0;">
+        <h1 class="project-h1">
           <%= @project.location_zip.presence || "Projet sans localisation" %>
         </h1>
         <span class="badge <%= status_class %> fw-normal"
@@ -114,7 +339,7 @@ status_label, status_class = case @project.status
           <%= status_label %>
         </span>
       </div>
-      <div style="color: #4A4640; font-size: 0.88rem; margin-top: 4px;">
+      <div class="project-meta">
         <% meta = [] %>
         <% meta << "#{@project.total_surface_sqm&.to_i} m²" if @project.total_surface_sqm.present? %>
         <% meta << "#{@project.room_count} pièces" if @project.room_count.present? %>
@@ -122,7 +347,7 @@ status_label, status_class = case @project.status
         <%= meta.join(" · ") %>
       </div>
     </div>
-    <div class="d-flex gap-2 align-items-center">
+    <div class="d-flex gap-2 align-items-center" style="font-family: 'Plus Jakarta Sans', sans-serif;">
       <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
       <%= link_to "Modifier", wizard_edit_path(@project), class: "btn btn-ghost-od btn-sm" %>
       <% if @project.archived? %>
@@ -154,7 +379,7 @@ status_label, status_class = case @project.status
       <div class="col-md-4">
         <div class="summary-card-light">
           <div class="summary-label" style="color: #4A4640;">Total HT</div>
-          <div class="summary-amount" style="font-size: 1.3rem; color: #4A4640;">
+          <div class="summary-amount-light">
             <%= number_to_currency(@total_ht, unit: "€", format: "%n %u",
                   separator: ",", delimiter: "\u202F") %>
           </div>
@@ -171,9 +396,7 @@ status_label, status_class = case @project.status
       </div>
       <div class="col-md-4">
         <div class="summary-card-light">
-          <div style="font-size: 0.8rem; color: #4A4640; margin-bottom: 0.6rem;">
-            Niveau de standing
-          </div>
+          <div class="summary-label" style="color: #4A4640; opacity: 1;">Niveau de standing</div>
           <div class="d-flex gap-2">
             <% [[1, "Éco"], [2, "Standard"], [3, "Premium"]].each do |level, label| %>
               <%= link_to label, project_path(@project, standing: level),
@@ -181,7 +404,7 @@ status_label, status_class = case @project.status
                     data: { turbo_frame: "project_summary" } %>
             <% end %>
           </div>
-          <div style="font-size: 0.75rem; color: #4A4640; margin-top: 0.5rem;">
+          <div class="standing-postes-count">
             <%= pluralize(@categories_data.sum { |d| d[:count] }, "poste") %>
           </div>
         </div>
@@ -190,7 +413,7 @@ status_label, status_class = case @project.status
 
     <%# Categories %>
     <% if @categories_data.any? %>
-      <div class="section-title">Par catégorie de travaux</div>
+      <div class="section-eyebrow">Par catégorie de travaux</div>
       <div class="row g-3 mb-5">
         <% @categories_data.each do |data| %>
           <% cat = data[:category] %>
@@ -208,8 +431,8 @@ status_label, status_class = case @project.status
         <% end %>
       </div>
     <% else %>
-      <div class="text-center py-4 mb-4" style="border: 1px solid #C8C4BC; border-radius: 10px; background: #fff;">
-        <div style="color: #4A4640; font-size: 0.9rem;">
+      <div class="text-center py-4 mb-4" style="border: 1.5px solid #E8E4DC; border-radius: 14px; background: #fff;">
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; color: #4A4640; font-size: 0.9rem;">
           Aucun poste pour le standing
           <strong><%= ["Éco", "Standard", "Premium"][@standing - 1] %></strong>.
           <% if @project.work_items.any? %>
@@ -225,18 +448,15 @@ status_label, status_class = case @project.status
 
   <%# ── Artisan bidding CTA ────────────────────────────────────────────── %>
   <% if @project.bidding_round.nil? %>
-    <div style="border: 1.5px dashed #C8C4BC; border-radius: 10px; background: #fff;
-                padding: 24px 28px; margin-bottom: 28px;
-                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div class="bidding-cta">
       <div>
-        <div style="font-weight: 700; color: #2C2A25; margin-bottom: 4px;">Obtenir des devis artisans</div>
-        <div style="color: #4A4640; font-size: 0.88rem;">
+        <div class="bidding-cta-title">Obtenir des devis artisans</div>
+        <div class="bidding-cta-desc">
           Envoyez votre estimation à des artisans locaux et comparez leurs propositions.
         </div>
       </div>
-      <%= link_to "Demander des devis →", new_project_bidding_round_path(@project, standing: @standing),
-            style: "background: #2563eb; color: #fff; border-radius: 8px; padding: 10px 20px;
-                    font-size: 0.9rem; font-weight: 600; text-decoration: none; white-space: nowrap;" %>
+      <%= link_to "Demander des devis", new_project_bidding_round_path(@project, standing: @standing),
+            class: "btn-bidding-cta" %>
     </div>
   <% else %>
     <%
@@ -248,51 +468,50 @@ status_label, status_class = case @project.status
         else                    ["Brouillon", "badge-brouillon"]
       end
     %>
-    <div style="border: 1px solid #C8C4BC; border-radius: 10px; background: #fff;
-                padding: 20px 24px; margin-bottom: 28px;
-                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div class="bidding-existing">
       <div>
         <div class="d-flex align-items-center gap-2 mb-1">
-          <span style="font-weight: 700; color: #2C2A25;">Devis artisans</span>
+          <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #2C2A25;">Devis artisans</span>
           <span class="badge <%= br_class %> fw-normal" style="font-size: 0.75rem; padding: 0.25em 0.7em; border-radius: 20px;">
             <%= br_label %>
           </span>
         </div>
-        <div style="color: #4A4640; font-size: 0.85rem;">
+        <div style="font-family: 'Plus Jakarta Sans', sans-serif; color: #4A4640; font-size: 0.85rem;">
           <%= br.responses_received %> / <%= br.total_requests %> réponses reçues
           · Niveau <%= br.standing_label %>
           · Date limite <%= l(br.deadline, format: :short) %>
         </div>
       </div>
-      <%= link_to "Voir le suivi →", project_bidding_round_path(@project),
-            style: "background: transparent; border: 1px solid #C8C4BC; color: #2C2A25; border-radius: 8px;
-                    padding: 8px 18px; font-size: 0.88rem; font-weight: 500; text-decoration: none;" %>
+      <%= link_to "Voir le suivi", project_bidding_round_path(@project),
+            style: "background: transparent; border: 1.5px solid #DDD9D1; color: #2C2A25; border-radius: 50px;
+                    padding: 8px 20px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; font-weight: 600; text-decoration: none;
+                    transition: border-color 0.12s;" %>
     </div>
   <% end %>
 
   <%# ── Rooms section ───────────────────────────────────────────────────── %>
-  <div class="mb-3">
-    <div class="section-title mb-0">Par pièce</div>
-  </div>
+  <div class="section-eyebrow">Par pièce</div>
 
   <% if @rooms.any? %>
     <% @rooms.each do |room| %>
       <%= link_to room, class: "room-row" do %>
         <div>
-          <div style="font-weight: 600; color: #2C2A25;"><%= room.name %></div>
-          <div style="font-size: 0.82rem; color: #4A4640;">
+          <div class="room-name"><%= room.name %></div>
+          <div class="room-meta">
             <% rparts = [] %>
             <% rparts << "#{room.surface_sqm&.to_i} m²" if room.surface_sqm.present? %>
             <% rparts << pluralize(room.work_items.size, "poste") %>
             <%= rparts.join(" · ") %>
           </div>
         </div>
-        <span style="color: #4A4640;">→</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9B9588; flex-shrink: 0;">
+          <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       <% end %>
     <% end %>
   <% else %>
-    <div class="text-center py-4" style="border: 1px solid #C8C4BC; border-radius: 10px;
-         background: #fff; color: #4A4640; font-size: 0.9rem;">
+    <div class="text-center py-4" style="border: 1.5px solid #E8E4DC; border-radius: 12px;
+         background: #fff; font-family: 'Plus Jakarta Sans', sans-serif; color: #4A4640; font-size: 0.9rem;">
       Aucune pièce pour l'instant.
     </div>
   <% end %>
@@ -300,9 +519,9 @@ status_label, status_class = case @project.status
 </div>
 
   <%# Modal de confirmation de suppression %>
-  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade proj-show-modal" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-      <div class="modal-content" style="border: 1px solid #C8C4BC; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,42,37,0.12);">
+      <div class="modal-content">
         <div class="modal-body p-4">
           <div class="d-flex align-items-center gap-3 mb-3">
             <div style="width: 40px; height: 40px; border-radius: 10px; background: #F8D7DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -312,22 +531,20 @@ status_label, status_class = case @project.status
               </svg>
             </div>
             <div>
-              <div style="font-weight: 700; color: #2C2A25; font-size: 1rem;">Supprimer le projet</div>
-              <div style="color: #4A4640; font-size: 0.85rem; margin-top: 2px;">
+              <div class="modal-title-text">Supprimer le projet</div>
+              <div class="modal-sub-text">
                 "<span data-delete-confirm-target="nameDisplay" style="color: #2C2A25; font-weight: 500;"></span>"
               </div>
             </div>
           </div>
-          <p style="color: #4A4640; font-size: 0.88rem; margin: 0 0 1.25rem;">
+          <p class="modal-body-text">
             Cette action est irréversible. Toutes les pièces et les postes associés à ce projet seront définitivement supprimés.
           </p>
           <div class="d-flex gap-2 justify-content-end">
-            <button type="button" data-bs-dismiss="modal"
-                    style="border: 1px solid #C8C4BC; background: #fff; color: #4A4640; border-radius: 8px; font-size: 0.88rem; padding: 0.45rem 1rem; cursor: pointer;">
+            <button type="button" data-bs-dismiss="modal" class="btn-modal-cancel">
               Annuler
             </button>
-            <button type="button" data-action="click->delete-confirm#confirm"
-                    style="background: #842029; color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 500; padding: 0.45rem 1rem; cursor: pointer;">
+            <button type="button" data-action="click->delete-confirm#confirm" class="btn-modal-danger">
               Supprimer définitivement
             </button>
           </div>
@@ -343,9 +560,9 @@ status_label, status_class = case @project.status
   <% end %>
 
   <%# Modal de confirmation d'archivage %>
-  <div class="modal fade" id="archiveConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade proj-show-modal" id="archiveConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-      <div class="modal-content" style="border: 1px solid #C8C4BC; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,42,37,0.12);">
+      <div class="modal-content">
         <div class="modal-body p-4">
           <div class="d-flex align-items-center gap-3 mb-3">
             <div style="width: 40px; height: 40px; border-radius: 10px; background: #EDE9E0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -354,22 +571,20 @@ status_label, status_class = case @project.status
               </svg>
             </div>
             <div>
-              <div style="font-weight: 700; color: #2C2A25; font-size: 1rem;">Archiver le projet</div>
-              <div style="color: #4A4640; font-size: 0.85rem; margin-top: 2px;">
+              <div class="modal-title-text">Archiver le projet</div>
+              <div class="modal-sub-text">
                 "<span data-archive-confirm-target="nameDisplay" style="color: #2C2A25; font-weight: 500;"></span>"
               </div>
             </div>
           </div>
-          <p style="color: #4A4640; font-size: 0.88rem; margin: 0 0 1.25rem;">
+          <p class="modal-body-text">
             Le projet sera déplacé dans les archives. Vous pourrez le désarchiver à tout moment.
           </p>
           <div class="d-flex gap-2 justify-content-end">
-            <button type="button" data-bs-dismiss="modal"
-                    style="border: 1px solid #C8C4BC; background: #fff; color: #4A4640; border-radius: 8px; font-size: 0.88rem; padding: 0.45rem 1rem; cursor: pointer;">
+            <button type="button" data-bs-dismiss="modal" class="btn-modal-cancel">
               Annuler
             </button>
-            <button type="button" data-action="click->archive-confirm#confirm"
-                    style="background: #2C2A25; color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 500; padding: 0.45rem 1rem; cursor: pointer;">
+            <button type="button" data-action="click->archive-confirm#confirm" class="btn-modal-dark">
               Archiver
             </button>
           </div>

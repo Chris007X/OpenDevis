@@ -3,109 +3,252 @@
 
 <% content_for :head do %>
 <style>
-  body { background-color: #FFFFFF; }
+  .proj-index { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-  .project-card {
-    border: 1px solid #C8C4BC;
-    border-radius: 10px;
-    background: #fff;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .project-card:hover {
-    border-color: #2C2A25;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44,42,37,0.08);
-    color: inherit;
-    text-decoration: none;
+  .proj-index body { background-color: #FAFAF7; }
+
+  .proj-index .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    color: #1C1A16;
+    line-height: 1.15;
   }
 
-  .badge-brouillon { background-color: #EDE9E0; color: #4A4640; }
-  .badge-en-cours  { background-color: #D4EDDA; color: #2D6A4F; }
-  .badge-termine   { background-color: #D0E8F5; color: #1A5C80; }
-  .badge-refuse    { background-color: #F8D7DA; color: #842029; }
-
-  .card-total {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #2C2A25;
-    letter-spacing: -0.5px;
+  .proj-index .project-count {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #9B9588;
+    font-size: 0.88rem;
+    margin-top: 4px;
+    font-weight: 500;
   }
-  .card-meta { color: #4A4640; font-size: 0.85rem; }
 
-  .btn-primary-dark {
+  .proj-index .btn-primary-dark {
     background-color: #2563eb;
     border-color: #2563eb;
     color: #fff;
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.5rem 1.35rem;
+    transition: background-color 0.15s, border-color 0.15s;
   }
-  .btn-primary-dark:hover {
+  .proj-index .btn-primary-dark:hover {
     background-color: #1B4FC2;
     border-color: #1B4FC2;
     color: #fff;
   }
 
-  .page-title { font-size: 1.6rem; font-weight: 700; color: #2C2A25; }
-  .project-count { color: #4A4640; font-size: 0.95rem; margin-top: 2px; }
+  .proj-index .project-card {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+  }
+  .proj-index .project-card:hover {
+    border-color: #2C2A25;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(44,42,37,0.1);
+    color: inherit;
+    text-decoration: none;
+  }
 
-  .empty-state-icon { font-size: 3.5rem; line-height: 1; }
+  .proj-index .badge-brouillon { background-color: #EDE9E0; color: #4A4640; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-index .badge-en-cours  { background-color: #D4EDDA; color: #2D6A4F; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-index .badge-termine   { background-color: #D0E8F5; color: #1A5C80; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-index .badge-refuse    { background-color: #F8D7DA; color: #842029; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
 
-  .project-card-wrapper { position: relative; }
-  .btn-delete-project {
+  .proj-index .card-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #1C1A16;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.35rem;
+  }
+
+  .proj-index .card-total {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: #1C1A16;
+  }
+
+  .proj-index .card-fourchette-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #9B9588;
+    font-weight: 500;
+    margin-bottom: 0.85rem;
+  }
+
+  .proj-index .card-meta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #9B9588;
+    font-size: 0.82rem;
+    font-weight: 400;
+  }
+
+  .proj-index .project-card-wrapper { position: relative; }
+
+  .proj-index .btn-delete-project {
     position: absolute;
     top: 8px;
     right: 8px;
     z-index: 10;
     width: 26px;
     height: 26px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.85);
-    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #E8E4DC;
     color: #C5BFB5;
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    transition: color 0.12s, background 0.12s;
+    transition: color 0.12s, background 0.12s, border-color 0.12s;
     cursor: pointer;
   }
-  .btn-delete-project:hover {
+  .proj-index .btn-delete-project:hover {
     color: #842029;
     background: #F8D7DA;
+    border-color: #F8D7DA;
   }
-  .project-card-photo {
+
+  .proj-index .project-card-photo {
     width: 100%;
     height: 130px;
     object-fit: cover;
-    border-radius: 9px 9px 0 0;
+    border-radius: 15px 15px 0 0;
     display: block;
   }
-  .project-card-photo-placeholder {
+  .proj-index .project-card-photo-placeholder {
     width: 100%;
     height: 130px;
-    border-radius: 9px 9px 0 0;
-    background: #F0EDE8;
+    border-radius: 15px 15px 0 0;
+    background: #F5F2EC;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
+  .proj-index .card-body-inner {
+    padding: 1.25rem 1.375rem;
+  }
+
+  /* Archives eyebrow */
+  .proj-index .section-eyebrow {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+  }
+  .proj-index .section-eyebrow::after {
+    content: '';
+    display: block;
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(to right, #DDD9D1, transparent);
+  }
+
+  /* Empty state */
+  .proj-index .empty-state-icon { margin-bottom: 1.25rem; }
+
+  .proj-index .empty-state-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #1C1A16;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .proj-index .empty-state-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #4A4640;
+    font-size: 0.9rem;
+    max-width: 360px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Delete modal */
+  .proj-index-modal .modal-content {
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(44,42,37,0.12);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-index-modal .modal-title-text {
+    font-weight: 700;
+    color: #2C2A25;
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-index-modal .modal-sub-text {
+    color: #4A4640;
+    font-size: 0.85rem;
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-index-modal .modal-body-text {
+    color: #4A4640;
+    font-size: 0.88rem;
+    margin: 0 0 1.25rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .proj-index-modal .btn-modal-cancel {
+    border: 1px solid #DDD9D1;
+    background: #fff;
+    color: #4A4640;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.45rem 1.15rem;
+    cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .proj-index-modal .btn-modal-cancel:hover { border-color: #2C2A25; }
+  .proj-index-modal .btn-modal-danger {
+    background: #842029;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.45rem 1.15rem;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .proj-index-modal .btn-modal-danger:hover { background: #6d1a22; }
 </style>
 <% end %>
 
-<div data-controller="delete-confirm">
+<div class="proj-index" data-controller="delete-confirm">
 
   <div class="container py-4" style="max-width: 1100px;">
     <%# Header %>
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
         <div class="page-title">Mes projets</div>
-        <div class="project-count"><%= pluralize(@projects.size, "projet(s)") %></div>
+        <div class="project-count"><%= pluralize(@projects.size, "projet") %></div>
       </div>
       <%= link_to wizard_choose_path, class: "btn btn-primary-dark" do %>
         + Nouveau projet
@@ -139,49 +282,50 @@
                        class="project-card-photo" />
                 <% else %>
                   <div class="project-card-photo-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#C8C4BC" viewBox="0 0 16 16">
-                      <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-2v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v3h-2a.5.5 0 0 1-.5-.5V7.207l4-4z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
+                      <path d="M24 6L4 22h5v20h12V30h6v12h12V22h5L24 6z" stroke="#C8C4BC" stroke-width="2" stroke-linejoin="round" fill="none"/>
+                      <rect x="19" y="30" width="10" height="12" rx="1" stroke="#C8C4BC" stroke-width="2" fill="none"/>
                     </svg>
                   </div>
                 <% end %>
 
-                <div class="p-4">
-                <%# Title + badge below %>
-                <div class="mb-3">
-                  <div style="font-size: 1.05rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.4rem;">
-                    <%= project.location_zip.presence || "Sans localisation" %>
+                <div class="card-body-inner">
+                  <%# Title + badge %>
+                  <div class="mb-2">
+                    <div class="card-name">
+                      <%= project.location_zip.presence || "Sans localisation" %>
+                    </div>
+                    <span class="badge <%= status_class %> fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
+                      <%= status_label %>
+                    </span>
                   </div>
-                  <span class="badge <%= status_class %> fw-normal" style="font-size: 0.8rem; padding: 0.35em 0.75em; border-radius: 20px;">
-                    <%= status_label %>
-                  </span>
-                </div>
 
-                <%# Price range Éco → Premium %>
-                <% eco_total     = project.total_incVAT_for_standing(1) %>
-                <% premium_total = project.total_incVAT_for_standing(3) %>
-                <div class="card-total mb-1">
-                  <% if eco_total > 0 && premium_total > 0 %>
-                    <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
-                    <span style="font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
-                    <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
-                  <% else %>
-                    — €
-                  <% end %>
-                </div>
-                <div class="card-meta mb-3">Fourchette TTC estimée (Éco → Premium)</div>
+                  <%# Price range Éco → Premium %>
+                  <% eco_total     = project.total_incVAT_for_standing(1) %>
+                  <% premium_total = project.total_incVAT_for_standing(3) %>
+                  <div class="card-total mb-1">
+                    <% if eco_total > 0 && premium_total > 0 %>
+                      <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
+                      <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
+                      <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
+                    <% else %>
+                      — €
+                    <% end %>
+                  </div>
+                  <div class="card-fourchette-label">Fourchette TTC estimée (Éco → Premium)</div>
 
-                <%# Room count + surface %>
-                <div class="card-meta">
-                  <% parts = [] %>
-                  <% parts << "#{project.room_count}p" if project.room_count.present? %>
-                  <% parts << "#{project.total_surface_sqm&.to_i} m²" if project.total_surface_sqm.present? %>
-                  <% unless parts.empty? %>
-                    <span><%= parts.join(" · ") %></span>
-                    <span class="mx-1">·</span>
-                  <% end %>
-                  <span>Modifié <%= time_ago_in_words(project.updated_at) %></span>
-                </div>
-                </div><%# /p-4 %>
+                  <%# Room count + surface %>
+                  <div class="card-meta">
+                    <% parts = [] %>
+                    <% parts << "#{project.room_count}p" if project.room_count.present? %>
+                    <% parts << "#{project.total_surface_sqm&.to_i} m²" if project.total_surface_sqm.present? %>
+                    <% unless parts.empty? %>
+                      <span><%= parts.join(" · ") %></span>
+                      <span class="mx-1">·</span>
+                    <% end %>
+                    <span>Modifié <%= time_ago_in_words(project.updated_at) %></span>
+                  </div>
+                </div><%# /card-body-inner %>
               <% end %>
             </div>
           </div>
@@ -191,9 +335,15 @@
     <% else %>
       <%# Empty state %>
       <div class="d-flex flex-column align-items-center justify-content-center py-5 mt-4">
-        <div class="empty-state-icon mb-3">🏗️</div>
-        <h5 style="color: #2C2A25; font-weight: 600;">Aucun projet pour le moment</h5>
-        <p class="text-center mb-4" style="color: #4A4640; max-width: 360px;">
+        <div class="empty-state-icon">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 8L6 28h7v28h16V42h6v14h16V28h7L32 8z" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
+            <rect x="25" y="42" width="14" height="14" rx="1.5" stroke="#2563eb" stroke-width="2" fill="none"/>
+            <path d="M22 28h20v14H22z" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="empty-state-title">Aucun projet pour le moment</div>
+        <p class="empty-state-desc">
           Créez votre première estimation de travaux en quelques clics.
         </p>
         <%= link_to "+ Nouveau projet", wizard_choose_path, class: "btn btn-primary-dark" %>
@@ -203,9 +353,11 @@
     <%# Archives section %>
     <% if @archived_projects.any? %>
       <div class="mt-5 pt-4" style="border-top: 1px solid #E8E4DC;">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <div class="page-title" style="font-size: 1.1rem;">Archives</div>
-          <span style="font-size: 0.85rem; color: #9B9588;"><%= pluralize(@archived_projects.size, "projet(s)") %></span>
+        <div class="section-eyebrow mb-3">
+          Archives
+          <span style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: #9B9588; margin-left: -0.25rem;">
+            (<%= @archived_projects.size %>)
+          </span>
         </div>
         <div class="row g-3">
           <% @archived_projects.each do |project| %>
@@ -225,17 +377,18 @@
                          class="project-card-photo" style="filter: grayscale(40%);" />
                   <% else %>
                     <div class="project-card-photo-placeholder">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#C8C4BC" viewBox="0 0 16 16">
-                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-2v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v3h-2a.5.5 0 0 1-.5-.5V7.207l4-4z"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
+                        <path d="M24 6L4 22h5v20h12V30h6v12h12V22h5L24 6z" stroke="#C8C4BC" stroke-width="2" stroke-linejoin="round" fill="none"/>
+                        <rect x="19" y="30" width="10" height="12" rx="1" stroke="#C8C4BC" stroke-width="2" fill="none"/>
                       </svg>
                     </div>
                   <% end %>
-                  <div class="p-4">
-                    <div class="mb-3">
-                      <div style="font-size: 1.05rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.4rem;">
+                  <div class="card-body-inner">
+                    <div class="mb-2">
+                      <div class="card-name">
                         <%= project.location_zip.presence || "Sans localisation" %>
                       </div>
-                      <span class="badge badge-refuse fw-normal" style="font-size: 0.8rem; padding: 0.35em 0.75em; border-radius: 20px;">
+                      <span class="badge badge-refuse fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
                         Archivé
                       </span>
                     </div>
@@ -244,13 +397,13 @@
                     <div class="card-total mb-1">
                       <% if eco_total > 0 && premium_total > 0 %>
                         <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
-                        <span style="font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
+                        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
                         <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
                       <% else %>
                         — €
                       <% end %>
                     </div>
-                    <div class="card-meta mb-3">Fourchette TTC estimée (Éco → Premium)</div>
+                    <div class="card-fourchette-label">Fourchette TTC estimée (Éco → Premium)</div>
                     <div class="card-meta">
                       <% parts = [] %>
                       <% parts << "#{project.room_count}p" if project.room_count.present? %>
@@ -272,9 +425,9 @@
   </div>
 
   <%# Modal de confirmation de suppression — à l'intérieur du controller Stimulus %>
-  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade proj-index-modal" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-      <div class="modal-content" style="border: 1px solid #C8C4BC; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,42,37,0.12);">
+      <div class="modal-content">
         <div class="modal-body p-4">
 
           <div class="d-flex align-items-center gap-3 mb-3">
@@ -285,26 +438,26 @@
               </svg>
             </div>
             <div>
-              <div style="font-weight: 700; color: #2C2A25; font-size: 1rem;">Supprimer le projet</div>
-              <div style="color: #4A4640; font-size: 0.85rem; margin-top: 2px;">
+              <div class="modal-title-text">Supprimer le projet</div>
+              <div class="modal-sub-text">
                 "<span data-delete-confirm-target="nameDisplay" style="color: #2C2A25; font-weight: 500;"></span>"
               </div>
             </div>
           </div>
 
-          <p style="color: #4A4640; font-size: 0.88rem; margin: 0 0 1.25rem;">
+          <p class="modal-body-text">
             Cette action est irréversible. Toutes les pièces et les postes associés à ce projet seront définitivement supprimés.
           </p>
 
           <div class="d-flex gap-2 justify-content-end">
             <button type="button"
                     data-bs-dismiss="modal"
-                    style="border: 1px solid #C8C4BC; background: #fff; color: #4A4640; border-radius: 8px; font-size: 0.88rem; padding: 0.45rem 1rem; cursor: pointer;">
+                    class="btn-modal-cancel">
               Annuler
             </button>
             <button type="button"
                     data-action="click->delete-confirm#confirm"
-                    style="background: #842029; color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 500; padding: 0.45rem 1rem; cursor: pointer;">
+                    class="btn-modal-danger">
               Supprimer définitivement
             </button>
           </div>

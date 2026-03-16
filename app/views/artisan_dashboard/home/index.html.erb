@@ -1,92 +1,167 @@
 <style>
-  .ad-container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
-  .ad-section-title { font-weight: 700; font-size: 1rem; color: #2C2A25; margin-bottom: 12px; margin-top: 32px; }
-  .ad-section-title:first-of-type { margin-top: 0; }
+  .ad-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .ad-page { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+  .ad-welcome-heading {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #1C1A16;
+    line-height: 1.15;
+    margin-bottom: 0.3rem;
+  }
+  .ad-welcome-sub { color: #9B9588; font-size: 0.9rem; margin-bottom: 2.5rem; }
+  .ad-section-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    margin-bottom: 0.75rem;
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ad-section-eyebrow:first-of-type { margin-top: 0; }
+  .ad-section-count {
+    background: #E8E4DC;
+    color: #4A4640;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 20px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
   .ad-request-card {
-    background: #fff; border: 1px solid #C8C4BC; border-radius: 10px; padding: 16px 20px;
-    margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    text-decoration: none; color: inherit; transition: border-color 0.12s, box-shadow 0.12s;
+    background: #fff;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    box-shadow: 0 1px 4px rgba(44,42,37,0.04);
   }
-  .ad-request-card:hover { border-color: #0D6EFD; box-shadow: 0 1px 4px rgba(13,110,253,0.12); }
+  .ad-request-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.1);
+    transform: translateY(-1px);
+    color: inherit;
+  }
+  .ad-request-category { font-weight: 700; color: #1C1A16; font-size: 0.93rem; margin-bottom: 3px; }
+  .ad-request-meta { font-size: 0.82rem; color: #9B9588; }
   .ad-status-badge {
-    font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  .badge-sent      { background: #D0E8F5; color: #1A5C80; }
-  .badge-responded { background: #D4EDDA; color: #2D6A4F; }
-  .badge-declined  { background: #F8D7DA; color: #842029; }
-  .badge-expired   { background: #EDE9E0; color: #4A4640; }
-  .badge-replaced  { background: #EDE9E0; color: #4A4640; }
-  .ad-empty { text-align: center; padding: 32px; background: #fff; border: 1px solid #C8C4BC; border-radius: 10px; color: #4A4640; font-size: 0.9rem; }
+  .badge-sent      { background: #DBEAFE; color: #1D4ED8; }
+  .badge-responded { background: #DCFCE7; color: #15803D; }
+  .badge-declined  { background: #FEE2E2; color: #991B1B; }
+  .badge-expired   { background: #F5F0E8; color: #4A4640; }
+  .badge-replaced  { background: #F5F0E8; color: #4A4640; }
+  .ad-deadline {
+    font-size: 0.78rem;
+    color: #9B9588;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .ad-price {
+    font-weight: 700;
+    color: #1C1A16;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+  .ad-empty {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: #FAFAF7;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    color: #9B9588;
+    font-size: 0.9rem;
+  }
 </style>
 
-<div class="ad-container">
-  <h2 style="font-weight: 700; color: #2C2A25; margin-bottom: 4px;">Bonjour <%= current_artisan.name %> 👋</h2>
-  <p style="color: #4A4640; font-size: 0.9rem; margin-bottom: 32px;">Gérez vos demandes de devis depuis votre tableau de bord.</p>
+<div class="ad-scope">
+  <div class="ad-page">
+    <h1 class="ad-welcome-heading">Bonjour, <%= current_artisan.name %></h1>
+    <p class="ad-welcome-sub">Gérez vos demandes de devis depuis votre tableau de bord.</p>
 
-  <div class="ad-section-title">
-    Demandes en attente
+    <div class="ad-section-eyebrow">
+      Demandes en attente
+      <% if @pending_requests.any? %>
+        <span class="ad-section-count"><%= @pending_requests.count %></span>
+      <% end %>
+    </div>
+
     <% if @pending_requests.any? %>
-      <span style="color: #4A4640; font-weight: 400; font-size: 0.85rem; margin-left: 6px;">(<%= @pending_requests.count %>)</span>
+      <% @pending_requests.each do |req| %>
+        <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
+          <div>
+            <div class="ad-request-category"><%= req.work_category.name %></div>
+            <div class="ad-request-meta">
+              <%= req.bidding_round.project.location_zip %>
+              <% if req.bidding_round.project.total_surface_sqm.present? %>
+                · <%= req.bidding_round.project.total_surface_sqm.to_i %> m²
+              <% end %>
+              · Standing <%= req.bidding_round.standing_label %>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
+            <span class="ad-deadline">Limite : <%= req.bidding_round.deadline.strftime("%d/%m/%Y") %></span>
+            <span class="ad-status-badge badge-sent">À répondre</span>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="ad-empty">Aucune demande en attente.</div>
+    <% end %>
+
+    <div class="ad-section-eyebrow">Demandes passées</div>
+
+    <% if @past_requests.any? %>
+      <% @past_requests.each do |req| %>
+        <%
+          badge_class = case req.status
+                        when "responded" then "badge-responded"
+                        when "declined"  then "badge-declined"
+                        when "expired"   then "badge-expired"
+                        else "badge-replaced"
+                        end
+          badge_label = { "responded" => "Répondu", "declined" => "Décliné",
+                          "expired" => "Expiré", "replaced" => "Remplacé" }[req.status]
+        %>
+        <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
+          <div>
+            <div class="ad-request-category"><%= req.work_category.name %></div>
+            <div class="ad-request-meta">
+              <%= req.bidding_round.project.location_zip %> · Standing <%= req.bidding_round.standing_label %>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
+            <% if req.responded? && req.price_total.present? %>
+              <span class="ad-price">
+                <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+              </span>
+            <% end %>
+            <span class="ad-status-badge <%= badge_class %>"><%= badge_label %></span>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="ad-empty">Aucune demande passée.</div>
     <% end %>
   </div>
-
-  <% if @pending_requests.any? %>
-    <% @pending_requests.each do |req| %>
-      <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
-        <div>
-          <div style="font-weight: 600; color: #2C2A25; margin-bottom: 3px;"><%= req.work_category.name %></div>
-          <div style="font-size: 0.82rem; color: #4A4640;">
-            <%= req.bidding_round.project.location_zip %>
-            <% if req.bidding_round.project.total_surface_sqm.present? %>
-              · <%= req.bidding_round.project.total_surface_sqm.to_i %> m²
-            <% end %>
-            · Standing <%= req.bidding_round.standing_label %>
-          </div>
-        </div>
-        <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
-          <span style="font-size: 0.8rem; color: #4A4640;">
-            Limite : <%= req.bidding_round.deadline.strftime("%d/%m/%Y") %>
-          </span>
-          <span class="ad-status-badge badge-sent">À répondre</span>
-        </div>
-      <% end %>
-    <% end %>
-  <% else %>
-    <div class="ad-empty">Aucune demande en attente.</div>
-  <% end %>
-
-  <div class="ad-section-title">Demandes passées</div>
-
-  <% if @past_requests.any? %>
-    <% @past_requests.each do |req| %>
-      <%
-        badge_class = case req.status
-                      when "responded" then "badge-responded"
-                      when "declined"  then "badge-declined"
-                      when "expired"   then "badge-expired"
-                      else "badge-replaced"
-                      end
-        badge_label = { "responded" => "Répondu", "declined" => "Décliné",
-                        "expired" => "Expiré", "replaced" => "Remplacé" }[req.status]
-      %>
-      <%= link_to artisan_dashboard_request_path(req), class: "ad-request-card" do %>
-        <div>
-          <div style="font-weight: 600; color: #2C2A25; margin-bottom: 3px;"><%= req.work_category.name %></div>
-          <div style="font-size: 0.82rem; color: #4A4640;">
-            <%= req.bidding_round.project.location_zip %> · Standing <%= req.bidding_round.standing_label %>
-          </div>
-        </div>
-        <div class="d-flex align-items-center gap-2" style="flex-shrink: 0;">
-          <% if req.responded? && req.price_total.present? %>
-            <span style="font-weight: 600; color: #2C2A25; font-size: 0.9rem;">
-              <%= number_to_currency(req.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
-            </span>
-          <% end %>
-          <span class="ad-status-badge <%= badge_class %>"><%= badge_label %></span>
-        </div>
-      <% end %>
-    <% end %>
-  <% else %>
-    <div class="ad-empty">Aucune demande passée.</div>
-  <% end %>
 </div>

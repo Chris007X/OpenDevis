@@ -1,76 +1,221 @@
-<div class="container py-4" style="max-width: 580px;">
+<div class="page-scope" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+<style>
+  .page-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .settings-page { max-width: 600px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+  .settings-heading {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-style: italic;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #1C1A16;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+  .settings-subheading { color: #9B9588; font-size: 0.88rem; margin-bottom: 2rem; }
+  .settings-card {
+    background: #fff;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 16px;
+    padding: 2rem 2.25rem;
+    box-shadow: 0 2px 12px rgba(44,42,37,0.06);
+    margin-bottom: 1.5rem;
+  }
+  .settings-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #E8E4DC;
+  }
+  .settings-eyebrow span {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #C8C4BC;
+    font-size: 0.78rem;
+    margin-left: 6px;
+  }
+  .page-scope .form-group label,
+  .page-scope .form-group .control-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #9B9588;
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+  .page-scope .form-group .form-control,
+  .page-scope .form-group input[type="email"],
+  .page-scope .form-group input[type="password"],
+  .page-scope .form-group input[type="text"] {
+    border-radius: 10px;
+    border: 1.5px solid #DDD9D1;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 0.6rem 0.875rem;
+    font-size: 0.92rem;
+    color: #1C1A16;
+    width: 100%;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+  }
+  .page-scope .form-group .form-control:focus,
+  .page-scope .form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    outline: none;
+  }
+  .page-scope .hint { font-size: 0.78rem; color: #9B9588; margin-top: 0.2rem; }
+  .settings-error {
+    background: #FEF2F2;
+    color: #842029;
+    border: 1.5px solid #FECDD3;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.88rem;
+  }
+  .settings-confirm-note {
+    font-size: 0.8rem;
+    color: #9B9588;
+    margin-top: 0.3rem;
+  }
+  .btn-settings-save {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.65rem 1.75rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .btn-settings-save:hover {
+    background: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  }
+  .btn-settings-cancel {
+    background: transparent;
+    color: #4A4640;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 50px;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: border-color 0.15s;
+  }
+  .btn-settings-cancel:hover { border-color: #C8C4BC; color: #1C1A16; }
+  .danger-card {
+    border: 1.5px solid #FECDD3;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    background: #fff;
+  }
+  .danger-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #C25E4A;
+    margin-bottom: 0.5rem;
+  }
+  .danger-desc { font-size: 0.85rem; color: #4A4640; margin-bottom: 1.25rem; }
+  .btn-danger-ghost {
+    background: transparent;
+    color: #842029;
+    border: 1.5px solid #FECDD3;
+    border-radius: 50px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .btn-danger-ghost:hover { background: #FEF2F2; border-color: #C25E4A; }
+</style>
+
+<div class="settings-page">
   <%= link_to "← Mes projets", projects_path, class: "od-back-link" %>
-  <div class="od-page-title">Mon profil</div>
 
-  <div class="od-form-card mb-4">
+  <h1 class="settings-heading mt-3">Paramètres du compte</h1>
+  <p class="settings-subheading">Gérez vos informations de connexion et de sécurité.</p>
+
+  <div class="settings-card">
     <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-      <%= f.error_notification class: "alert", style: "background:#F8D7DA;color:#842029;border:1px solid #f5c2c7;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.9rem;" %>
+      <%= f.error_notification class: "settings-error" %>
 
-      <div class="mb-3 pb-3" style="border-bottom: 1px solid #C8C4BC;">
-        <div style="font-size: 0.78rem; font-weight: 700; color: #4A4640; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem;">
-          Informations du compte
-        </div>
-        <div class="row g-3">
-          <div class="col-12">
-            <%= f.input :email,
-                        label: "Adresse e-mail",
-                        required: true,
-                        autofocus: true,
-                        input_html: { autocomplete: "email" } %>
-            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-              <div style="font-size: 0.8rem; color: #4A4640; margin-top: 0.25rem;">
-                En attente de confirmation pour : <%= resource.unconfirmed_email %>
-              </div>
-            <% end %>
+      <%# Section email %>
+      <div class="settings-eyebrow">Informations du compte</div>
+      <div class="mb-4 pb-4" style="border-bottom: 1px solid #E8E4DC;">
+        <%= f.input :email,
+                    label: "Adresse e-mail",
+                    required: true,
+                    autofocus: true,
+                    input_html: { autocomplete: "email" } %>
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <div class="settings-confirm-note">
+            En attente de confirmation pour : <%= resource.unconfirmed_email %>
           </div>
+        <% end %>
+      </div>
+
+      <%# Section mot de passe %>
+      <div class="settings-eyebrow mt-4">
+        Changer le mot de passe
+        <span>(laisser vide pour ne pas modifier)</span>
+      </div>
+      <div class="row g-3 mb-4 pb-4" style="border-bottom: 1px solid #E8E4DC;">
+        <div class="col-md-6">
+          <%= f.input :password,
+                      label: "Nouveau mot de passe",
+                      required: false,
+                      input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.input :password_confirmation,
+                      label: "Confirmer",
+                      required: false,
+                      input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
         </div>
       </div>
 
-      <div class="mb-3">
-        <div style="font-size: 0.78rem; font-weight: 700; color: #4A4640; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem;">
-          Changer le mot de passe <span style="font-weight: 400; text-transform: none;">(laisser vide pour ne pas modifier)</span>
-        </div>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <%= f.input :password,
-                        label: "Nouveau mot de passe",
-                        required: false,
-                        input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
-          </div>
-          <div class="col-md-6">
-            <%= f.input :password_confirmation,
-                        label: "Confirmer",
-                        required: false,
-                        input_html: { autocomplete: "new-password", placeholder: "••••••••" } %>
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-3 pt-3" style="border-top: 1px solid #C8C4BC;">
+      <%# Confirmation mot de passe actuel %>
+      <div class="settings-eyebrow mt-4">Confirmer les modifications</div>
+      <div class="mb-4">
         <%= f.input :current_password,
                     label: "Mot de passe actuel (requis pour confirmer)",
                     required: true,
                     input_html: { autocomplete: "current-password", placeholder: "••••••••" } %>
       </div>
 
-      <div class="d-flex align-items-center gap-2 mt-4">
-        <%= f.button :submit, "Enregistrer les modifications", class: "btn btn-dark-od" %>
-        <%= link_to "Annuler", projects_path, class: "btn btn-ghost-od" %>
+      <div class="d-flex align-items-center gap-3 mt-2">
+        <button type="submit" class="btn-settings-save">Enregistrer les modifications</button>
+        <%= link_to "Annuler", projects_path, class: "btn-settings-cancel" %>
       </div>
     <% end %>
   </div>
 
   <%# Danger zone %>
-  <div style="border: 1px solid #F8D7DA; border-radius: 10px; padding: 1.25rem 1.5rem; background: #fff;">
-    <div style="font-size: 0.85rem; font-weight: 700; color: #842029; margin-bottom: 0.5rem;">Zone dangereuse</div>
-    <div style="font-size: 0.85rem; color: #4A4640; margin-bottom: 1rem;">
-      La suppression de votre compte est irréversible. Toutes vos données seront perdues.
-    </div>
+  <div class="danger-card">
+    <div class="danger-eyebrow">Zone dangereuse</div>
+    <p class="danger-desc">La suppression de votre compte est irréversible. Toutes vos données seront perdues.</p>
     <%= button_to "Supprimer mon compte",
           registration_path(resource_name),
           data: { turbo_confirm: "Supprimer définitivement votre compte ?" },
           method: :delete,
-          class: "btn btn-ghost-od btn-sm",
-          style: "color: #842029; border-color: #F8D7DA;" %>
+          class: "btn-danger-ghost" %>
   </div>
+</div>
 </div>

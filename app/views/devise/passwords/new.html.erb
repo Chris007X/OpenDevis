@@ -1,20 +1,123 @@
 <% content_for :title, "Mot de passe oublié — OpenDevis" %>
 
-<h2>Mot de passe oublié ?</h2>
+<div class="auth-scope" style="min-height: calc(100vh - 56px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: #FAFAF7;">
+  <style>
+    .auth-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .auth-card {
+      background: #fff;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 16px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 2px 12px rgba(44,42,37,0.06);
+      width: 100%;
+      max-width: 440px;
+    }
+    .auth-wordmark {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #2C2A25;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+    .auth-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-style: italic;
+      font-size: 1.9rem;
+      font-weight: 400;
+      color: #1C1A16;
+      margin: 0 0 0.25rem;
+      line-height: 1.15;
+    }
+    .auth-subheading {
+      color: #9B9588;
+      font-size: 0.88rem;
+      margin-bottom: 1.75rem;
+    }
+    .auth-scope .form-group label,
+    .auth-scope .form-group .control-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #9B9588;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .auth-scope .form-group .form-control,
+    .auth-scope .form-group input[type="email"],
+    .auth-scope .form-group input[type="text"] {
+      border-radius: 10px;
+      border: 1.5px solid #DDD9D1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 0.6rem 0.875rem;
+      font-size: 0.92rem;
+      color: #1C1A16;
+      width: 100%;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      box-sizing: border-box;
+    }
+    .auth-scope .form-group .form-control:focus,
+    .auth-scope .form-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      outline: none;
+    }
+    .auth-submit-btn {
+      width: 100%;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.7rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.15s, box-shadow 0.15s;
+      margin-top: 0.5rem;
+    }
+    .auth-submit-btn:hover {
+      background: #1d4ed8;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    }
+    .auth-scope .devise-links a {
+      color: #4A4640;
+      font-size: 0.83rem;
+      text-decoration: none;
+      transition: color 0.12s;
+    }
+    .auth-scope .devise-links a:hover { color: #1C1A16; text-decoration: underline; }
+  </style>
 
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= f.error_notification %>
+  <div style="width: 100%; max-width: 440px;">
+    <div class="text-center mb-4">
+      <%= link_to "OpenDevis", root_path, class: "auth-wordmark" %>
+    </div>
 
-  <div class="form-inputs">
-    <%= f.input :email,
-                required: true,
-                autofocus: true,
-                input_html: { autocomplete: "email" } %>
+    <div class="auth-card">
+      <h1 class="auth-heading">Mot de passe oublié ?</h1>
+      <p class="auth-subheading">Nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+
+      <%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+        <%= f.error_notification %>
+
+        <div class="form-inputs mb-3">
+          <%= f.input :email,
+                      required: true,
+                      autofocus: true,
+                      label: "Adresse e-mail",
+                      input_html: { autocomplete: "email", placeholder: "vous@exemple.com" } %>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="auth-submit-btn">Envoyer les instructions de réinitialisation</button>
+        </div>
+      <% end %>
+
+      <div class="text-center mt-3 devise-links">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Envoyer les instructions de réinitialisation" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

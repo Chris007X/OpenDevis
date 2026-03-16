@@ -3,6 +3,342 @@
 <% content_for :keywords, "devis rénovation, estimation travaux, coût rénovation appartement, prix travaux maison, devis gratuit, rénovation cuisine, rénovation salle de bain" %>
 
 <% content_for :head do %>
+  <style>
+    .home-scope * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .home-scope h1, .home-scope h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    /* ── HERO ── */
+    .home-hero {
+      background: linear-gradient(135deg, #FAFAF7 0%, #F5F0E8 100%);
+      padding: 5rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 60% 40%, rgba(37,99,235,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #4A4640;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 4px rgba(44,42,37,0.06);
+    }
+    .hero-eyebrow-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22C55E;
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+      50% { box-shadow: 0 0 0 5px rgba(34,197,94,0.1); }
+    }
+    .hero-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2.4rem, 5vw, 3.5rem);
+      font-weight: 400;
+      color: #1C1A16;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: #2563eb;
+    }
+    .hero-lead {
+      font-size: 1.05rem;
+      color: #4A4640;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 520px;
+    }
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2.25rem;
+    }
+    .hero-avatars {
+      display: flex;
+    }
+    .hero-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2.5px solid #FAFAF7;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+      margin-left: -8px;
+    }
+    .hero-avatars .hero-avatar:first-child { margin-left: 0; }
+    .hero-stars { color: #F59E0B; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 2px; }
+    .hero-social-label { font-size: 0.82rem; color: #4A4640; margin: 0; }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.875rem 2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+    }
+    .hero-cta:hover {
+      background: #1d4ed8;
+      box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+      transform: translateY(-1px);
+      color: #fff;
+    }
+
+    /* ── Hero words loader (keep existing animation) ── */
+    .hero-words-loader {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      vertical-align: bottom;
+      height: 1.15em;
+      min-width: 140px;
+    }
+    .hero-words {
+      display: flex;
+      flex-direction: column;
+      animation: slideWords 6s infinite;
+    }
+    .hero-word {
+      display: block;
+      color: #2563eb;
+      font-style: italic;
+      line-height: 1.1;
+    }
+    @keyframes slideWords {
+      0%   { transform: translateY(0); }
+      20%  { transform: translateY(0); }
+      25%  { transform: translateY(-1.1em); }
+      45%  { transform: translateY(-1.1em); }
+      50%  { transform: translateY(-2.2em); }
+      70%  { transform: translateY(-2.2em); }
+      75%  { transform: translateY(-3.3em); }
+      95%  { transform: translateY(-3.3em); }
+      100% { transform: translateY(0); }
+    }
+
+    /* ── Hero mock card ── */
+    .hero-card-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .hero-card-float {
+      animation: floatCard 4s ease-in-out infinite;
+    }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .hero-card {
+      background: #fff;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: 0 16px 48px rgba(44,42,37,0.14), 0 2px 8px rgba(44,42,37,0.06);
+      width: 340px;
+      max-width: 100%;
+    }
+    .hero-card-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: #9B9588; margin: 0 0 4px; }
+    .hero-card-title { font-weight: 800; color: #1C1A16; font-size: 1.05rem; margin: 0; }
+    .hero-card-icon {
+      width: 40px; height: 40px;
+      background: #EFF6FF;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #F0EDE8;
+    }
+    .hero-item:last-child { border-bottom: none; }
+    .hero-item-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .hero-item-icon--orange { background: #FEF3C7; color: #D97706; }
+    .hero-item-icon--cyan { background: #DBEAFE; color: #2563eb; }
+    .hero-item-name { font-weight: 600; color: #1C1A16; font-size: 0.88rem; margin: 0 0 1px; }
+    .hero-item-sub { font-size: 0.75rem; color: #9B9588; margin: 0; }
+    .hero-item-price { font-weight: 700; color: #1C1A16; font-size: 0.92rem; white-space: nowrap; }
+    .hero-card-footer {
+      background: #F5F0E8;
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-top: 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .hero-footer-label { font-size: 0.72rem; color: #9B9588; margin: 0 0 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .hero-footer-total { font-size: 1.35rem; font-weight: 800; color: #1C1A16; margin: 0; }
+    .hero-footer-ttc { font-size: 0.72rem; color: #9B9588; font-weight: 600; }
+    .hero-check-btn {
+      width: 36px; height: 36px;
+      background: #22C55E;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    /* ── FEATURES SECTION ── */
+    .features-section {
+      padding: 5rem 0;
+      background: #fff;
+    }
+    .section-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #2563eb;
+      margin-bottom: 0.75rem;
+    }
+    .section-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 400;
+      color: #1C1A16;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    .section-lead { color: #4A4640; font-size: 1rem; max-width: 500px; margin: 0 auto; }
+    .feature-card-od {
+      background: #FAFAF7;
+      border: 1.5px solid #E8E4DC;
+      border-radius: 16px;
+      padding: 1.75rem;
+      height: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    }
+    .feature-card-od:hover {
+      border-color: #DDD9D1;
+      box-shadow: 0 4px 16px rgba(44,42,37,0.08);
+      transform: translateY(-2px);
+    }
+    .feature-icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    .feature-icon-wrap--blue { background: #EFF6FF; color: #2563eb; }
+    .feature-icon-wrap--amber { background: #FEF3C7; color: #D97706; }
+    .feature-icon-wrap--green { background: #DCFCE7; color: #15803D; }
+    .feature-title { font-weight: 800; color: #1C1A16; font-size: 1rem; margin-bottom: 0.5rem; }
+    .feature-desc { color: #4A4640; font-size: 0.88rem; line-height: 1.65; margin: 0; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      padding: 5rem 0;
+      background: #FAFAF7;
+    }
+    .step-circle {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+    .step-title { font-weight: 700; color: #1C1A16; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .step-desc { color: #4A4640; font-size: 0.85rem; line-height: 1.6; }
+    .step-arrow { color: #DDD9D1; font-size: 1.5rem; }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #1C1A16 0%, #2C2A25 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    .cta-heading em { font-style: italic; color: #93C5FD; }
+    .cta-lead { color: rgba(255,255,255,0.6); font-size: 1rem; margin-bottom: 2rem; }
+    .btn-cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.875rem 2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+    }
+    .btn-cta-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+      color: #fff;
+    }
+    .cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      margin-top: 1.25rem;
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -23,219 +359,227 @@
   </script>
 <% end %>
 
-<%# ── HERO ──────────────────────────────────────────────────────────────── %>
-<section class="hero-v2">
-  <div class="container py-5 py-lg-6">
-    <div class="row align-items-center g-5">
+<div class="home-scope">
 
-      <%# Colonne gauche : texte %>
-      <div class="col-lg-6">
-        <div class="hero-badge mb-4">
-          <span class="hero-badge-dot">
-            <span class="hero-badge-ping"></span>
-          </span>
-          Reprenez le contrôle de votre rénovation
+  <%# ── HERO ── %>
+  <section class="home-hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+
+        <%# Colonne gauche : texte %>
+        <div class="col-lg-6">
+          <div class="hero-eyebrow">
+            <span class="hero-eyebrow-dot"></span>
+            Reprenez le contrôle de votre rénovation
+          </div>
+
+          <h1 class="hero-title">
+            Obtenez le devis de vos
+            <span class="hero-words-loader">
+              <span class="hero-words">
+                <span class="hero-word">travaux</span>
+                <span class="hero-word">rénovations</span>
+                <span class="hero-word">isolations</span>
+                <span class="hero-word">travaux</span>
+              </span>
+            </span><br>
+            facilement et <em>instantanément.</em>
+          </h1>
+
+          <p class="hero-lead">
+            Visitez, chiffrez, décidez l'esprit léger. OpenDevis vous guide pas à pas pour estimer chaque poste de dépense, à votre rythme et en totale autonomie, sans dépendre de l'agenda de quiconque.
+          </p>
+
+          <%# Avis clients %>
+          <div class="hero-social-proof">
+            <div class="hero-avatars">
+              <div class="hero-avatar" style="background: #F59E0B;">S</div>
+              <div class="hero-avatar" style="background: #22C55E;">M</div>
+              <div class="hero-avatar" style="background: #3B82F6;">A</div>
+              <div class="hero-avatar" style="background: #EF4444;">L</div>
+            </div>
+            <div>
+              <div class="hero-stars">★★★★★</div>
+              <p class="hero-social-label">
+                <strong>4,9/5</strong> · Plébiscité par +200 propriétaires
+              </p>
+            </div>
+          </div>
+
+          <% if user_signed_in? %>
+            <%= link_to projects_path, class: "hero-cta" do %>
+              Mes projets <i class="fa fa-arrow-right"></i>
+            <% end %>
+          <% else %>
+            <%= link_to new_user_registration_path, class: "hero-cta" do %>
+              Obtenir mon estimation <i class="fa fa-arrow-right"></i>
+            <% end %>
+          <% end %>
         </div>
 
-        <h1 class="hero-v2-title mb-4">
-          Obtenez le devis de vos
-          <span class="hero-words-loader">
-            <span class="hero-words">
-              <span class="hero-word">travaux</span>
-              <span class="hero-word">rénovations</span>
-              <span class="hero-word">isolations</span>
-              <span class="hero-word">travaux</span>
-            </span>
-          </span><br>
-          facilement et instantanément.
-        </h1>
+        <%# Colonne droite : carte mock UI %>
+        <div class="col-lg-6 d-flex justify-content-center justify-content-lg-end">
+          <div class="hero-card-wrap">
+            <div class="hero-card-float">
+              <div class="hero-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <p class="hero-card-label">Projet en cours</p>
+                    <p class="hero-card-title">Appartement Paris 11e</p>
+                  </div>
+                  <div class="hero-card-icon">
+                    <i class="fa fa-home text-primary"></i>
+                  </div>
+                </div>
 
-        <p class="hero-v2-lead mb-4">
-          Visitez, chiffrez, décidez l'esprit léger. OpenDevis vous guide pas à pas pour estimer chaque poste de dépense, à votre rythme et en totale autonomie, sans dépendre de l'agenda de quiconque.
-        </p>
+                <div>
+                  <div class="hero-item">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="hero-item-icon hero-item-icon--orange">
+                        <i class="fa fa-utensils fa-sm"></i>
+                      </div>
+                      <div>
+                        <p class="hero-item-name">Cuisine complète</p>
+                        <p class="hero-item-sub">12m² • Dépose + Pose</p>
+                      </div>
+                    </div>
+                    <p class="hero-item-price">6 450 €</p>
+                  </div>
 
-        <%# Avis clients %>
-        <div class="hero-social-proof mb-5">
-          <div class="hero-avatars">
-            <div class="hero-avatar" style="background: #fbbf24;">S</div>
-            <div class="hero-avatar" style="background: #34d399;">M</div>
-            <div class="hero-avatar" style="background: #60a5fa;">A</div>
-            <div class="hero-avatar" style="background: #f87171;">L</div>
-          </div>
-          <div>
-            <div class="hero-stars">
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
+                  <div class="hero-item">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="hero-item-icon hero-item-icon--cyan">
+                        <i class="fa fa-bath fa-sm"></i>
+                      </div>
+                      <div>
+                        <p class="hero-item-name">Salle de bain</p>
+                        <p class="hero-item-sub">5m² • Rafraîchissement</p>
+                      </div>
+                    </div>
+                    <p class="hero-item-price">3 200 €</p>
+                  </div>
+                </div>
+
+                <div class="hero-card-footer">
+                  <div>
+                    <p class="hero-footer-label">Enveloppe globale estimée</p>
+                    <p class="hero-footer-total">9 650 € <span class="hero-footer-ttc">TTC</span></p>
+                  </div>
+                  <div class="hero-check-btn">
+                    <i class="fa fa-check"></i>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="hero-social-label">
-              <strong>4,9/5</strong> · Plébiscité par +200 propriétaires
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <%# ── FONCTIONNALITÉS ── %>
+  <section class="features-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-eyebrow">Fonctionnalités</div>
+        <h2 class="section-heading">Tout ce qu'il faut pour<br>chiffrer un chantier</h2>
+        <p class="section-lead">De la première pièce au devis final, OpenDevis gère la structure.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card-od">
+            <div class="feature-icon-wrap feature-icon-wrap--blue">
+              <i class="fa fa-folder-open"></i>
+            </div>
+            <div class="feature-title">Projets</div>
+            <p class="feature-desc">
+              Organisez chaque chantier comme un projet. Suivez le statut (brouillon, envoyé, accepté), la surface, la classe énergétique et le lien du bien — tout au même endroit.
             </p>
           </div>
         </div>
 
-        <% if user_signed_in? %>
-          <%= link_to projects_path, class: "btn hero-v2-cta" do %>
-            Mes projets <i class="fa fa-arrow-right ms-2"></i>
-          <% end %>
-        <% else %>
-          <%= link_to new_user_registration_path, class: "btn hero-v2-cta" do %>
-            Obtenir mon estimation <i class="fa fa-arrow-right ms-2"></i>
-          <% end %>
-        <% end %>
-      </div>
-
-      <%# Colonne droite : carte mock UI %>
-      <div class="col-lg-6 d-flex justify-content-center justify-content-lg-end">
-        <div class="hero-v2-card-wrap">
-          <div class="hero-v2-card-float">
-          <div class="hero-v2-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <div>
-                <p class="hero-v2-card-label">Projet en cours</p>
-                <p class="hero-v2-card-title">Appartement Paris 11e</p>
-              </div>
-              <div class="hero-v2-card-icon">
-                <i class="fa fa-home fa-lg text-primary"></i>
-              </div>
+        <div class="col-md-4">
+          <div class="feature-card-od">
+            <div class="feature-icon-wrap feature-icon-wrap--amber">
+              <i class="fa fa-vector-square"></i>
             </div>
+            <div class="feature-title">Pièces</div>
+            <p class="feature-desc">
+              Décomposez chaque projet pièce par pièce avec surface, périmètre et hauteur sous plafond. Vos devis reflètent la géométrie réelle des espaces.
+            </p>
+          </div>
+        </div>
 
-            <div class="hero-v2-items">
-              <div class="hero-v2-item">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="hero-v2-item-icon hero-v2-item-icon--orange">
-                    <i class="fa fa-utensils fa-sm"></i>
-                  </div>
-                  <div>
-                    <p class="hero-v2-item-name">Cuisine complète</p>
-                    <p class="hero-v2-item-sub">12m² • Dépose + Pose</p>
-                  </div>
-                </div>
-                <p class="hero-v2-item-price">6 450 €</p>
-              </div>
-
-              <div class="hero-v2-item">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="hero-v2-item-icon hero-v2-item-icon--cyan">
-                    <i class="fa fa-bath fa-sm"></i>
-                  </div>
-                  <div>
-                    <p class="hero-v2-item-name">Salle de bain</p>
-                    <p class="hero-v2-item-sub">5m² • Rafraîchissement</p>
-                  </div>
-                </div>
-                <p class="hero-v2-item-price">3 200 €</p>
-              </div>
+        <div class="col-md-4">
+          <div class="feature-card-od">
+            <div class="feature-icon-wrap feature-icon-wrap--green">
+              <i class="fa fa-list-check"></i>
             </div>
-
-            <div class="hero-v2-card-footer">
-              <div>
-                <p class="hero-v2-footer-label">Enveloppe globale estimée</p>
-                <p class="hero-v2-footer-total">9 650 € <span class="hero-v2-footer-ttc">TTC</span></p>
-              </div>
-              <div class="hero-v2-check-btn">
-                <i class="fa fa-check"></i>
-              </div>
-            </div>
-          </div>
+            <div class="feature-title">Postes &amp; matériaux</div>
+            <p class="feature-desc">
+              Sélectionnez les matériaux depuis un catalogue partagé, saisissez les quantités et laissez OpenDevis calculer automatiquement vos totaux HT et TTC.
+            </p>
           </div>
         </div>
       </div>
-
-    </div>
-  </div>
-</section>
-
-<%# ── FONCTIONNALITÉS ─────────────────────────────────────────────────────── %>
-<section class="py-6 bg-white">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Tout ce qu'il faut pour chiffrer un chantier</h2>
-      <p class="text-muted">De la première pièce au devis final, OpenDevis gère la structure.</p>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="feature-card h-100 p-4 rounded-3 border">
-          <div class="feature-icon bg-primary-subtle text-primary mb-3">
-            <i class="fa fa-folder-open fa-lg"></i>
-          </div>
-          <h5 class="fw-bold">Projets</h5>
-          <p class="text-muted mb-0">
-            Organisez chaque chantier comme un projet. Suivez le statut (brouillon, envoyé, accepté), la surface, la classe énergétique et le lien du bien — tout au même endroit.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="feature-card h-100 p-4 rounded-3 border">
-          <div class="feature-icon bg-warning-subtle text-warning mb-3">
-            <i class="fa fa-vector-square fa-lg"></i>
-          </div>
-          <h5 class="fw-bold">Pièces</h5>
-          <p class="text-muted mb-0">
-            Décomposez chaque projet pièce par pièce avec surface, périmètre et hauteur sous plafond. Vos devis reflètent la géométrie réelle des espaces.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="feature-card h-100 p-4 rounded-3 border">
-          <div class="feature-icon bg-success-subtle text-success mb-3">
-            <i class="fa fa-list-check fa-lg"></i>
-          </div>
-          <h5 class="fw-bold">Postes & matériaux</h5>
-          <p class="text-muted mb-0">
-            Sélectionnez les matériaux depuis un catalogue partagé, saisissez les quantités et laissez OpenDevis calculer automatiquement vos totaux HT et TTC.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<%# ── COMMENT ÇA MARCHE ───────────────────────────────────────────────────── %>
-<section class="py-6">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Comment ça marche</h2>
-    </div>
-
-    <div class="row g-4 justify-content-center">
-      <div class="col-md-3 text-center">
-        <div class="step-number mx-auto mb-3">1</div>
-        <h6 class="fw-bold">Créez un projet</h6>
-        <p class="text-muted small">Ajoutez la localisation, la surface et la classe énergétique. Faites évoluer le statut au fil du temps.</p>
-      </div>
-      <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center text-muted">
-        <i class="fa fa-arrow-right fa-lg"></i>
-      </div>
-      <div class="col-md-3 text-center">
-        <div class="step-number mx-auto mb-3">2</div>
-        <h6 class="fw-bold">Ajoutez les pièces</h6>
-        <p class="text-muted small">Définissez les dimensions de chaque pièce. OpenDevis garde la structure claire et navigable.</p>
-      </div>
-      <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center text-muted">
-        <i class="fa fa-arrow-right fa-lg"></i>
-      </div>
-      <div class="col-md-3 text-center">
-        <div class="step-number mx-auto mb-3">3</div>
-        <h6 class="fw-bold">Construisez votre devis</h6>
-        <p class="text-muted small">Choisissez les matériaux, entrez les quantités — les totaux se mettent à jour sur l'ensemble du projet.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<%# ── APPEL À L'ACTION ────────────────────────────────────────────────────── %>
-<% unless user_signed_in? %>
-  <section class="py-6 bg-primary text-white">
-    <div class="container text-center">
-      <h2 class="fw-bold mb-3">Prêt à créer votre premier devis ?</h2>
-      <p class="lead mb-4 opacity-75">Gratuit pour toujours. Sans carte bancaire.</p>
-      <%= link_to "Créer mon compte", new_user_registration_path, class: "btn btn-light btn-lg px-5 fw-bold text-primary" %>
     </div>
   </section>
-<% end %>
+
+  <%# ── COMMENT ÇA MARCHE ── %>
+  <section class="how-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-eyebrow">En 3 étapes</div>
+        <h2 class="section-heading">Comment ça marche</h2>
+      </div>
+
+      <div class="row g-4 justify-content-center align-items-center">
+        <div class="col-md-3 text-center">
+          <div class="step-circle">1</div>
+          <div class="step-title">Créez un projet</div>
+          <p class="step-desc">Ajoutez la localisation, la surface et la classe énergétique. Faites évoluer le statut au fil du temps.</p>
+        </div>
+        <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center">
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="col-md-3 text-center">
+          <div class="step-circle">2</div>
+          <div class="step-title">Ajoutez les pièces</div>
+          <p class="step-desc">Définissez les dimensions de chaque pièce. OpenDevis garde la structure claire et navigable.</p>
+        </div>
+        <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center">
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="col-md-3 text-center">
+          <div class="step-circle">3</div>
+          <div class="step-title">Construisez votre devis</div>
+          <p class="step-desc">Choisissez les matériaux, entrez les quantités — les totaux se mettent à jour sur l'ensemble du projet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# ── APPEL À L'ACTION ── %>
+  <% unless user_signed_in? %>
+    <section class="cta-section">
+      <div class="container text-center" style="position: relative; z-index: 1;">
+        <h2 class="cta-heading">
+          Prêt à créer votre<br><em>premier devis ?</em>
+        </h2>
+        <p class="cta-lead">Gratuit pour toujours. Sans carte bancaire.</p>
+        <%= link_to "Créer mon compte", new_user_registration_path, class: "btn-cta-primary" do %>
+          Créer mon compte <i class="fa fa-arrow-right"></i>
+        <% end %>
+        <div>
+          <span class="cta-badge">
+            <i class="fa fa-shield-halved"></i>
+            Aucun engagement · Résiliable à tout moment
+          </span>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+</div>
