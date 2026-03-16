@@ -22,6 +22,11 @@ export default class extends Controller {
       if (field.type === "number" && field.value !== "" && parseFloat(field.value) < 0) {
         return false
       }
+      // For location_zip: require exactly 5 digits
+      if (field.dataset.fieldName === "location_zip") {
+        const digits = field.value.replace(/\D/g, "")
+        return digits.length === 5
+      }
       return field.value.trim() !== ""
     })
 

@@ -1,0 +1,204 @@
+<% content_for :head do %>
+<meta name="turbo-cache-control" content="no-cache">
+<style>
+  .room-picker {
+    border: 1px solid #C8C4BC;
+    border-radius: 10px;
+    padding: 1.25rem;
+    background: #FFFFFF;
+    margin-top: 0.75rem;
+  }
+
+  .room-group {
+    border: 1px solid #C8C4BC;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+  .room-group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+  }
+  .room-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #2C2A25;
+    font-weight: 500;
+    flex: 1;
+  }
+  .room-count-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .room-count-control .btn-count {
+    width: 26px; height: 26px;
+    border: 1px solid #C8C4BC;
+    border-radius: 6px;
+    background: #fff;
+    color: #2C2A25;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    padding: 0;
+  }
+  .room-count-control .btn-count:hover { background: #F0EDE8; border-color: #2C2A25; }
+  .room-count-control .count-display {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2C2A25;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .room-instances {
+    border-top: 1px solid #C8C4BC;
+  }
+  .room-instance {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 2.75rem;
+    border-top: 1px solid #F0EDE8;
+  }
+  .room-instance:first-child { border-top: none; }
+  .room-instance-name {
+    font-size: 0.88rem;
+    color: #2C2A25;
+    font-weight: 500;
+    min-width: 100px;
+  }
+  .room-instance-surface {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+  .room-instance-surface input {
+    width: 80px;
+    border: 1px solid #C8C4BC;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    color: #2C2A25;
+    background: #fff;
+  }
+  .room-instance-surface input:focus {
+    border-color: #2C2A25;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(44,42,37,0.1);
+  }
+  .room-instance-surface span {
+    font-size: 0.8rem;
+    color: #4A4640;
+  }
+
+  .generate-btn-loader {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<% end %>
+
+<%
+  selected_rooms_data = (@selected_rooms.is_a?(Array) && @selected_rooms.first.is_a?(Hash)) ? @selected_rooms : []
+  selected_bases  = selected_rooms_data.map { |r| r["base"] || r["name"] }.uniq
+  selected_counts = selected_rooms_data.group_by { |r| r["base"] || r["name"] }
+%>
+
+<div class="container py-4" style="max-width: 620px;">
+  <%= render "projects/wizard/stepper", current_step: 2, project_type: "construction" %>
+
+  <h2 class="mb-1" style="color: #2C2A25; font-weight: 700;">Décrivez votre future construction</h2>
+  <p class="mb-4" style="color: #4A4640;">Sélectionnez les pièces que vous souhaitez inclure dans votre maison neuve.</p>
+
+  <%= form_with url: construction_generate_path, method: :post,
+      data: { controller: "construction-step2" } do |f| %>
+
+    <input type="hidden" name="standing" value="2">
+
+    <div class="room-picker">
+      <% Projects::WizardController::PRESET_ROOMS.each do |room| %>
+        <%
+          is_checked = selected_bases.include?(room)
+          room_instances = selected_counts[room] || []
+          count = [room_instances.size, 1].max
+        %>
+        <div class="room-group" data-construction-step2-target="roomGroup" data-room="<%= room %>">
+          <div class="room-group-header">
+            <label class="room-checkbox-label">
+              <input type="checkbox"
+                     data-construction-step2-target="roomCheckbox"
+                     data-room="<%= room %>"
+                     <%= "checked" if is_checked %>
+                     data-action="change->construction-step2#toggleRoom">
+              <%= room %>
+            </label>
+
+            <div class="room-count-control" <%= "hidden" unless is_checked %>
+                 data-construction-step2-target="countControl" data-room="<%= room %>">
+              <button type="button" class="btn-count"
+                      data-action="click->construction-step2#decrement"
+                      data-room="<%= room %>">−</button>
+              <span class="count-display"
+                    data-construction-step2-target="countDisplay" data-room="<%= room %>"><%= count %></span>
+              <button type="button" class="btn-count"
+                      data-action="click->construction-step2#increment"
+                      data-room="<%= room %>">+</button>
+            </div>
+          </div>
+
+          <div class="room-instances" <%= "hidden" unless is_checked %>
+               data-construction-step2-target="roomInstances" data-room="<%= room %>">
+            <% if is_checked %>
+              <% room_instances.each_with_index do |inst, i| %>
+                <div class="room-instance" data-room-index>
+                  <div class="room-instance-name"><%= count > 1 ? "#{room} #{i + 1}" : room %></div>
+                  <input type="hidden" class="room-field-name" name="rooms[][name]" value="<%= count > 1 ? "#{room} #{i + 1}" : room %>">
+                  <input type="hidden" class="room-field-base" name="rooms[][base]" value="<%= room %>">
+                  <input type="hidden" class="room-field-surface" name="rooms[][surface]" value="<%= inst["surface"] %>">
+                  <div class="room-instance-surface">
+                    <input type="number" placeholder="—" min="0" step="any"
+                           data-action="input->construction-step2#syncSurface"
+                           value="<%= inst["surface"] %>">
+                    <span>m²</span>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <%= link_to wizard_step1_path, class: "btn btn-ghost-od" do %>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retour
+      <% end %>
+      <button type="submit" class="btn btn-dark-od"
+              data-construction-step2-target="submit"
+              disabled
+              onclick="this.querySelector('.generate-btn-loader').style.display='inline-block'; this.querySelector('.generate-btn-text').style.display='none';">
+        <span class="generate-btn-text">Générer l'estimation ✨</span>
+        <span class="generate-btn-loader"></span>
+      </button>
+    </div>
+  <% end %>
+</div>

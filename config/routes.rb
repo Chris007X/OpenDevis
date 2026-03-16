@@ -20,6 +20,11 @@ Rails.application.routes.draw do
   post "projects/wizard/analyze_pdf",   to: "projects/wizard#analyze_pdf",   as: :wizard_analyze_pdf
   post "projects/wizard/upload_photo",  to: "projects/wizard#upload_photo",  as: :wizard_upload_photo
 
+  # Construction-specific flow
+  get  "projects/construction/step2",    to: "projects/construction#step2",   as: :construction_step2
+  post "projects/construction/step2",    to: "projects/construction#save_step2"
+  post "projects/construction/generate", to: "projects/construction#generate", as: :construction_generate
+
   resources :projects do
     patch :archive,   on: :member
     patch :unarchive, on: :member
