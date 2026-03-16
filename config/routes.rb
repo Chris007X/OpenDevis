@@ -21,7 +21,8 @@ Rails.application.routes.draw do
   post "projects/wizard/upload_photo",  to: "projects/wizard#upload_photo",  as: :wizard_upload_photo
 
   resources :projects do
-    patch :archive, on: :member
+    patch :archive,   on: :member
+    patch :unarchive, on: :member
     resources :rooms,     only: [:index, :new, :create]
     resources :documents, only: [:index, :new, :create]
     resource :bidding_round, only: [:new, :create, :show] do

@@ -57,7 +57,7 @@
     <div class="ad-status-responded">
       <strong>✅ Devis envoyé</strong> ·
       <%= number_to_currency(@bidding_request.price_total, unit: "€", format: "%n %u") %> HT
-      · le <%= @bidding_request.responded_at.strftime("%d/%m/%Y à %H:%M") %>
+      · le <%= @bidding_request.responded_at&.strftime("%d/%m/%Y à %H:%M") %>
     </div>
 
     <% if @bidding_request.artisan_comment.present? %>
@@ -90,7 +90,7 @@
           <textarea name="artisan_comment" rows="4" placeholder="Décrivez ce qui est inclus dans votre devis (prestations, matériaux, délais…)"
                     style="width: 100%; border: 2px solid #C8C4BC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"><%= @bidding_request.artisan_comment %></textarea>
         </div>
-        <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
+        <button type="submit" style="background: #0D6EFD; color: #fff; border: none; border-radius: 8px;
                 padding: 11px 24px; font-size: 0.95rem; font-weight: 600; cursor: pointer;">
           Mettre à jour
         </button>
@@ -139,7 +139,7 @@
                     style="width: 100%; border: 2px solid #C8C4BC; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; resize: vertical; font-family: inherit;"></textarea>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
+          <button type="submit" style="background: #0D6EFD; color: #fff; border: none; border-radius: 8px;
                   padding: 12px 28px; font-size: 1rem; font-weight: 600; cursor: pointer; flex: 1; min-width: 160px;">
             Envoyer mon devis
           </button>

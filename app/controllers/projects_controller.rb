@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show edit update destroy archive]
+  before_action :set_project, only: %i[show edit update destroy archive unarchive]
 
   def index
     all = policy_scope(Project).order(updated_at: :desc).includes(rooms: :work_items)
@@ -62,6 +62,11 @@ class ProjectsController < ApplicationController
   def archive
     @project.archived!
     redirect_to @project, notice: "Projet archivé."
+  end
+
+  def unarchive
+    @project.in_progress!
+    redirect_to @project, notice: "Projet désarchivé."
   end
 
   private

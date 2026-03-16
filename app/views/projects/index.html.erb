@@ -158,9 +158,9 @@
                 <% premium_total = project.total_incVAT_for_standing(3) %>
                 <div class="card-total mb-1">
                   <% if eco_total > 0 && premium_total > 0 %>
-                    <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+                    <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
                     <span style="font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
-                    <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+                    <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
                   <% else %>
                     — €
                   <% end %>
@@ -240,9 +240,9 @@
                     <% premium_total = project.total_incVAT_for_standing(3) %>
                     <div class="card-total mb-1">
                       <% if eco_total > 0 && premium_total > 0 %>
-                        <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+                        <%= number_to_currency(eco_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
                         <span style="font-weight: 400; font-size: 1rem; color: #9B9588; margin: 0 0.2rem;">—</span>
-                        <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F") %>
+                        <%= number_to_currency(premium_total, unit: "€", format: "%n %u", separator: ",", delimiter: "\u202F", precision: 0) %>
                       <% else %>
                         — €
                       <% end %>

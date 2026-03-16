@@ -373,7 +373,113 @@ artisan_data = [
   # Chauffage (additional)
   { name: "Sophie Mercier", email: "s.mercier@mercier-thermique.fr", company_name: "Mercier Thermique",
     postcode: "75014", phone: "06 89 01 23 45", rating: 4.6, certifications: "RGE, Qualibat",
-    categories: ["chauffage", "plomberie"] }
+    categories: ["chauffage", "plomberie"] },
+
+  # Lyon (69*) — pour le projet 69003
+  { name: "Baptiste Faure", email: "b.faure@faure-renovation.fr", company_name: "Faure Rénovation",
+    postcode: "69003", phone: "04 72 11 22 33", rating: 4.7, certifications: "Qualibat",
+    categories: ["maconnerie", "carrelage"] },
+  { name: "Claire Dupuis", email: "c.dupuis@dupuis-elec-lyon.fr", company_name: "Dupuis Électricité Lyon",
+    postcode: "69007", phone: "04 72 33 44 55", rating: 4.5, certifications: "Qualifelec",
+    categories: ["electricite"] },
+  { name: "Rachid Hamidi", email: "r.hamidi@hamidi-plomberie.fr", company_name: "Hamidi Plomberie",
+    postcode: "69008", phone: "04 72 55 66 77", rating: 4.6, certifications: "RGE",
+    categories: ["plomberie", "chauffage"] },
+  { name: "Nathalie Perrin", email: "n.perrin@perrin-peinture.fr", company_name: "Perrin Décoration",
+    postcode: "69003", phone: "06 11 22 44 88", rating: 4.8, certifications: nil,
+    categories: ["peinture", "menuiserie"] },
+
+  # Bordeaux (33*) — pour le projet 33000
+  { name: "Julien Lacoste", email: "j.lacoste@lacoste-btp.fr", company_name: "Lacoste BTP",
+    postcode: "33000", phone: "05 56 11 22 33", rating: 4.6, certifications: "Qualibat",
+    categories: ["maconnerie", "menuiserie"] },
+  { name: "Isabelle Aubert", email: "i.aubert@aubert-chauffage.fr", company_name: "Aubert Thermique",
+    postcode: "33300", phone: "05 56 33 44 55", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["chauffage", "plomberie"] },
+  { name: "Éric Bonnet", email: "e.bonnet@bonnet-isolation.fr", company_name: "Bonnet Isolation",
+    postcode: "33200", phone: "05 56 55 66 77", rating: 4.7, certifications: "RGE",
+    categories: ["isolation", "chauffage"] },
+  { name: "Sandra Leroy", email: "s.leroy@leroy-carrelage.fr", company_name: "Leroy Carrelage",
+    postcode: "33000", phone: "06 44 55 66 88", rating: 4.5, certifications: nil,
+    categories: ["carrelage", "peinture"] },
+
+  # Marseille (13*) — pour le projet 13008
+  { name: "Youssef Aït", email: "y.ait@ait-construction.fr", company_name: "Aït Construction",
+    postcode: "13008", phone: "04 91 11 22 33", rating: 4.7, certifications: "Qualibat",
+    categories: ["maconnerie", "isolation"] },
+  { name: "Marie Castellan", email: "m.castellan@castellan-elec.fr", company_name: "Castellan Électricité",
+    postcode: "13005", phone: "04 91 33 44 55", rating: 4.6, certifications: "Qualifelec",
+    categories: ["electricite", "menuiserie"] },
+  { name: "Omar Bensouda", email: "o.bensouda@bensouda-plomb.fr", company_name: "Bensouda Sanitaire",
+    postcode: "13013", phone: "04 91 55 66 77", rating: 4.5, certifications: "RGE",
+    categories: ["plomberie", "carrelage"] },
+  { name: "Céline Roux", email: "c.roux@roux-peinture-marseille.fr", company_name: "Roux Peinture",
+    postcode: "13008", phone: "06 22 33 55 99", rating: 4.8, certifications: nil,
+    categories: ["peinture", "menuiserie"] },
+
+  # Paris (75) — Démolition & maçonnerie
+  { name: "Bruno Tessier", email: "b.tessier@tessier-demolition.fr", company_name: "Tessier Démolition",
+    postcode: "75011", phone: "06 11 33 55 77", rating: 4.7, certifications: "Qualibat",
+    categories: ["demolition_maconnerie", "maconnerie"] },
+  { name: "Samir Haddad", email: "s.haddad@haddad-btp.fr", company_name: "Haddad BTP",
+    postcode: "75019", phone: "06 22 44 66 88", rating: 4.5, certifications: "Qualibat",
+    categories: ["demolition_maconnerie"] },
+
+  # Paris (75) — Fenêtres
+  { name: "Gilles Perrot", email: "g.perrot@perrot-fenetres.fr", company_name: "Perrot Fenêtres & Volets",
+    postcode: "75015", phone: "06 33 55 77 99", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["fenetres", "menuiseries_interieures"] },
+  { name: "Laure Vidal", email: "l.vidal@vidal-menuiserie.fr", company_name: "Vidal Menuiserie Extérieure",
+    postcode: "75008", phone: "06 44 66 88 00", rating: 4.6, certifications: "Qualibois",
+    categories: ["fenetres"] },
+
+  # Paris (75) — Toiture & étanchéité
+  { name: "Thierry Couvreur", email: "t.couvreur@couvreur-paris.fr", company_name: "Couvreur Paris Toiture",
+    postcode: "75017", phone: "06 55 77 99 11", rating: 4.9, certifications: "Qualibat",
+    categories: ["toiture", "maconnerie"] },
+  { name: "Axel Renaud", email: "a.renaud@renaud-etancheite.fr", company_name: "Renaud Étanchéité",
+    postcode: "75013", phone: "06 66 88 00 22", rating: 4.7, certifications: "Qualibat",
+    categories: ["toiture"] },
+
+  # Paris (75) — Ventilation & chauffage
+  { name: "Cyril Gautier", email: "c.gautier@gautier-clim.fr", company_name: "Gautier Climatisation",
+    postcode: "75016", phone: "06 77 99 11 33", rating: 4.8, certifications: "RGE, Qualibat",
+    categories: ["ventilation_chauffage", "chauffage"] },
+  { name: "Nadia Khelil", email: "n.khelil@khelil-ventilation.fr", company_name: "Khelil Ventilation",
+    postcode: "75010", phone: "06 88 00 22 44", rating: 4.6, certifications: "RGE",
+    categories: ["ventilation_chauffage"] },
+
+  # Paris (75) — Menuiseries intérieures
+  { name: "Marc-Antoine Levy", email: "m.levy@levy-agencement.fr", company_name: "Lévy Agencement",
+    postcode: "75004", phone: "06 99 11 33 55", rating: 4.9, certifications: "Qualibois",
+    categories: ["menuiseries_interieures", "menuiserie"] },
+  { name: "Amandine Collet", email: "a.collet@collet-interieurs.fr", company_name: "Collet Intérieurs",
+    postcode: "75018", phone: "06 00 22 44 66", rating: 4.7, certifications: nil,
+    categories: ["menuiseries_interieures"] },
+
+  # Paris (75) — Peintures
+  { name: "Régis Morin", email: "r.morin@morin-peintures.fr", company_name: "Morin Peintures Décoration",
+    postcode: "75011", phone: "06 11 44 77 00", rating: 4.8, certifications: nil,
+    categories: ["peintures", "peinture"] },
+  { name: "Fatima Zahra", email: "f.zahra@zahra-deco.fr", company_name: "Zahra Décoration",
+    postcode: "75020", phone: "06 22 55 88 11", rating: 4.6, certifications: nil,
+    categories: ["peintures"] },
+
+  # Paris (75) — Cuisine
+  { name: "Laurent Dupré", email: "l.dupre@dupre-cuisine.fr", company_name: "Dupré Cuisines & Aménagement",
+    postcode: "75009", phone: "06 33 66 99 22", rating: 4.7, certifications: "Qualibat",
+    categories: ["cuisine", "plomberie"] },
+  { name: "Hélène Garnier", email: "h.garnier@garnier-cuisine.fr", company_name: "Garnier Cuisine Design",
+    postcode: "75006", phone: "06 44 77 00 33", rating: 4.9, certifications: nil,
+    categories: ["cuisine", "menuiseries_interieures"] },
+
+  # Paris (75) — Salle de bain & WC
+  { name: "Florian Breton", email: "f.breton@breton-sdb.fr", company_name: "Breton Salle de Bain",
+    postcode: "75007", phone: "06 55 88 11 44", rating: 4.8, certifications: "Qualibat",
+    categories: ["salle_de_bain_wc", "plomberie"] },
+  { name: "Isabelle Nguyen", email: "i.nguyen@nguyen-sanitaire.fr", company_name: "Nguyen Sanitaire & Carrelage",
+    postcode: "75014", phone: "06 66 99 22 55", rating: 4.7, certifications: "RGE",
+    categories: ["salle_de_bain_wc", "carrelage"] }
 ]
 
 artisan_data.each do |ad|
@@ -396,6 +502,34 @@ artisan_data.each do |ad|
     next unless category
 
     ArtisanCategory.find_or_create_by!(artisan: artisan, work_category: category)
+  end
+end
+
+# Link artisans to new wizard categories based on their existing specialisations
+wizard_category_map = {
+  "demolition_maconnerie"  => %w[maconnerie],
+  "isolation"              => %w[isolation],
+  "toiture"                => %w[maconnerie isolation],
+  "fenetres"               => %w[menuiserie isolation],
+  "ventilation_chauffage"  => %w[chauffage plomberie],
+  "menuiseries_interieures" => %w[menuiserie],
+  "peintures"              => %w[peinture],
+  "cuisine"                => %w[plomberie electricite],
+  "salle_de_bain_wc"       => %w[plomberie carrelage]
+}
+
+wizard_category_map.each do |new_slug, related_slugs|
+  new_cat = WorkCategory.find_by(slug: new_slug)
+  next unless new_cat
+
+  related_slugs.each do |old_slug|
+    old_cat = WorkCategory.find_by(slug: old_slug)
+    next unless old_cat
+
+    artisan_ids = ArtisanCategory.where(work_category: old_cat).pluck(:artisan_id)
+    artisan_ids.each do |artisan_id|
+      ArtisanCategory.find_or_create_by!(artisan_id: artisan_id, work_category: new_cat)
+    end
   end
 end
 

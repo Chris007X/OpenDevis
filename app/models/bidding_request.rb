@@ -54,6 +54,8 @@ class BiddingRequest < ApplicationRecord
       partial: "bidding_rounds/progress_bar",
       locals: { bidding_round: bidding_round }
     )
+  rescue StandardError => e
+    Rails.logger.error("BiddingRequest#broadcast_status_change failed: #{e.message}")
   end
   # rubocop:enable Metrics/MethodLength
 end

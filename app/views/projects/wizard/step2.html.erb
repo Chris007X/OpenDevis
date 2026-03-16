@@ -1,4 +1,5 @@
 <% content_for :head do %>
+<meta name="turbo-cache-control" content="no-cache">
 <style>
   .renovation-card {
     display: flex;
@@ -149,7 +150,8 @@
   <p class="mb-4" style="color: #4A4640;">Sélectionnez le type de travaux envisagés.</p>
 
   <%= form_with url: wizard_step2_path, method: :post,
-      data: { controller: "renovation-type", action: "change->renovation-type#validate" } do |f| %>
+      data: { controller: "renovation-type", action: "change->renovation-type#validate",
+              "renovation-type-total-surface-value": @project.total_surface_sqm.to_f } do |f| %>
     <%
       renovation_types = []
       renovation_types << ["renovation_complete", "🏗️", "Rénovation complète", "Estimation rapide"] unless @project_type == "construction"
@@ -230,6 +232,10 @@
       <% if @errors&.include?(:rooms) %>
         <div class="field-error">Veuillez sélectionner au moins une pièce</div>
       <% end %>
+      <% if @errors&.include?(:surface_total) %>
+        <div class="field-error">La somme des surfaces des pièces dépasse la surface totale du bien (<%= @project.total_surface_sqm %> m²)</div>
+      <% end %>
+      <div class="field-error" hidden data-renovation-type-target="surfaceError"></div>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">

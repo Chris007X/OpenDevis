@@ -56,12 +56,12 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;">
           <% @work_categories.each do |cat| %>
             <% selected = @artisan.work_category_ids.include?(cat.id) %>
-            <label style="display: flex; align-items: center; gap: 10px; border: 1.5px solid <%= selected ? "#2C2A25" : "#C8C4BC" %>;
-                          border-radius: 8px; padding: 10px 14px; cursor: pointer; background: <%= selected ? "#EDEAE4" : "#fff" %>;
+            <label style="display: flex; align-items: center; gap: 10px; border: 1.5px solid <%= selected ? "#0D6EFD" : "#C8C4BC" %>;
+                          border-radius: 8px; padding: 10px 14px; cursor: pointer; background: <%= selected ? "#EBF3FF" : "#fff" %>;
                           transition: border-color 0.15s;">
               <%= check_box_tag "artisan[work_category_ids][]", cat.id, selected,
                     id: "cat_#{cat.id}",
-                    style: "accent-color: #2C2A25; width: 16px; height: 16px; flex-shrink: 0;" %>
+                    style: "accent-color: #0D6EFD; width: 16px; height: 16px; flex-shrink: 0;" %>
               <span style="font-size: 0.88rem; font-weight: 500; color: #2C2A25;">
                 <%= category_icons[cat.slug] || "🔨" %> <%= cat.name %>
               </span>
@@ -72,7 +72,7 @@
         <%= hidden_field_tag "artisan[work_category_ids][]", "" %>
       </div>
 
-      <button type="submit" style="background: #2C2A25; color: #fff; border: none; border-radius: 8px;
+      <button type="submit" style="background: #0D6EFD; color: #fff; border: none; border-radius: 8px;
               padding: 12px 28px; font-size: 1rem; font-weight: 600; cursor: pointer;">
         Enregistrer
       </button>
