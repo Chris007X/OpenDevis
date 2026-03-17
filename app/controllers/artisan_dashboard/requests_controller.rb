@@ -2,7 +2,7 @@ module ArtisanDashboard
   class RequestsController < BaseController
     include ArtisanSubmission
 
-    before_action :set_request
+    before_action :set_request, only: [:show, :submit_price, :decline]
 
     def index
       redirect_to artisan_dashboard_root_path
