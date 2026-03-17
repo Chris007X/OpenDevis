@@ -53,7 +53,7 @@ export default class extends Controller {
 
   fillFields(data) {
     if (data.type_de_bien)      this.setPropertyType(data.type_de_bien)
-    if (data.total_surface_sqm) this.setField("project_total_surface_sqm", data.total_surface_sqm)
+    if (data.total_surface_sqm) this.setField("project_total_surface_sqm", Math.ceil(data.total_surface_sqm))
     if (data.room_count)        this.setField("project_room_count",         data.room_count)
     if (data.location_zip)      this.setLocationZip(data.location_zip)
     if (data.energy_rating)     this.setSelect("project_energy_rating",     data.energy_rating)
@@ -61,14 +61,20 @@ export default class extends Controller {
     if (data.photo_url)         document.dispatchEvent(new CustomEvent("photo:received", { detail: { url: data.photo_url } }))
     const nameField = document.getElementById("project_name")
     if (nameField && !nameField.value.trim()) nameField.value = this.buildAutoTitle(data)
+    this.triggerValidation()
   }
 
   buildAutoTitle(data) {
     const parts = []
     if (data.type_de_bien)      parts.push(data.type_de_bien)
     if (data.location_zip)      parts.push(data.location_zip)
-    if (data.total_surface_sqm) parts.push(`${data.total_surface_sqm}m²`)
+    if (data.total_surface_sqm) parts.push(`${Math.ceil(data.total_surface_sqm)}m²`)
     return parts.join(" ")
+  }
+
+  triggerValidation() {
+    const form = document.querySelector("[data-controller~='wizard-form']")
+    if (form) form.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
   setPropertyType(value) {

@@ -56,7 +56,7 @@ export default class extends Controller {
     // Extract digits only to decide when to trigger search
     const digits = raw.replace(/\D/g, "")
 
-    if (digits.length < 2) {
+    if (digits.length < 2 || digits.length === 5) {
       this.hideResults()
       return
     }
