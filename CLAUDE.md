@@ -191,6 +191,9 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 | `city-autocomplete` | Autocomplete city/zip in step 1 via geo.api.gouv.fr; max 5 digits, no letters |
 | `card-tilt` | Hover tilt effect on cards |
 | `wizard-form` | Form submission handling in wizard; validates required fields |
+| `construction-step2` | Room picker + surface total for construction wizard step 2; handles "Autres" custom label |
+| `select-all` | Toggles all category checkboxes within its scope |
+| `analytics-live` | Polls `/analytics/active_users` every 10s and replaces frame content |
 
 ## Turbo Frames
 
@@ -231,7 +234,5 @@ Styles live in `app/views/shared/_od_styles.html.erb` (inline `<style>` block, i
 
 - Do not add columns or migrations without being explicitly asked
 - Do not extract images from PDFs (technically not possible with PDF::Reader)
-- Do not use `localStorage` (edge runtime incompatible in some contexts)
-- Do not use React Server Actions
 - Do not install new gems without explaining why
 - Do not rewrite entire files to fix an isolated bug
