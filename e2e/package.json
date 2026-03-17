@@ -1,0 +1,16 @@
+{
+  "name": "opendevis-e2e",
+  "version": "1.0.0",
+  "description": "AI-powered E2E test suite for OpenDevis",
+  "type": "module",
+  "scripts": {
+    "test": "LD_LIBRARY_PATH=/tmp/chromium-libs/usr/lib/x86_64-linux-gnu node run_tests.mjs",
+    "test:visible": "LD_LIBRARY_PATH=/tmp/chromium-libs/usr/lib/x86_64-linux-gnu HEADLESS=false node run_tests.mjs",
+    "test:fast": "LD_LIBRARY_PATH=/tmp/chromium-libs/usr/lib/x86_64-linux-gnu SKIP_AI=true node run_tests.mjs",
+    "install-browsers": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "playwright": "^1.49.0"
+  }
+}

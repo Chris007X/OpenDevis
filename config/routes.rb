@@ -77,5 +77,9 @@ Rails.application.routes.draw do
   get  "analytics/active_users",      to: "analytics_dashboard#active_users",  as: :analytics_active_users
   get  "analytics/users/:user_id",    to: "analytics_dashboard#user_detail",   as: :analytics_user_detail
 
+  resources :test_runs, only: [ :index, :show, :create ] do
+    post :trigger, on: :collection
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -99,7 +99,7 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 
 ### Wizard Flow (5 steps + choose screen)
 
-**Choose screen** (`/projects/wizard/choose`): user picks project type (renovation / construction / extension). Clears all wizard session state.
+**Choose screen** (`/projects/wizard/choose`): user picks project type (renovation / construction / extension). Clears all wizard session state. Construction projects use a separate controller at `app/controllers/projects/construction_controller.rb` with its own `step2` (room picker) and `generate` actions.
 
 **Step 1 — Bien immobilier** (`/projects/wizard/step1`):
 - 3 AJAX import modes (URL, PDF, Chat IA) — each populates manual fields on success
@@ -191,12 +191,30 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 | `city-autocomplete` | Autocomplete city/zip in step 1 via geo.api.gouv.fr; max 5 digits, no letters |
 | `card-tilt` | Hover tilt effect on cards |
 | `wizard-form` | Form submission handling in wizard; validates required fields |
+| `analytics-live` | Real-time analytics dashboard updates |
+| `construction-step2` | Room picker for construction wizard step 2 |
+| `select-all` | Checkbox select-all toggling |
 
 ## Turbo Frames
 
 - `project_summary` — Summary bar + category cards on results page (refreshed on standing change)
 - `room_content` — Room detail content (switches on room tab click)
 - BiddingRequest rows — broadcast status changes via Turbo Streams
+
+## Analytics System
+
+Self-hosted analytics at `/analytics` (admin-only). See `CLAUDE_ANALYTICS.md` for full spec.
+
+**Tables:** `analytics_events`, `analytics_sessions`, `analytics_funnels`, `analytics_daily_stats`
+
+**Key files:**
+- `app/services/analytics_tracker.rb` — `AnalyticsTracker.track(event_type:, user_id:, ...)` enqueues async job
+- `app/jobs/tracking_job.rb` — inserts analytics events in background via Solid Queue
+- `app/jobs/aggregate_daily_stats_job.rb` — pre-aggregates daily stats
+- `app/controllers/analytics_controller.rb` + `analytics_dashboard_controller.rb` — admin dashboard
+- `app/services/funnel_analyzer.rb` — multi-step conversion analysis
+
+**Frontend tracking:** JavaScript in layout uses `navigator.sendBeacon` → Rails controller → `AnalyticsTracker.track()`.
 
 ## Services
 
@@ -205,6 +223,8 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 - `PropertyChatAnalyzer` — AI chat interface, returns structured property fields
 - `EstimationCalculator` — calculates work item prices per standing level
 - `FinalQuotePdfGenerator` — generates PDF for final quote
+- `BiddingRecommendationService` — AI-scored artisan recommendations per category
+- `AnalyticsTracker` — async analytics event tracking
 
 ## Jobs
 
@@ -213,6 +233,8 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 - `SendUserNotificationEmailJob` — email users about events (artisan responded, all responded, etc.)
 - `GenerateFinalQuotePdfJob` — generate final quote PDF
 - `ProcessInboundEmailJob` — handle artisan replies received by email
+- `TrackingJob` — async analytics event persistence
+- `AggregateDailyStatsJob` — roll up analytics_events into analytics_daily_stats
 
 ## Design System
 
@@ -231,7 +253,5 @@ Styles live in `app/views/shared/_od_styles.html.erb` (inline `<style>` block, i
 
 - Do not add columns or migrations without being explicitly asked
 - Do not extract images from PDFs (technically not possible with PDF::Reader)
-- Do not use `localStorage` (edge runtime incompatible in some contexts)
-- Do not use React Server Actions
 - Do not install new gems without explaining why
 - Do not rewrite entire files to fix an isolated bug

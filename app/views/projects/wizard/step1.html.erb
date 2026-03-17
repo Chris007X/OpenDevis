@@ -418,6 +418,61 @@
 
   /* ── Section spacing ───────────────────────────────────── */
   .s1-section { margin-bottom: 1.625rem; }
+
+  /* ── URL analyze loader ─────────────────────────────────── */
+  .url-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 0;
+    gap: 1rem;
+  }
+  .url-loader-label {
+    font-size: 0.75rem;
+    color: #9B9588;
+    font-family: monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* 3D cube spinner */
+  .spinner {
+    width: 44px;
+    height: 44px;
+    animation: spinner-y0fdc1 2s infinite ease;
+    transform-style: preserve-3d;
+  }
+  .spinner > div {
+    background-color: rgba(0,77,255,0.2);
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    border: 2px solid #004dff;
+  }
+  .spinner div:nth-of-type(1) { transform: translateZ(-22px) rotateY(180deg); }
+  .spinner div:nth-of-type(2) { transform: rotateY(-270deg) translateX(50%); transform-origin: top right; }
+  .spinner div:nth-of-type(3) { transform: rotateY(270deg) translateX(-50%); transform-origin: center left; }
+  .spinner div:nth-of-type(4) { transform: rotateX(90deg) translateY(-50%); transform-origin: top center; }
+  .spinner div:nth-of-type(5) { transform: rotateX(-90deg) translateY(50%); transform-origin: bottom center; }
+  .spinner div:nth-of-type(6) { transform: translateZ(22px); }
+  @keyframes spinner-y0fdc1 {
+    0%   { transform: rotate(45deg) rotateX(-25deg) rotateY(25deg); }
+    50%  { transform: rotate(45deg) rotateX(-385deg) rotateY(25deg); }
+    100% { transform: rotate(45deg) rotateX(-385deg) rotateY(385deg); }
+  }
+
+  /* Success status animation */
+  .url-status-success {
+    color: #16a34a;
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: statusFadeInUp 0.4s ease forwards;
+  }
+  @keyframes statusFadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>
 <% end %>
 
@@ -503,7 +558,7 @@
          data-controller="url-analyze"
          data-url-analyze-endpoint-value="<%= wizard_analyze_url_path %>">
       <div class="import-panel-label">Copiez l'URL de l'annonce</div>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-2" data-url-analyze-target="inputRow">
         <input type="text" class="form-control" placeholder="https://www.seloger.com/annonces/..."
                data-url-analyze-target="input"
                data-action="input->url-analyze#toggleBtn">
@@ -513,6 +568,10 @@
                 data-url-analyze-target="btn">
           Analyser
         </button>
+      </div>
+      <div class="url-loader" data-url-analyze-target="loader" hidden>
+        <div class="spinner"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="url-loader-label">Analyse en cours…</div>
       </div>
       <div data-url-analyze-target="status" hidden></div>
     </div>

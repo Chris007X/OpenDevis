@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // fetches property data from a listing URL via backend scraper + LLM,
 // then pre-fills the property info form fields.
 export default class extends Controller {
-  static targets = ["input", "btn", "status"]
+  static targets = ["input", "btn", "status", "inputRow", "loader"]
   static values  = { endpoint: String }
 
   toggleBtn() {
@@ -22,9 +22,12 @@ export default class extends Controller {
     const url = this.inputTarget.value.trim()
     if (!url) return
 
-    this.btnTarget.disabled = true
-    this.btnTarget.textContent = "Analyse en cours..."
-    this.showStatus("loading", "Récupération de l'annonce...")
+    this.inputRowTarget.hidden = true
+    this.loaderTarget.hidden = false
+    this.statusTarget.hidden = true
+
+    const startTime = Date.now()
+    let json
 
     try {
       const res = await fetch(this.endpointValue, {
@@ -35,25 +38,28 @@ export default class extends Controller {
         },
         body: JSON.stringify({ url })
       })
-      const json = await res.json()
-
-      if (json.success) {
-        this.fillFields(json.data)
-        this.showStatus("success", "Informations pré-remplies ! Vérifiez et corrigez si besoin.")
-      } else {
-        this.showStatus("error", json.error)
-      }
+      json = await res.json()
     } catch {
-      this.showStatus("error", "Impossible d'analyser cette URL.")
-    } finally {
-      this.btnTarget.disabled = false
-      this.btnTarget.textContent = "Analyser"
+      json = { success: false, error: "Impossible d'analyser cette URL." }
+    }
+
+    const elapsed = Date.now() - startTime
+    if (elapsed < 3000) await new Promise(resolve => setTimeout(resolve, 3000 - elapsed))
+
+    this.loaderTarget.hidden = true
+    this.inputRowTarget.hidden = false
+
+    if (json.success) {
+      this.fillFields(json.data)
+      this.showStatus("success", "✓ Informations pré-remplies ! Vérifiez et corrigez si besoin.")
+    } else {
+      this.showStatus("error", json.error || "Impossible d'analyser cette URL.")
     }
   }
 
   fillFields(data) {
     if (data.type_de_bien)      this.setPropertyType(data.type_de_bien)
-    if (data.total_surface_sqm) this.setField("project_total_surface_sqm", data.total_surface_sqm)
+    if (data.total_surface_sqm) this.setField("project_total_surface_sqm", Math.ceil(data.total_surface_sqm))
     if (data.room_count)        this.setField("project_room_count",         data.room_count)
     if (data.location_zip)      this.setLocationZip(data.location_zip)
     if (data.energy_rating)     this.setSelect("project_energy_rating",     data.energy_rating)
@@ -61,14 +67,20 @@ export default class extends Controller {
     if (data.photo_url)         document.dispatchEvent(new CustomEvent("photo:received", { detail: { url: data.photo_url } }))
     const nameField = document.getElementById("project_name")
     if (nameField && !nameField.value.trim()) nameField.value = this.buildAutoTitle(data)
+    this.triggerValidation()
   }
 
   buildAutoTitle(data) {
     const parts = []
     if (data.type_de_bien)      parts.push(data.type_de_bien)
     if (data.location_zip)      parts.push(data.location_zip)
-    if (data.total_surface_sqm) parts.push(`${data.total_surface_sqm}m²`)
+    if (data.total_surface_sqm) parts.push(`${Math.ceil(data.total_surface_sqm)}m²`)
     return parts.join(" ")
+  }
+
+  triggerValidation() {
+    const form = document.querySelector("[data-controller~='wizard-form']")
+    if (form) form.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
   setPropertyType(value) {
@@ -106,7 +118,7 @@ export default class extends Controller {
   showStatus(type, message) {
     const el = this.statusTarget
     el.hidden = false
-    el.className = type === "success" ? "mt-2 text-success small"
+    el.className = type === "success" ? "mt-2 url-status-success"
                  : type === "error"   ? "mt-2 text-danger small"
                  : "mt-2 text-muted small"
     el.textContent = message

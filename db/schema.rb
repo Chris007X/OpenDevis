@@ -245,6 +245,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_150425) do
     t.index ["project_id"], name: "index_rooms_on_project_id"
   end
 
+  create_table "test_runs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.float "duration_seconds", default: 0.0
+    t.integer "errors_count", default: 0
+    t.integer "flows_passed", default: 0
+    t.integer "flows_total", default: 0
+    t.integer "pages_passed", default: 0
+    t.integer "pages_total", default: 0
+    t.datetime "ran_at", null: false
+    t.jsonb "results", default: {}
+    t.string "trigger"
+    t.integer "ui_passed", default: 0
+    t.integer "ui_total", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["ran_at"], name: "index_test_runs_on_ran_at"
+    t.index ["results"], name: "index_test_runs_on_results", using: :gin
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "auth_provider", default: "email"
     t.datetime "created_at", null: false
