@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Autocomplete for French postal codes using geo.api.gouv.fr
-// Triggers after 2 digits typed. Display format: "Paris (75001)"
-// Also accepts raw 5-digit postal codes without selecting from suggestions.
+// Triggers after 2 digits typed. Display format: "75001 — Paris"
+// Stores only the 5-digit postal code as the value.
 export default class extends Controller {
   static targets = ["input", "hidden", "results"]
 
@@ -12,7 +12,7 @@ export default class extends Controller {
     this.handleClickOutside = this.clickOutside.bind(this)
     document.addEventListener("click", this.handleClickOutside)
 
-    // Sync hidden field from visible input on page load (handles pre-filled "City (XXXXX)" values)
+    // Sync hidden field from visible input on page load (handles pre-filled values)
     if (this.inputTarget.value.trim()) {
       this.hiddenTarget.value = this.inputTarget.value.trim()
     }
@@ -22,11 +22,8 @@ export default class extends Controller {
     document.removeEventListener("click", this.handleClickOutside)
   }
 
-  // Allow digits and also "City (XXXXX)" format — only filter when raw typing
+  // Only allow digits, max 5
   filterDigits() {
-    // If the value contains letters (from a selection like "Paris (75011)"), keep it
-    if (/[a-zA-ZÀ-ÿ]/.test(this.inputTarget.value)) return
-
     const pos = this.inputTarget.selectionStart
     const before = this.inputTarget.value
     const filtered = before.replace(/\D/g, "").slice(0, 5)
@@ -50,7 +47,7 @@ export default class extends Controller {
 
     const raw = this.inputTarget.value.trim()
 
-    // Sync hidden field with current input — allows free-text postal codes
+    // Sync hidden field with current input
     this.hiddenTarget.value = raw
 
     // Extract digits only to decide when to trigger search
@@ -90,21 +87,21 @@ export default class extends Controller {
       return
     }
 
-    // Build list of "Ville (CP)" entries, filtering postal codes that match typed digits
+    // Build list of "CP — Ville" entries, filtering postal codes that match typed digits
     const items = communes.flatMap(commune =>
       commune.codesPostaux
         .filter(cp => cp.startsWith(digits))
         .map(cp => ({
-          label: `${commune.nom} (${cp})`,
-          value: `${commune.nom} (${cp})`
+          label: `${cp} — ${commune.nom}`,
+          value: cp
         }))
     )
 
     // If searching by department (2-4 digits), all postal codes match — show them all
     const finalItems = items.length > 0 ? items : communes.flatMap(commune =>
       commune.codesPostaux.map(cp => ({
-        label: `${commune.nom} (${cp})`,
-        value: `${commune.nom} (${cp})`
+        label: `${cp} — ${commune.nom}`,
+        value: cp
       }))
     )
 

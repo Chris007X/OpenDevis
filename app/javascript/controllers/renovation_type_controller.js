@@ -146,7 +146,7 @@ export default class extends Controller {
           <input type="hidden" class="room-field-base" name="rooms[][base]" value="${room}">
           <input type="hidden" class="room-field-surface" name="rooms[][surface]" value="${surface}">
           <div class="room-instance-surface">
-            <input type="number" placeholder="—" min="0" step="0.5"
+            <input type="number" placeholder="—" min="0" step="0.01"
                    data-action="input->renovation-type#syncSurface"
                    value="${surface}">
             <span>m²</span>

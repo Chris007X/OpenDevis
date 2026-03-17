@@ -78,16 +78,17 @@ module Projects
       property_url = resolve_property_type
       # For construction flow, property type is not shown — use a default
       property_url = "construction" if property_url.blank? && session[:wizard_project_type] == "construction"
-      @project.assign_attributes(step1_params.merge(status: :in_progress, property_url: property_url))
+      @project.assign_attributes(step1_params.merge(status: :in_progress, property_url: property_url, project_type: session[:wizard_project_type]))
 
       # Server-side validation for required fields
       @errors = []
       @errors << :property_type if property_url.blank?
       @errors << :total_surface_sqm if @project.total_surface_sqm.blank? || @project.total_surface_sqm <= 0
-      # Accept "75001" or "Paris (75001)" — extract and validate the 5-digit postal code
+      # Extract and store only the 5-digit postal code
       zip = @project.location_zip.to_s.strip
       zip_digits = zip[/(\d{5})/, 1]
       @errors << :location_zip if zip.blank? || zip_digits.nil?
+      @project.location_zip = zip_digits if zip_digits.present?
       @errors.uniq!
 
       if @errors.any?
