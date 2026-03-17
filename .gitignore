@@ -40,3 +40,8 @@
 # Ignore Mac and Linux file system files
 *.swp
 .DS_Store
+
+# E2E test artifacts
+e2e/node_modules/
+e2e/screenshots/
+e2e/.env

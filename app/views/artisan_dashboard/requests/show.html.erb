@@ -211,7 +211,7 @@
 
     <% if @bidding_request.status == "responded" %>
       <div class="ad-status-banner ad-status-banner--green">
-        <i class="fa fa-circle-check"></i>
+        <i class="fas fa-circle-check"></i>
         Devis envoyé ·
         <%= number_to_currency(@bidding_request.price_total, unit: "€", format: "%n %u") %> HT
         · le <%= @bidding_request.responded_at&.strftime("%d/%m/%Y à %H:%M") %>
@@ -251,19 +251,19 @@
 
     <% elsif @bidding_request.status == "declined" %>
       <div class="ad-status-banner ad-status-banner--red">
-        <i class="fa fa-circle-xmark"></i>
+        <i class="fas fa-circle-xmark"></i>
         Demande déclinée · Vous avez décliné cette demande.
       </div>
 
     <% elsif @bidding_request.status == "expired" %>
       <div class="ad-status-banner ad-status-banner--amber">
-        <i class="fa fa-clock"></i>
+        <i class="fas fa-clock"></i>
         Délai dépassé · La date limite de réponse est passée.
       </div>
 
     <% elsif @bidding_request.status == "replaced" %>
       <div class="ad-status-banner ad-status-banner--amber">
-        <i class="fa fa-ban"></i>
+        <i class="fas fa-ban"></i>
         Demande annulée · Cette demande a été annulée par le donneur d'ordre.
       </div>
 
@@ -274,7 +274,7 @@
 
       <% if @bidding_request.bidding_round.deadline_passed? %>
         <div class="ad-status-banner ad-status-banner--amber">
-          <i class="fa fa-clock"></i>
+          <i class="fas fa-clock"></i>
           Délai dépassé · La date limite de réponse est passée.
         </div>
       <% else %>
