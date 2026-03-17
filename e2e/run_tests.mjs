@@ -40,6 +40,8 @@ const ARTISAN_EMAIL = "marc.dubois@artisan-maconnerie.fr";
 const ARTISAN_PASSWORD = "password123";
 const HEADLESS = process.env.HEADLESS !== "false";
 const SKIP_AI = process.env.SKIP_AI === "true";
+const RESULTS_URL = process.env.RESULTS_URL || null;       // e.g. https://app.opendevis.com/test_runs
+const TEST_TOKEN = process.env.OPENDEVIS_TEST_TOKEN || null;
 const NAV_TIMEOUT = 30_000;
 const ACTION_TIMEOUT = 10_000;
 
@@ -864,11 +866,59 @@ async function testBrokenLinks(browser) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Post results to Rails admin dashboard
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function postResults(elapsed) {
+  if (!RESULTS_URL || !TEST_TOKEN) return;
+
+  const passedPages = results.pages.filter((p) => p.status === "pass").length;
+  const passedFlows = results.flows.filter((f) => f.status === "pass").length;
+  const passedUI    = results.uiChecks.filter((u) => u.status === "pass").length;
+
+  const payload = {
+    test_run: {
+      ran_at:           new Date(results.startTime).toISOString(),
+      trigger:          process.env.TEST_TRIGGER || "manual",
+      duration_seconds: parseFloat(elapsed),
+      pages_total:      results.pages.length,
+      pages_passed:     passedPages,
+      flows_total:      results.flows.length,
+      flows_passed:     passedFlows,
+      ui_total:         results.uiChecks.length,
+      ui_passed:        passedUI,
+      errors_count:     results.errors.length,
+      results: {
+        pages:     results.pages,
+        flows:     results.flows,
+        uiChecks:  results.uiChecks,
+        errors:    results.errors,
+      },
+    },
+  };
+
+  try {
+    const res = await fetch(RESULTS_URL, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${TEST_TOKEN}` },
+      body:    JSON.stringify(payload),
+    });
+    if (res.ok) {
+      const { id } = await res.json();
+      console.log(`\n  📤 Results posted → ${RESULTS_URL.replace(/\/test_runs.*/, "")}/test_runs/${id}`);
+    } else {
+      console.warn(`\n  ⚠️  Could not post results: HTTP ${res.status}`);
+    }
+  } catch (e) {
+    console.warn(`\n  ⚠️  Could not post results: ${e.message}`);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Report
 // ─────────────────────────────────────────────────────────────────────────────
 
-function printReport() {
-  const elapsed = ((Date.now() - results.startTime) / 1000).toFixed(1);
+function printReport(elapsed) {
   const line = "═".repeat(60);
 
   console.log(`\n\n${line}`);
@@ -973,7 +1023,9 @@ async function main() {
     warn("Fatal", e.message);
   } finally {
     await browser.close();
-    printReport();
+    const elapsed = ((Date.now() - results.startTime) / 1000).toFixed(1);
+    printReport(elapsed);
+    await postResults(elapsed);
   }
 
   const failures = [...results.pages, ...results.flows, ...results.uiChecks].filter((r) => r.status === "fail").length;

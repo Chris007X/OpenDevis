@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_113130) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -242,6 +242,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_113130) do
     t.datetime "updated_at", null: false
     t.decimal "wall_height_m", precision: 10, scale: 2
     t.index ["project_id"], name: "index_rooms_on_project_id"
+  end
+
+  create_table "test_runs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.float "duration_seconds", default: 0.0
+    t.integer "errors_count", default: 0
+    t.integer "flows_passed", default: 0
+    t.integer "flows_total", default: 0
+    t.integer "pages_passed", default: 0
+    t.integer "pages_total", default: 0
+    t.datetime "ran_at", null: false
+    t.jsonb "results", default: {}
+    t.string "trigger"
+    t.integer "ui_passed", default: 0
+    t.integer "ui_total", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["ran_at"], name: "index_test_runs_on_ran_at"
+    t.index ["results"], name: "index_test_runs_on_results", using: :gin
   end
 
   create_table "users", force: :cascade do |t|
