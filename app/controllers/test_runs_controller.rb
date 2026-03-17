@@ -1,5 +1,5 @@
 class TestRunsController < ApplicationController
-  before_action :require_admin!, only: [ :index, :show ]
+  before_action :require_admin!, only: [ :index, :show, :trigger ]
 
   protect_from_forgery with: :null_session, only: [ :create ]
   skip_before_action :authenticate_user!, only: [ :create ]
@@ -15,6 +15,12 @@ class TestRunsController < ApplicationController
   # GET /test_runs/:id
   def show
     @test_run = TestRun.find(params[:id])
+  end
+
+  # POST /test_runs/trigger — enqueue the E2E suite from the UI
+  def trigger
+    RunTestSuiteJob.perform_later
+    redirect_to test_runs_path
   end
 
   # POST /test_runs  — token-authenticated JSON API for the E2E suite
