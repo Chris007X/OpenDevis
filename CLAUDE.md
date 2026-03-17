@@ -253,7 +253,5 @@ Styles live in `app/views/shared/_od_styles.html.erb` (inline `<style>` block, i
 
 - Do not add columns or migrations without being explicitly asked
 - Do not extract images from PDFs (technically not possible with PDF::Reader)
-- Do not use `localStorage` (edge runtime incompatible in some contexts)
-- Do not use React Server Actions
 - Do not install new gems without explaining why
 - Do not rewrite entire files to fix an isolated bug
