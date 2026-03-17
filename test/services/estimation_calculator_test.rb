@@ -4,7 +4,7 @@ class EstimationCalculatorTest < ActiveSupport::TestCase
   setup do
     @user = User.create!(email: "calc-test@example.com", password: "password123", password_confirmation: "password123")
     @project = @user.projects.create!(
-      location_zip: "Paris (75011)",
+      location_zip: "75011",
       total_surface_sqm: 50.0,
       status: :in_progress
     )

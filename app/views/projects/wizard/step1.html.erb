@@ -690,8 +690,8 @@
             <span class="required">*</span>
           </label>
           <%= f.number_field :total_surface_sqm, class: "form-control",
-              placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78",
-              step: 0.5, min: 0, data: { required: true } %>
+              placeholder: @project_type == "construction" ? "ex : 90" : "ex. 78.5",
+              step: 0.01, min: 0, data: { required: true } %>
           <% if @errors&.include?(:total_surface_sqm) %>
             <div class="field-error">Veuillez renseigner la surface (nombre positif)</div>
           <% end %>
@@ -708,9 +708,11 @@
           <label class="field-label">Code postal <span class="required">*</span></label>
           <div class="autocomplete-wrapper">
             <input type="text" class="form-control"
-                   placeholder="<%= @project_type == "construction" ? "ex : 75001" : "ex. 75001" %>"
+                   placeholder="ex. 75001"
                    inputmode="numeric"
-                   value="<%= @project.location_zip.present? ? @project.location_zip : '' %>"
+                   maxlength="5"
+                   pattern="\d{5}"
+                   value="<%= @project.location_zip.present? ? @project.location_zip.to_s[/\d{5}/] || @project.location_zip : '' %>"
                    data-city-autocomplete-target="input"
                    data-action="input->city-autocomplete#search input->city-autocomplete#filterDigits keydown->city-autocomplete#handleKeydown input->wizard-form#validate blur->city-autocomplete#handleBlur"
                    data-required="true"

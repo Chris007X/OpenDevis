@@ -348,7 +348,8 @@ status_label, status_class = case @project.status
       </div>
     </div>
     <div class="d-flex gap-2 align-items-center" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-      <button class="btn btn-ghost-od btn-sm" disabled title="À venir">Exporter PDF</button>
+      <%= link_to "Exporter PDF", project_path(@project, standing: @standing, format: :pdf),
+            class: "btn btn-ghost-od btn-sm" %>
       <%= link_to "Modifier", wizard_edit_path(@project), class: "btn btn-ghost-od btn-sm" %>
       <% if @project.archived? %>
         <%= button_to "Désarchiver", unarchive_project_path(@project), method: :patch,

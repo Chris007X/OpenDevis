@@ -63,6 +63,8 @@
   .proj-index .badge-en-cours  { background-color: #D4EDDA; color: #2D6A4F; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
   .proj-index .badge-termine   { background-color: #D0E8F5; color: #1A5C80; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
   .proj-index .badge-refuse    { background-color: #F8D7DA; color: #842029; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-index .badge-renovation   { background-color: #FFF3E0; color: #E65100; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
+  .proj-index .badge-construction { background-color: #E8E4F8; color: #5B4FC2; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.02em; }
 
   .proj-index .card-name {
     font-family: 'DM Serif Display', serif;
@@ -290,13 +292,16 @@
                 <% end %>
 
                 <div class="card-body-inner">
-                  <%# Title + badge %>
+                  <%# Title + badges %>
                   <div class="mb-2">
                     <div class="card-name">
                       <%= project.location_zip.presence || "Sans localisation" %>
                     </div>
                     <span class="badge <%= status_class %> fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
                       <%= status_label %>
+                    </span>
+                    <span class="badge <%= project.project_type == "construction" ? "badge-construction" : "badge-renovation" %> fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
+                      <%= project.project_type == "construction" ? "Construction" : "Rénovation" %>
                     </span>
                   </div>
 
@@ -390,6 +395,9 @@
                       </div>
                       <span class="badge badge-refuse fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
                         Archivé
+                      </span>
+                      <span class="badge badge-project-type fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
+                        <%= project.project_type == "construction" ? "Construction" : "Rénovation" %>
                       </span>
                     </div>
                     <% eco_total     = project.total_incVAT_for_standing(1) %>

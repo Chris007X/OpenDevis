@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_113130) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_150425) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -206,6 +206,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_113130) do
     t.string "location_zip"
     t.string "name"
     t.text "photo_url"
+    t.string "project_type", default: "renovation"
     t.text "property_url"
     t.integer "room_count"
     t.string "status"

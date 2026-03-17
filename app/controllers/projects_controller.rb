@@ -26,6 +26,24 @@ class ProjectsController < ApplicationController
                          { category: cat, count: items.count, total: subtotal }
                        end
                        .sort_by { |d| -d[:total] }
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf_data = EstimationPdfGenerator.new(
+          @project,
+          standing: @standing,
+          rooms: @rooms,
+          total_ht: @total_ht,
+          total_ttc: @total_ttc,
+          categories_data: @categories_data
+        ).generate
+        send_data pdf_data,
+                  filename: "estimation-#{@project.id}-#{Date.current}.pdf",
+                  type: "application/pdf",
+                  disposition: "attachment"
+      end
+    end
   end
 
   def new
