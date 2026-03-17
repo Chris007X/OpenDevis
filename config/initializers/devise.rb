@@ -279,7 +279,7 @@ Devise.setup do |config|
                   ENV["GOOGLE_CLIENT_ID"],
                   ENV["GOOGLE_CLIENT_SECRET"],
                   scope: "email,profile",
-                  provider_ignores_state: Rails.env.test?
+                  provider_ignores_state: true
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

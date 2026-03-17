@@ -1,0 +1,235 @@
+<% content_for :title, "Run ##{@test_run.id} — Test Runs" %>
+
+<% content_for :head do %>
+<style>
+  .tr-page     { background: #FAFAF7; min-height: 100vh; }
+  .tr-header   { border-bottom: 1.5px solid #E8E4DC; background: #fff; padding: 1.25rem 0; margin-bottom: 2rem; }
+  .tr-title    { font-size: 1.3rem; font-weight: 700; color: #2C2A25; font-family: 'Plus Jakarta Sans', sans-serif; }
+  .tr-subtitle { font-size: 0.85rem; color: #9B9588; margin-top: 2px; }
+  .kpi-card    { background: #fff; border: 1.5px solid #E8E4DC; border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .kpi-label   { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #9B9588; margin-bottom: 0.4rem; }
+  .kpi-value   { font-size: 1.8rem; font-weight: 700; color: #2C2A25; line-height: 1; }
+  .kpi-sub     { font-size: 0.8rem; color: #9B9588; margin-top: 0.3rem; }
+  .section-card { background: #fff; border: 1.5px solid #E8E4DC; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .section-title { font-size: 0.9rem; font-weight: 700; color: #2C2A25; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .prog-row   { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.65rem; }
+  .prog-label { font-size: 0.85rem; color: #4A4640; width: 72px; flex-shrink: 0; font-weight: 600; }
+  .prog-track { flex: 1; height: 10px; background: #F0EDE8; border-radius: 5px; overflow: hidden; }
+  .prog-fill  { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+  .prog-count { font-size: 0.85rem; color: #9B9588; width: 64px; text-align: right; flex-shrink: 0; }
+  .pill { display: inline-block; padding: 0.2em 0.75em; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .pill-pass    { background: #D1FAE5; color: #065F46; }
+  .pill-fail    { background: #FEE2E2; color: #991B1B; }
+  .pill-trigger { background: #EDE9E0; color: #4A4640; }
+  .pill-warn    { background: #FEF3C7; color: #92400E; }
+  .mono { font-family: ui-monospace, monospace; font-size: 0.82rem; color: #4A4640; }
+  .results-table thead th { font-size: 0.72rem; font-weight: 700; color: #9B9588; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #E8E4DC; padding: 0.5rem 0.75rem; }
+  .results-table tbody td { font-size: 0.85rem; color: #2C2A25; padding: 0.55rem 0.75rem; border-bottom: 1px solid #F0EDE8; vertical-align: middle; }
+  .results-table tbody tr:last-child td { border-bottom: none; }
+</style>
+<% end %>
+
+<div class="tr-page">
+  <%# Header %>
+  <div class="tr-header">
+    <div class="container" style="max-width: 1100px;">
+      <div class="d-flex align-items-start gap-3 flex-wrap">
+        <%= link_to test_runs_path, style: "font-size: 0.85rem; color: #9B9588; text-decoration: none; padding-top: 4px; flex-shrink: 0;" do %>
+          ← Retour
+        <% end %>
+        <div>
+          <div class="tr-title d-flex align-items-center gap-2 flex-wrap">
+            Run #<%= @test_run.id %> — <%= l(@test_run.ran_at, format: :long) %>
+            <% if @test_run.overall_passed? %>
+              <span class="pill pill-pass" style="font-size: 0.8rem;">✓ Passé</span>
+            <% else %>
+              <span class="pill pill-fail" style="font-size: 0.8rem;">✗ Échoué</span>
+            <% end %>
+          </div>
+          <div class="tr-subtitle">
+            Durée&nbsp;: <%= @test_run.duration_seconds.round(2) %>s
+            <% if @test_run.trigger.present? %>
+              &nbsp;·&nbsp; Trigger&nbsp;: <strong><%= @test_run.trigger %></strong>
+            <% end %>
+            &nbsp;·&nbsp; Enregistré le <%= l(@test_run.created_at, format: :short) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb-5" style="max-width: 1100px;">
+
+    <%# KPI row %>
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Pass rate</div>
+          <div class="kpi-value" style="color: <%= @test_run.overall_passed? ? '#059669' : '#DC2626' %>;">
+            <%= @test_run.pass_rate ? "#{@test_run.pass_rate}%" : "—" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Tests totaux</div>
+          <div class="kpi-value"><%= @test_run.pages_total + @test_run.flows_total + @test_run.ui_total %></div>
+          <div class="kpi-sub"><%= @test_run.pages_passed + @test_run.flows_passed + @test_run.ui_passed %> passés</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Erreurs</div>
+          <div class="kpi-value" style="color: <%= @test_run.errors_count > 0 ? '#DC2626' : '#059669' %>;">
+            <%= @test_run.errors_count %>
+          </div>
+          <div class="kpi-sub"><%= @test_run.errors_count > 0 ? "Voir détails ci-dessous" : "Aucune erreur" %></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Durée</div>
+          <div class="kpi-value"><%= @test_run.duration_seconds.round(1) %>s</div>
+          <div class="kpi-sub">Temps total</div>
+        </div>
+      </div>
+    </div>
+
+    <%# Category breakdown with progress bars %>
+    <div class="section-card">
+      <div class="section-title">Résultats par catégorie</div>
+      <% [
+        [ "Pages",  @test_run.pages_passed,  @test_run.pages_total,  "#2563EB" ],
+        [ "Flows",  @test_run.flows_passed,  @test_run.flows_total,  "#7C3AED" ],
+        [ "UI",     @test_run.ui_passed,     @test_run.ui_total,     "#D97706" ]
+      ].each do |label, passed, total, color| %>
+        <% pct = total > 0 ? (passed.to_f / total * 100).round : 0 %>
+        <% bar_color = total.zero? ? "#E8E4DC" : (passed == total ? "#059669" : "#DC2626") %>
+        <div class="prog-row">
+          <div class="prog-label"><%= label %></div>
+          <div class="prog-track">
+            <div class="prog-fill" style="width: <%= pct %>%; background: <%= bar_color %>;"></div>
+          </div>
+          <div class="prog-count">
+            <% if total.zero? %>
+              <span style="color: #C8C4BC;">n/a</span>
+            <% else %>
+              <span style="color: <%= passed == total ? '#059669' : '#DC2626' %>; font-weight: <%= passed == total ? 400 : 600 %>;">
+                <%= passed %>/<%= total %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Pages results %>
+    <% pages = @test_run.results["pages"] %>
+    <% if pages.present? %>
+      <div class="section-card">
+        <div class="section-title">Pages testées (<%= pages.size %>)</div>
+        <table class="results-table w-100" style="border-collapse: collapse;">
+          <thead>
+            <tr><th>Page</th><th>Statut</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            <% pages.each do |p| %>
+              <tr>
+                <td class="mono"><%= p["label"] || p["url"] %></td>
+                <td>
+                  <% if p["status"] == "pass" %>
+                    <span class="pill pill-pass" style="font-size: 0.72rem;">✓</span>
+                  <% else %>
+                    <span class="pill pill-fail" style="font-size: 0.72rem;">✗</span>
+                  <% end %>
+                </td>
+                <td style="color: #6B6560; font-size: 0.82rem;"><%= p["note"] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <%# Flows results %>
+    <% flows = @test_run.results["flows"] %>
+    <% if flows.present? %>
+      <div class="section-card">
+        <div class="section-title">Flows testés (<%= flows.size %>)</div>
+        <table class="results-table w-100" style="border-collapse: collapse;">
+          <thead>
+            <tr><th>Flow</th><th>Statut</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            <% flows.each do |f| %>
+              <tr>
+                <td><%= f["label"] %></td>
+                <td>
+                  <% if f["status"] == "pass" %>
+                    <span class="pill pill-pass" style="font-size: 0.72rem;">✓</span>
+                  <% else %>
+                    <span class="pill pill-fail" style="font-size: 0.72rem;">✗</span>
+                  <% end %>
+                </td>
+                <td style="color: #6B6560; font-size: 0.82rem;"><%= f["note"] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <%# UI consistency results %>
+    <% ui_checks = @test_run.results["uiChecks"] %>
+    <% if ui_checks.present? %>
+      <div class="section-card">
+        <div class="section-title">Vérifications UI — Claude AI (<%= ui_checks.size %>)</div>
+        <table class="results-table w-100" style="border-collapse: collapse;">
+          <thead>
+            <tr><th>Page</th><th>Statut</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            <% ui_checks.each do |u| %>
+              <tr>
+                <td><%= u["label"] %></td>
+                <td>
+                  <% if u["status"] == "pass" %>
+                    <span class="pill pill-pass" style="font-size: 0.72rem;">✓</span>
+                  <% else %>
+                    <span class="pill pill-fail" style="font-size: 0.72rem;">✗</span>
+                  <% end %>
+                </td>
+                <td style="color: #6B6560; font-size: 0.82rem;"><%= u["note"] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <%# Errors %>
+    <% errors = @test_run.results["errors"] %>
+    <% if errors.present? %>
+      <div class="section-card" style="border-color: #FECACA;">
+        <div class="section-title" style="color: #991B1B;">Erreurs détectées (<%= errors.size %>)</div>
+        <% errors.each do |e| %>
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.6rem 0; border-bottom: 1px solid #FEE2E2;">
+            <span style="color: #DC2626; font-size: 0.9rem; flex-shrink: 0; margin-top: 1px;">⚠</span>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: #991B1B;"><%= e["label"] %></div>
+              <div style="font-size: 0.82rem; color: #6B6560; margin-top: 2px;"><%= e["msg"] %></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Navigation %>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <%= link_to test_runs_path, class: "btn-ghost-od", style: "font-size: 0.85rem; padding: 0.4rem 1.1rem;" do %>
+        ← Tous les runs
+      <% end %>
+    </div>
+
+  </div>
+</div>
