@@ -1,0 +1,51 @@
+fr:
+  cookie_consent:
+    banner:
+      title: "Nous utilisons des cookies"
+      description: "Ce site utilise des cookies pour améliorer votre expérience et analyser le trafic. Vous pouvez accepter, refuser ou personnaliser vos choix."
+      accept_all: "Tout accepter"
+      reject_all: "Tout refuser"
+      customize: "Personnaliser"
+      policy_link: "Politique de cookies"
+    modal:
+      title: "Préférences de cookies"
+      description: "Choisissez les catégories de cookies que vous acceptez. Vous pouvez modifier vos préférences à tout moment."
+      essential:
+        title: "Cookies essentiels"
+        description: "Nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés."
+        badge: "Toujours actif"
+      analytics:
+        title: "Cookies analytiques"
+        description: "Nous aident à comprendre comment vous utilisez le site afin d'améliorer votre expérience."
+      marketing:
+        title: "Cookies marketing"
+        description: "Utilisés pour vous proposer des publicités pertinentes. Actuellement, aucun cookie marketing n'est utilisé."
+      save: "Enregistrer mes choix"
+      reject_all: "Tout refuser"
+    policy:
+      title: "Politique de cookies"
+      meta_description: "Politique de cookies d'OpenDevis — découvrez comment nous utilisons les cookies et gérez vos préférences."
+      intro:
+        title: "Qu'est-ce qu'un cookie ?"
+        text: "Un cookie est un petit fichier texte stocké sur votre appareil lorsque vous visitez un site web. Les cookies permettent au site de mémoriser vos actions et préférences pendant une durée déterminée."
+      categories:
+        title: "Les catégories de cookies utilisées"
+        essential:
+          title: "Cookies essentiels"
+          text: "Ces cookies sont indispensables au bon fonctionnement du site. Ils vous permettent de naviguer et d'utiliser les fonctionnalités de base (authentification, sécurité, préférences de session). Ils ne peuvent pas être désactivés."
+        analytics:
+          title: "Cookies analytiques"
+          text: "Ces cookies nous permettent de mesurer l'audience du site et de comprendre comment les visiteurs l'utilisent. Les données collectées sont anonymisées et utilisées uniquement pour améliorer le site. Notre solution d'analyse est hébergée en interne (pas de transfert vers des tiers)."
+        marketing:
+          title: "Cookies marketing"
+          text: "Ces cookies permettraient de vous proposer des publicités personnalisées. Actuellement, OpenDevis n'utilise aucun cookie marketing."
+      retention:
+        title: "Durée de conservation"
+        text: "Votre choix de consentement est conservé pendant 13 mois maximum, conformément aux recommandations de la CNIL. À l'expiration de ce délai, la bannière de consentement s'affichera à nouveau."
+      manage:
+        title: "Modifier vos préférences"
+        text: "Vous pouvez modifier vos préférences de cookies à tout moment en cliquant sur le bouton ci-dessous ou via le lien « Gérer les cookies » dans le menu de votre profil."
+        button: "Modifier mes préférences"
+      rights:
+        title: "Vos droits"
+        text: "Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition au traitement de vos données personnelles. Pour exercer ces droits, contactez-nous à l'adresse indiquée dans nos mentions légales."

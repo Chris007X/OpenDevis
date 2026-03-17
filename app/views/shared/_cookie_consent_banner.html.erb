@@ -1,0 +1,40 @@
+<div data-controller="cookie-consent">
+  <%# ── Banner (hidden by default, shown by Stimulus if no consent cookie) ── %>
+  <div data-cookie-consent-target="banner" class="d-none"
+       style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1055;
+              background: #fff; border-top: 1.5px solid #C8C4BC;
+              box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+              font-family: 'Plus Jakarta Sans', sans-serif;">
+    <div class="container py-3">
+      <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+        <div class="flex-grow-1">
+          <p style="font-weight: 600; font-size: 0.95rem; color: #2C2A25; margin-bottom: 0.25rem;">
+            <%= t("cookie_consent.banner.title") %>
+          </p>
+          <p style="font-size: 0.85rem; color: #4A4640; margin-bottom: 0;">
+            <%= t("cookie_consent.banner.description") %>
+            <%= link_to t("cookie_consent.banner.policy_link"), cookie_policy_path,
+                  style: "color: #2563eb; text-decoration: underline;" %>
+          </p>
+        </div>
+        <div class="d-flex flex-column flex-sm-row gap-2 flex-shrink-0">
+          <button type="button" class="btn btn-ghost-od btn-sm"
+                  data-action="cookie-consent#rejectAll">
+            <%= t("cookie_consent.banner.reject_all") %>
+          </button>
+          <button type="button" class="btn btn-ghost-od btn-sm"
+                  data-action="cookie-consent#customize">
+            <%= t("cookie_consent.banner.customize") %>
+          </button>
+          <button type="button" class="btn btn-dark-od btn-sm"
+                  data-action="cookie-consent#acceptAll">
+            <%= t("cookie_consent.banner.accept_all") %>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Preferences Modal ── %>
+  <%= render "shared/cookie_consent_modal" %>
+</div>

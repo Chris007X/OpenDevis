@@ -1,0 +1,87 @@
+<% content_for(:head) do %>
+  <meta name="description" content="<%= t('cookie_consent.policy.meta_description') %>">
+<% end %>
+
+<div class="container" style="max-width: 720px; padding: 2.5rem 1rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+  <h1 style="font-family: 'DM Serif Display', serif; font-size: 2rem; color: #2C2A25; margin-bottom: 2rem;">
+    <%= t("cookie_consent.policy.title") %>
+  </h1>
+
+  <%# ── What is a cookie? ── %>
+  <div class="od-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; color: #2C2A25; margin-bottom: 0.75rem;">
+      <%= t("cookie_consent.policy.intro.title") %>
+    </h2>
+    <p style="font-size: 0.9rem; color: #4A4640; margin-bottom: 0;">
+      <%= t("cookie_consent.policy.intro.text") %>
+    </p>
+  </div>
+
+  <%# ── Categories ── %>
+  <div class="od-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; color: #2C2A25; margin-bottom: 1rem;">
+      <%= t("cookie_consent.policy.categories.title") %>
+    </h2>
+
+    <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E8E4DC;">
+      <h3 style="font-size: 0.95rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.35rem;">
+        <%= t("cookie_consent.policy.categories.essential.title") %>
+      </h3>
+      <p style="font-size: 0.85rem; color: #4A4640; margin-bottom: 0;">
+        <%= t("cookie_consent.policy.categories.essential.text") %>
+      </p>
+    </div>
+
+    <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E8E4DC;">
+      <h3 style="font-size: 0.95rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.35rem;">
+        <%= t("cookie_consent.policy.categories.analytics.title") %>
+      </h3>
+      <p style="font-size: 0.85rem; color: #4A4640; margin-bottom: 0;">
+        <%= t("cookie_consent.policy.categories.analytics.text") %>
+      </p>
+    </div>
+
+    <div>
+      <h3 style="font-size: 0.95rem; font-weight: 600; color: #2C2A25; margin-bottom: 0.35rem;">
+        <%= t("cookie_consent.policy.categories.marketing.title") %>
+      </h3>
+      <p style="font-size: 0.85rem; color: #4A4640; margin-bottom: 0;">
+        <%= t("cookie_consent.policy.categories.marketing.text") %>
+      </p>
+    </div>
+  </div>
+
+  <%# ── Retention ── %>
+  <div class="od-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; color: #2C2A25; margin-bottom: 0.75rem;">
+      <%= t("cookie_consent.policy.retention.title") %>
+    </h2>
+    <p style="font-size: 0.9rem; color: #4A4640; margin-bottom: 0;">
+      <%= t("cookie_consent.policy.retention.text") %>
+    </p>
+  </div>
+
+  <%# ── Manage preferences ── %>
+  <div class="od-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; color: #2C2A25; margin-bottom: 0.75rem;">
+      <%= t("cookie_consent.policy.manage.title") %>
+    </h2>
+    <p style="font-size: 0.9rem; color: #4A4640; margin-bottom: 1rem;">
+      <%= t("cookie_consent.policy.manage.text") %>
+    </p>
+    <button type="button" class="btn btn-dark-od btn-sm"
+            onclick="window.dispatchEvent(new CustomEvent('cookie-consent:reopen')); return false;">
+      <%= t("cookie_consent.policy.manage.button") %>
+    </button>
+  </div>
+
+  <%# ── Rights ── %>
+  <div class="od-card" style="padding: 1.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; color: #2C2A25; margin-bottom: 0.75rem;">
+      <%= t("cookie_consent.policy.rights.title") %>
+    </h2>
+    <p style="font-size: 0.9rem; color: #4A4640; margin-bottom: 0;">
+      <%= t("cookie_consent.policy.rights.text") %>
+    </p>
+  </div>
+</div>

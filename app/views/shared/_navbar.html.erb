@@ -115,6 +115,12 @@
                 <% end %>
               </li>
             <% end %>
+            <li>
+              <a href="#" class="dropdown-item" style="font-size: 0.875rem; border-radius: 6px; font-family: 'Plus Jakarta Sans', sans-serif;"
+                 onclick="window.dispatchEvent(new CustomEvent('cookie-consent:reopen')); return false;">
+                Gérer les cookies
+              </a>
+            </li>
             <li><hr class="dropdown-divider" style="border-color: #C8C4BC; margin: 0.25rem 0;"></li>
             <li><%= link_to "Se déconnecter", destroy_user_session_path,
                       data: { turbo_method: :delete },

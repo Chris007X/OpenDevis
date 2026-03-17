@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
   devise_for :artisans, path: "artisans", controllers: { sessions: "artisans/sessions" }
   root to: "pages#home"
+  get "politique-cookies", to: "pages#cookie_policy", as: :cookie_policy
 
   # Project wizard (creation flow)
   get  "projects/wizard/choose",   to: "projects/wizard#choose",     as: :wizard_choose

@@ -17,6 +17,7 @@
 const Analytics = (() => {
   const ENDPOINT = '/analytics/events'
   let pageEnteredAt = null
+  let initialized = false
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -24,7 +25,15 @@ const Analytics = (() => {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? ''
   }
 
+  function readCookieConsent() {
+    const match = document.cookie.match(/(?:^|;\s*)cookie_consent=([^;]*)/)
+    if (!match) return null
+    try { return JSON.parse(decodeURIComponent(match[1])) }
+    catch { return null }
+  }
+
   function send(eventType, properties = {}, extra = {}) {
+    if (!initialized) return
     const payload = {
       authenticity_token: csrfToken(),
       event: {
@@ -146,26 +155,32 @@ const Analytics = (() => {
     })
   }
 
-  // ── Turbo-aware lifecycle ─────────────────────────────────────────────────
+  // ── Visibility handler (named for removeEventListener) ───────────────────
 
-  function init() {
-    // Track page view on every Turbo navigation (and initial load)
+  function handleVisibility() {
+    if (document.visibilityState === 'hidden') trackTimeOnPage()
+  }
+
+  // ── Listener management ─────────────────────────────────────────────────
+
+  function attachListeners() {
+    if (initialized) return
+    initialized = true
     document.addEventListener('turbo:load', trackPageView)
-
-    // Track time on page before Turbo navigates away
     document.addEventListener('turbo:before-visit', trackTimeOnPage)
-
-    // Also track when tab becomes hidden (user switches tab / closes browser)
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') trackTimeOnPage()
-    })
-
-    // Click tracking — single delegated listener on the document
+    document.addEventListener('visibilitychange', handleVisibility)
     document.addEventListener('click', handleClick)
-
-    // Unhandled JS errors and promise rejections
     window.addEventListener('error', handleError)
     window.addEventListener('unhandledrejection', handleUnhandledRejection)
+  }
+
+  // ── Turbo-aware lifecycle (consent-gated) ───────────────────────────────
+
+  function init() {
+    const consent = readCookieConsent()
+    if (!consent || !consent.analytics) return
+    attachListeners()
+    trackPageView()
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -173,6 +188,23 @@ const Analytics = (() => {
   return {
     init,
     track: send,
+    enableIfConsented() {
+      const consent = readCookieConsent()
+      if (consent?.analytics) {
+        attachListeners()
+        trackPageView()
+      }
+    },
+    disable() {
+      if (!initialized) return
+      document.removeEventListener('turbo:load', trackPageView)
+      document.removeEventListener('turbo:before-visit', trackTimeOnPage)
+      document.removeEventListener('visibilitychange', handleVisibility)
+      document.removeEventListener('click', handleClick)
+      window.removeEventListener('error', handleError)
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+      initialized = false
+    },
   }
 })()
 
