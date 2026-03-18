@@ -197,18 +197,12 @@
       </table>
     </div>
 
-    <%# Trigger button %>
-    <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-      <%= button_to trigger_test_runs_path,
-            method: :post,
-            class: "btn-dark-od",
-            style: "font-size: 0.875rem; padding: 0.5rem 1.4rem; display: inline-flex; align-items: center; gap: 0.5rem;" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-        </svg>
-        Lancer les tests
-      <% end %>
-      <span style="font-size: 0.8rem; color: #9B9588;">À lancer depuis l'environnement local (requiert Node.js + Playwright).</span>
+    <%# Run command %>
+    <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: #F0F4FF; border: 1.5px solid #BFCFFF; border-radius: 10px; font-size: 0.83rem; color: #2C2A25;">
+      <strong>Lancer la suite E2E depuis votre machine :</strong><br>
+      <code style="font-size: 0.8rem; color: #4A4640;">
+        OPENDEVIS_TEST_TOKEN=&lt;token&gt; RESULTS_URL=<%= request.base_url %>/test_runs SKIP_AI=true node e2e/run_tests.mjs
+      </code>
     </div>
 
   </div>
