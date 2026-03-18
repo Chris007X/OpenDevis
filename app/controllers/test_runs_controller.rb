@@ -20,7 +20,9 @@ class TestRunsController < ApplicationController
   # POST /test_runs/trigger — enqueue the E2E suite from the UI
   def trigger
     RunTestSuiteJob.perform_later
-    redirect_to test_runs_path
+    redirect_to test_runs_path, notice: "Test suite lancée."
+  rescue StandardError => e
+    redirect_to test_runs_path, alert: "Impossible de lancer les tests : #{e.message}"
   end
 
   # POST /test_runs  — token-authenticated JSON API for the E2E suite
