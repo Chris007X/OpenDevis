@@ -6,10 +6,28 @@ export default class extends Controller {
   connect() {
     this.poll()
     this.interval = setInterval(() => this.poll(), 30000)
+    this.onResponseReceived = () => { this.poll(); this.pulse() }
+    window.addEventListener("response-toast:received", this.onResponseReceived)
   }
 
   disconnect() {
     clearInterval(this.interval)
+    window.removeEventListener("response-toast:received", this.onResponseReceived)
+  }
+
+  pulse() {
+    const el = this.element.querySelector("svg") || this.element
+    el.animate(
+      [
+        { transform: "rotate(0deg)" },
+        { transform: "rotate(-18deg)" },
+        { transform: "rotate(18deg)" },
+        { transform: "rotate(-12deg)" },
+        { transform: "rotate(12deg)" },
+        { transform: "rotate(0deg)" }
+      ],
+      { duration: 500, easing: "ease-in-out" }
+    )
   }
 
   async poll() {

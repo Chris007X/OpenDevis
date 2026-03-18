@@ -1,0 +1,61 @@
+<h2>Où afficher le loader Mario & Luigi ?</h2>
+<p class="subtitle">Deux approches possibles pour l'expérience pendant l'analyse de l'URL</p>
+
+<div class="cards">
+
+  <!-- Option A: Fullscreen overlay -->
+  <div class="card" data-choice="fullscreen" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;min-height:200px;display:flex;align-items:center;justify-content:center;border-radius:8px;position:relative;overflow:hidden;">
+      <!-- Simulated fullscreen overlay -->
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+        <!-- Mario pixel art (simplified) -->
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="font-size:2.5rem;animation:none;">🧑‍🔧</div>
+          <div style="font-size:2.5rem;">👷</div>
+        </div>
+        <!-- Mini house being built -->
+        <div style="font-size:2rem;position:relative;">
+          🏠
+          <div style="position:absolute;top:-8px;right:-8px;font-size:0.7rem;background:#FFD700;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;">✨</div>
+        </div>
+        <div style="color:#FFD700;font-size:0.75rem;font-family:monospace;letter-spacing:2px;">ANALYSE EN COURS...</div>
+        <!-- Progress bar -->
+        <div style="width:120px;height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden;">
+          <div style="width:60%;height:100%;background:#FFD700;border-radius:3px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Overlay plein écran</h3>
+      <p>Fond sombre qui recouvre toute la page (comme le loader de l'étape 4). Effet immersif, empêche toute interaction pendant l'analyse.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Inline panel -->
+  <div class="card" data-choice="inline" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#FAFAF7;min-height:200px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1.5px solid #C8C4BC;">
+      <!-- Simulated step1 URL panel -->
+      <div style="width:90%;background:white;border-radius:10px;border:1.5px solid #C8C4BC;overflow:hidden;">
+        <!-- Panel header (import mode tabs) -->
+        <div style="background:#F5F2EE;padding:8px 12px;font-size:0.7rem;color:#9B9588;border-bottom:1px solid #E8E4DC;">🔗 URL &nbsp;|&nbsp; 📄 PDF &nbsp;|&nbsp; 💬 Chat</div>
+        <!-- Loading state inside panel -->
+        <div style="padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <div style="display:flex;gap:6px;align-items:flex-end;">
+            <div style="font-size:1.8rem;">🧑‍🔧</div>
+            <div style="font-size:1.8rem;">👷</div>
+          </div>
+          <div style="font-size:1.2rem;">🏠</div>
+          <div style="font-size:0.65rem;color:#9B9588;font-family:monospace;letter-spacing:1px;">ANALYSE EN COURS...</div>
+          <div style="width:100px;height:4px;background:#E8E4DC;border-radius:2px;overflow:hidden;">
+            <div style="width:60%;height:100%;background:#2563eb;border-radius:2px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Inline dans le panneau URL</h3>
+      <p>Le loader remplace temporairement le contenu du panneau d'import URL. Plus discret, l'utilisateur reste dans le contexte du formulaire.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FAFAF7; color: #2C2A25; padding: 24px; }
+  h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #9B9588; font-size: 0.9rem; margin-bottom: 24px; }
+
+  .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  .option-card {
+    background: white;
+    border: 2px solid #C8C4BC;
+    border-radius: 12px;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.1s;
+    overflow: hidden;
+  }
+  .option-card:hover { border-color: #2563eb; transform: translateY(-2px); }
+  .option-card.selected { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+
+  .preview-zone {
+    background: white;
+    border-radius: 10px;
+    border-bottom: 1.5px solid #E8E4DC;
+    padding: 20px 16px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .option-label {
+    padding: 12px 16px;
+  }
+  .option-label h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+  .option-label p { font-size: 0.75rem; color: #9B9588; line-height: 1.4; }
+
+  /* ---- OPTION A: Pixel Art CSS ---- */
+  .pixel { display: inline-block; image-rendering: pixelated; }
+
+  /* Mario pixel art 16×16 */
+  .mario-pixel {
+    width: 32px; height: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='0' width='7' height='2' fill='%23e52222'/%3E%3Crect x='3' y='2' width='9' height='2' fill='%23e52222'/%3E%3Crect x='3' y='4' width='3' height='2' fill='%23805025'/%3E%3Crect x='6' y='4' width='5' height='3' fill='%23f5c29c'/%3E%3Crect x='4' y='7' width='9' height='4' fill='%23e52222'/%3E%3Crect x='3' y='7' width='2' height='3' fill='%23805025'/%3E%3Crect x='13' y='7' width='2' height='3' fill='%23805025'/%3E%3Crect x='4' y='11' width='3' height='3' fill='%23121280'/%3E%3Crect x='9' y='11' width='3' height='3' fill='%23121280'/%3E%3Crect x='3' y='14' width='4' height='2' fill='%23805025'/%3E%3Crect x='9' y='14' width='4' height='2' fill='%23805025'/%3E%3C/svg%3E");
+    background-size: cover;
+    animation: walk-a 0.4s steps(1) infinite;
+  }
+
+  /* Luigi pixel art */
+  .luigi-pixel {
+    width: 32px; height: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='4' y='0' width='7' height='2' fill='%23228B22'/%3E%3Crect x='3' y='2' width='9' height='2' fill='%23228B22'/%3E%3Crect x='3' y='4' width='3' height='2' fill='%23805025'/%3E%3Crect x='6' y='4' width='5' height='3' fill='%23f5c29c'/%3E%3Crect x='4' y='7' width='9' height='4' fill='%23228B22'/%3E%3Crect x='3' y='7' width='2' height='3' fill='%23805025'/%3E%3Crect x='13' y='7' width='2' height='3' fill='%23805025'/%3E%3Crect x='4' y='11' width='3' height='3' fill='%23003080'/%3E%3Crect x='9' y='11' width='3' height='3' fill='%23003080'/%3E%3Crect x='3' y='14' width='4' height='2' fill='%23805025'/%3E%3Crect x='9' y='14' width='4' height='2' fill='%23805025'/%3E%3C/svg%3E");
+    background-size: cover;
+  }
+
+  /* House being built pixel by pixel */
+  .house-build {
+    width: 48px; height: 48px;
+    position: relative;
+    image-rendering: pixelated;
+  }
+
+  @keyframes walk-a {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes hammer {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-30deg); }
+  }
+  @keyframes build-up {
+    0% { clip-path: inset(100% 0 0 0); }
+    100% { clip-path: inset(0% 0 0 0); }
+  }
+  @keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* OPTION A pixel art scene */
+  .scene-a {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    position: relative;
+  }
+  .mario-a {
+    font-size: 28px;
+    animation: bounce 0.5s ease-in-out infinite;
+    filter: hue-rotate(0deg);
+  }
+  .luigi-a {
+    font-size: 28px;
+    animation: bounce 0.5s ease-in-out infinite 0.25s;
+    filter: hue-rotate(90deg);
+  }
+  .house-a {
+    font-size: 36px;
+    position: relative;
+  }
+  .hammer-a {
+    position: absolute;
+    top: -12px; right: -10px;
+    font-size: 16px;
+    animation: hammer 0.4s ease-in-out infinite;
+    transform-origin: bottom right;
+  }
+  .progress-a {
+    width: 100px; height: 5px;
+    background: #E8E4DC;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-a-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 3px;
+    animation: progress-fill 3s ease-in-out infinite;
+  }
+  @keyframes progress-fill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
+  .label-a {
+    font-size: 0.65rem;
+    font-family: monospace;
+    letter-spacing: 2px;
+    color: #9B9588;
+  }
+
+  /* OPTION B: Pixel art retro (NES style avec CSS grid) */
+  .pixel-grid {
+    display: grid;
+    gap: 0;
+  }
+  .px { width: 4px; height: 4px; }
+
+  .scene-b {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .characters-b {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+  }
+
+  /* CSS Pixel art Mario */
+  .mario-css {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 16' shape-rendering='crispEdges'%3E%3Crect x='3' y='0' width='6' height='1' fill='%23c00'/%3E%3Crect x='2' y='1' width='8' height='1' fill='%23c00'/%3E%3Crect x='2' y='2' width='3' height='1' fill='%23a0522d'/%3E%3Crect x='5' y='2' width='4' height='1' fill='%23ffd700'/%3E%3Crect x='2' y='3' width='9' height='2' fill='%23ffdcb0'/%3E%3Crect x='4' y='5' width='4' height='1' fill='%23a0522d'/%3E%3Crect x='3' y='6' width='6' height='1' fill='%23c00'/%3E%3Crect x='2' y='7' width='8' height='3' fill='%23c00'/%3E%3Crect x='1' y='8' width='2' height='2' fill='%23ffdcb0'/%3E%3Crect x='9' y='8' width='2' height='2' fill='%23ffdcb0'/%3E%3Crect x='3' y='10' width='2' height='2' fill='%23000080'/%3E%3Crect x='7' y='10' width='2' height='2' fill='%23000080'/%3E%3Crect x='2' y='12' width='3' height='2' fill='%23a0522d'/%3E%3Crect x='7' y='12' width='3' height='2' fill='%23a0522d'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: mario-run 0.3s steps(1) infinite;
+  }
+  @keyframes mario-run {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .luigi-css {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 16' shape-rendering='crispEdges'%3E%3Crect x='3' y='0' width='6' height='1' fill='%23006400'/%3E%3Crect x='2' y='1' width='8' height='1' fill='%23006400'/%3E%3Crect x='2' y='2' width='3' height='1' fill='%23a0522d'/%3E%3Crect x='5' y='2' width='4' height='1' fill='%23ffd700'/%3E%3Crect x='2' y='3' width='9' height='2' fill='%23ffdcb0'/%3E%3Crect x='4' y='5' width='4' height='1' fill='%23a0522d'/%3E%3Crect x='3' y='6' width='6' height='1' fill='%23006400'/%3E%3Crect x='2' y='7' width='8' height='3' fill='%23006400'/%3E%3Crect x='1' y='8' width='2' height='2' fill='%23ffdcb0'/%3E%3Crect x='9' y='8' width='2' height='2' fill='%23ffdcb0'/%3E%3Crect x='3' y='10' width='2' height='2' fill='%23000080'/%3E%3Crect x='7' y='10' width='2' height='2' fill='%23000080'/%3E%3Crect x='2' y='12' width='3' height='2' fill='%23a0522d'/%3E%3Crect x='7' y='12' width='3' height='2' fill='%23a0522d'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: luigi-run 0.3s steps(1) infinite 0.15s;
+  }
+  @keyframes luigi-run {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .house-build-b {
+    font-size: 32px;
+    animation: build-up 2s ease-out infinite;
+  }
+
+  .progress-b {
+    width: 120px; height: 6px;
+    background: #E8E4DC; border-radius: 3px; overflow: hidden;
+  }
+  .progress-b-fill {
+    height: 100%; background: linear-gradient(90deg, #e52222, #2563eb);
+    border-radius: 3px;
+    animation: progress-fill 3s ease-in-out infinite;
+  }
+  .blocks-row {
+    display: flex;
+    gap: 3px;
+  }
+  .block {
+    width: 12px; height: 12px;
+    background: #e08020;
+    border: 1.5px solid #8B4513;
+    border-radius: 1px;
+    animation: block-appear 0.5s ease backwards;
+  }
+  .block:nth-child(1) { animation-delay: 0.1s; }
+  .block:nth-child(2) { animation-delay: 0.3s; }
+  .block:nth-child(3) { animation-delay: 0.5s; }
+  .block:nth-child(4) { animation-delay: 0.7s; }
+  @keyframes block-appear {
+    from { transform: scale(0) translateY(-10px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  /* OPTION C: Cartoon/Fun emoji style */
+  .scene-c {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .emoji-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    font-size: 2rem;
+  }
+  .mario-emoji { animation: bounce 0.6s ease-in-out infinite; }
+  .luigi-emoji { animation: bounce 0.6s ease-in-out infinite 0.3s; }
+  .tool-emoji {
+    font-size: 1.2rem;
+    animation: hammer 0.4s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+  .house-emoji {
+    font-size: 2.5rem;
+    position: relative;
+  }
+  .star-c {
+    position: absolute;
+    font-size: 0.7rem;
+    animation: sparkle 0.6s ease-in-out infinite;
+  }
+  .progress-c {
+    width: 120px; height: 6px;
+    background: #E8E4DC; border-radius: 3px; overflow: hidden;
+  }
+  .progress-c-fill {
+    height: 100%; background: #22c55e;
+    border-radius: 3px;
+    animation: progress-fill 3s ease-in-out infinite;
+  }
+  .coin-row {
+    display: flex;
+    gap: 4px;
+  }
+  .coin {
+    width: 14px; height: 14px;
+    background: #FFD700;
+    border-radius: 50%;
+    border: 2px solid #B8860B;
+    animation: coin-spin 1s ease-in-out infinite;
+  }
+  .coin:nth-child(2) { animation-delay: 0.2s; }
+  .coin:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes coin-spin {
+    0%, 100% { transform: scaleX(1); }
+    50% { transform: scaleX(0.1); }
+  }
+</style>
+</head>
+<body>
+
+<h2>Quel style pour les personnages ?</h2>
+<p class="subtitle">Trois ambiances pour le loader Mario & Luigi — toutes animées, sans images externes</p>
+
+<div class="options-grid">
+
+  <!-- Option A: Emoji + animations fluides -->
+  <div class="option-card" data-choice="A" onclick="toggleSelect(this)">
+    <div class="preview-zone">
+      <div class="scene-a">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div style="font-size:0.6rem;color:#e52222;font-weight:700;">MARIO</div>
+          <div class="mario-a">🧑‍🔧</div>
+        </div>
+        <div class="house-a">
+          🏠
+          <div class="hammer-a">🔨</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div style="font-size:0.6rem;color:#22863a;font-weight:700;">LUIGI</div>
+          <div class="luigi-a">👷</div>
+        </div>
+      </div>
+      <div class="progress-a"><div class="progress-a-fill"></div></div>
+      <div class="label-a">ANALYSE EN COURS...</div>
+    </div>
+    <div class="option-label">
+      <h3>A — Emoji animés</h3>
+      <p>Emojis système avec animations CSS. Simple, universel, compatible partout.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Pixel art CSS (vrai style NES) -->
+  <div class="option-card" data-choice="B" onclick="toggleSelect(this)">
+    <div class="preview-zone">
+      <div class="scene-b">
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="font-size:0.55rem;color:#c00;font-weight:700;font-family:monospace;">M</div>
+            <div class="mario-css"></div>
+          </div>
+          <div style="font-size:2rem;animation:bounce 0.4s ease-in-out infinite;">🏠</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="font-size:0.55rem;color:#006400;font-weight:700;font-family:monospace;">L</div>
+            <div class="luigi-css"></div>
+          </div>
+        </div>
+        <div class="blocks-row">
+          <div class="block"></div>
+          <div class="block"></div>
+          <div class="block"></div>
+          <div class="block"></div>
+        </div>
+        <div class="progress-b"><div class="progress-b-fill"></div></div>
+        <div style="font-size:0.6rem;font-family:monospace;letter-spacing:2px;color:#9B9588;">ANALYSE EN COURS...</div>
+      </div>
+    </div>
+    <div class="option-label">
+      <h3>B — Pixel art NES</h3>
+      <p>Vrais sprites Mario/Luigi en CSS SVG pixel art avec briques qui apparaissent. Style rétro authentique.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Fun + pièces -->
+  <div class="option-card" data-choice="C" onclick="toggleSelect(this)">
+    <div class="preview-zone">
+      <div class="scene-c">
+        <div class="emoji-row">
+          <div class="mario-emoji">👨‍🔧</div>
+          <div style="position:relative;">
+            <div class="house-emoji">🏗️</div>
+          </div>
+          <div class="luigi-emoji">👷‍♂️</div>
+        </div>
+        <div class="coin-row">
+          <div class="coin"></div>
+          <div class="coin"></div>
+          <div class="coin"></div>
+        </div>
+        <div class="progress-c"><div class="progress-c-fill"></div></div>
+        <div style="font-size:0.65rem;color:#9B9588;font-family:monospace;letter-spacing:1.5px;">ANALYSE EN COURS...</div>
+      </div>
+    </div>
+    <div class="option-label">
+      <h3>C — Fun avec pièces d'or</h3>
+      <p>Emojis construction + pièces Mario qui tournent. Plus coloré et joueur, rappelle directement l'univers Mario.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  if (window.__companion) {
+    window.__companion.recordClick(el.dataset.choice, el.querySelector('h3').textContent);
+  }
+}
+</script>
+</body>
+</html>

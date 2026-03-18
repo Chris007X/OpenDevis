@@ -24,6 +24,10 @@ bin/rubocop        # Lint
 bin/rubocop -A     # Auto-fix lint issues
 
 bin/ci             # Full CI pipeline (rubocop, security checks, tests, seed test)
+
+# E2E tests (Playwright + Claude visual validation)
+ANTHROPIC_API_KEY=sk-... node e2e/run_tests.mjs
+# Optional: HEADLESS=false (show browser), SKIP_AI=true (skip Claude checks), BASE_URL=...
 ```
 
 ## Architecture
@@ -63,6 +67,8 @@ Artisan
 - `WorkCategory#slug` used for identification and wizard category filtering
 - `BiddingRequest` broadcasts status changes via Turbo Streams; has unique token for artisan portal
 - `BiddingRound` is unique per project (one bidding round at a time)
+- `ReferencePrice` stores base (Standard) prices for materials; Éco and Premium are derived via coefficients (0.75/0.90 and 1.35/1.15 for supply/labor respectively). Used by `EstimationCalculator`.
+- `TestRun` records results of the E2E test suite (pages, flows, UI checks with pass/total counts and error log)
 
 ### Authentication & Authorization
 
@@ -88,6 +94,10 @@ Three additional Solid databases for cache, queue, and cable (Rails 8 defaults).
 - Demo users: `demo@opendevis.com` / `password123` and `bob@opendevis.com` / `password123`
 - Demo artisans per category
 - 4 projects with rooms and work items
+
+## JavaScript
+
+Uses **importmaps** (no webpack/esbuild/vite). Stimulus controllers live in `app/javascript/controllers/`. Adding a new controller: create the file and it's auto-registered via `stimulus-rails` + importmap pin.
 
 ## Code Style
 
@@ -194,6 +204,7 @@ RuboCop with `rubocop-rails-omakase` — max line length 120. Config in `.ruboco
 | `analytics-live` | Real-time analytics dashboard updates |
 | `construction-step2` | Room picker for construction wizard step 2 |
 | `select-all` | Checkbox select-all toggling |
+| `cookie-consent` | Cookie consent banner (accept/reject, persists choice) |
 
 ## Turbo Frames
 
@@ -215,6 +226,12 @@ Self-hosted analytics at `/analytics` (admin-only). See `CLAUDE_ANALYTICS.md` fo
 - `app/services/funnel_analyzer.rb` — multi-step conversion analysis
 
 **Frontend tracking:** JavaScript in layout uses `navigator.sendBeacon` → Rails controller → `AnalyticsTracker.track()`.
+
+## AI Integration
+
+All AI services include `LlmClient` (`app/services/concerns/llm_client.rb`), which calls the **Azure Models Inference API** (`https://models.inference.ai.azure.com`) using model `gpt-4o-mini`. Auth uses `GITHUB_TOKEN` env var (not an OpenAI key). `fetch_llm_content` returns raw text; `fetch_llm_json` parses JSON response.
+
+Required env var: `GITHUB_TOKEN` (Azure Models Inference access token).
 
 ## Services
 
