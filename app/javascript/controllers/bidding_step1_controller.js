@@ -4,6 +4,10 @@ export default class extends Controller {
   static targets = ["catCard", "deadline", "submitBtn", "selectAllToggle"]
 
   connect() {
+    this.catCardTargets.forEach(card => {
+      const cb = card.querySelector('input[type="checkbox"]')
+      if (cb?.checked) card.classList.add("selected")
+    })
     this.updateButton()
     this.syncSelectAllToggle()
   }

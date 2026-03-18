@@ -181,6 +181,7 @@
             <label class="bd-cat-card w-100 d-block" data-bidding-step1-target="catCard">
               <input type="checkbox" name="category_ids[]" value="<%= category.id %>"
                      class="bd-cat-checkbox"
+                     <%= "checked" if @selected_category_ids.include?(category.id) %>
                      data-action="change->bidding-step1#updateButton">
               <div class="bd-cat-name"><%= category.name %></div>
               <div class="bd-cat-meta"><%= category.items_count %> postes</div>
@@ -205,7 +206,7 @@
 
     <div class="row g-2 mb-1">
       <div class="col-auto">
-        <% default_deadline = 7.days.from_now.strftime("%Y-%m-%dT%H:%M") %>
+        <% default_deadline = @bidding_round.persisted? ? @bidding_round.deadline.strftime("%Y-%m-%dT%H:%M") : 7.days.from_now.strftime("%Y-%m-%dT%H:%M") %>
         <input type="datetime-local"
                name="bidding_round[deadline]"
                value="<%= default_deadline %>"

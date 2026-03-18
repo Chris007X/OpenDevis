@@ -8,25 +8,43 @@ class BiddingRoundsController < ApplicationController
   def new
     authorize :bidding_round, :new?
     track_funnel_step("bidding_to_contract", 1, "configure_bid", completed: false)
-    @bidding_round = BiddingRound.new
-    @standing_level = (params[:standing] || 2).to_i.clamp(1, 3)
+    @bidding_round = @project.bidding_round || BiddingRound.new
+    @standing_level = (params[:standing] || @bidding_round.standing_level || 2).to_i.clamp(1, 3)
     @categories_with_items = categories_with_items(@standing_level)
+    @selected_category_ids = session[:selected_category_ids] || []
   end
 
   # rubocop:disable Metrics/MethodLength
   def create
     authorize :bidding_round, :create?
-    @bidding_round = BiddingRound.new(bidding_round_params)
-    @bidding_round.project = @project
+    existing = @project.bidding_round
 
-    if @bidding_round.save
-      track_funnel_step("bidding_to_contract", 2, "bid_configured", completed: false)
-      session[:selected_category_ids] = params[:category_ids]&.map(&:to_i)
-      redirect_to select_artisans_project_bidding_round_path(@project)
+    if existing&.status == "draft"
+      if existing.update(bidding_round_params)
+        track_funnel_step("bidding_to_contract", 2, "bid_configured", completed: false)
+        session[:selected_category_ids] = params[:category_ids]&.map(&:to_i)
+        redirect_to select_artisans_project_bidding_round_path(@project)
+      else
+        @bidding_round = existing
+        @standing_level = @bidding_round.standing_level || 2
+        @categories_with_items = categories_with_items(@standing_level)
+        @selected_category_ids = session[:selected_category_ids] || []
+        render :new, status: :unprocessable_entity
+      end
     else
-      @standing_level = @bidding_round.standing_level || 2
-      @categories_with_items = categories_with_items(@standing_level)
-      render :new, status: :unprocessable_entity
+      @bidding_round = BiddingRound.new(bidding_round_params)
+      @bidding_round.project = @project
+
+      if @bidding_round.save
+        track_funnel_step("bidding_to_contract", 2, "bid_configured", completed: false)
+        session[:selected_category_ids] = params[:category_ids]&.map(&:to_i)
+        redirect_to select_artisans_project_bidding_round_path(@project)
+      else
+        @standing_level = @bidding_round.standing_level || 2
+        @categories_with_items = categories_with_items(@standing_level)
+        @selected_category_ids = []
+        render :new, status: :unprocessable_entity
+      end
     end
   end
   # rubocop:enable Metrics/MethodLength

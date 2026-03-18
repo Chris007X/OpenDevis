@@ -143,11 +143,30 @@
     padding: 3rem;
     text-align: center;
   }
+  .sa-scope .more-artisans-details { margin-top: 2px; }
+  .sa-scope .more-artisans-details > summary {
+    font-size: 0.82rem;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0 4px;
+    list-style: none;
+    user-select: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .sa-scope .more-artisans-details > summary::-webkit-details-marker { display: none; }
+  .sa-scope .more-artisans-details > summary::after {
+    content: ' ▼';
+    font-size: 0.65rem;
+    vertical-align: middle;
+  }
+  .sa-scope .more-artisans-details[open] > summary::after { content: ' ▲'; }
+  .sa-scope .more-artisans-details > summary:hover { color: #1d4ed8; }
 </style>
 <% end %>
 
 <div class="container py-4 sa-scope" style="max-width: 860px;">
-  <%= link_to "← Retour", new_project_bidding_round_path(@project), class: "back-link" %>
+  <%= link_to "← Retour", new_project_bidding_round_path(@project, standing: @bidding_round.standing_level), class: "back-link" %>
 
   <h2 class="page-heading mt-3">Choisir les artisans</h2>
   <p class="mb-4" style="color: #9B9588; font-size: 0.88rem;">Sélectionnez jusqu'à 3 artisans par catégorie. Ils recevront une demande de devis.</p>
@@ -179,7 +198,7 @@
           </div>
           <div class="cat-section-body">
             <% if artisans.any? %>
-              <% artisans.each do |artisan| %>
+              <% artisans.first(3).each do |artisan| %>
                 <label class="artisan-card" data-artisan-select-target="card">
                   <input type="checkbox"
                          name="artisan_selections[<%= category.id %>][]"
@@ -209,6 +228,41 @@
                   </div>
                 </label>
               <% end %>
+              <% if artisans.count > 3 %>
+                <details class="more-artisans-details">
+                  <summary>Voir <%= artisans.count - 3 %> autre<%= artisans.count - 3 > 1 ? "s" : "" %> artisan<%= artisans.count - 3 > 1 ? "s" : "" %></summary>
+                  <% artisans.drop(3).each do |artisan| %>
+                    <label class="artisan-card" data-artisan-select-target="card">
+                      <input type="checkbox"
+                             name="artisan_selections[<%= category.id %>][]"
+                             value="<%= artisan.id %>"
+                             class="artisan-checkbox"
+                             data-artisan-select-target="checkbox"
+                             data-action="change->artisan-select#toggle">
+                      <div class="artisan-avatar">
+                        <%= artisan.name.first.upcase %>
+                      </div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div class="artisan-name"><%= artisan.name %></div>
+                        <div class="artisan-meta">
+                          <%= artisan.company_name.presence || artisan.postcode %>
+                          <% if artisan.company_name.present? %>
+                            · <%= artisan.postcode %>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="text-end" style="padding-right: 28px;">
+                        <% if artisan.rating.present? %>
+                          <div class="artisan-rating">★ <%= artisan.star_rating %></div>
+                        <% end %>
+                        <% if artisan.certifications.present? %>
+                          <div class="artisan-meta">Certifié</div>
+                        <% end %>
+                      </div>
+                    </label>
+                  <% end %>
+                </details>
+              <% end %>
             <% else %>
               <div style="color: #9B9588; font-size: 0.88rem; text-align: center; padding: 20px 0;">
                 Aucun artisan disponible dans ce secteur pour cette catégorie.
@@ -220,12 +274,12 @@
     <% else %>
       <div class="empty-state">
         <div style="color: #9B9588; font-size: 0.88rem;">Aucune catégorie sélectionnée.</div>
-        <%= link_to "← Retour", new_project_bidding_round_path(@project), class: "btn btn-ghost-od btn-sm mt-3" %>
+        <%= link_to "← Retour", new_project_bidding_round_path(@project, standing: @bidding_round.standing_level), class: "btn btn-ghost-od btn-sm mt-3" %>
       </div>
     <% end %>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-      <%= link_to "← Retour", new_project_bidding_round_path(@project), class: "back-link" %>
+      <%= link_to "← Retour", new_project_bidding_round_path(@project, standing: @bidding_round.standing_level), class: "back-link" %>
       <button type="submit" class="submit-btn">
         Envoyer les demandes →
       </button>
