@@ -288,7 +288,7 @@ artisan_data = [
   # Maçonnerie (required by bidding rounds)
   { name: "Marc Dubois", email: "marc.dubois@artisan-maconnerie.fr", company_name: "Dubois Maçonnerie",
     postcode: "75010", phone: "06 11 22 33 44", rating: 4.8, certifications: "RGE, Qualibat",
-    categories: ["maconnerie"] },
+    categories: ["maconnerie","electricite"] },
   { name: "Antoine Vernet", email: "a.vernet@btp-paris.fr", company_name: "BTP Paris Est",
     postcode: "75019", phone: "06 22 33 44 55", rating: 4.5, certifications: "Qualibat",
     categories: ["maconnerie", "carrelage"] },
@@ -501,6 +501,14 @@ artisan_data.each do |ad|
     category = WorkCategory.find_by(slug: slug)
     next unless category
 
+    if artisan.postcode&.start_with?("75")
+      paris_count = ArtisanCategory.joins(:artisan)
+                                   .where(work_category: category)
+                                   .where("artisans.postcode LIKE '75%'")
+                                   .count
+      next if paris_count >= 5
+    end
+
     ArtisanCategory.find_or_create_by!(artisan: artisan, work_category: category)
   end
 end
@@ -528,6 +536,14 @@ wizard_category_map.each do |new_slug, related_slugs|
 
     artisan_ids = ArtisanCategory.where(work_category: old_cat).pluck(:artisan_id)
     artisan_ids.each do |artisan_id|
+      artisan = Artisan.find(artisan_id)
+      if artisan.postcode&.start_with?("75")
+        paris_count = ArtisanCategory.joins(:artisan)
+                                     .where(work_category: new_cat)
+                                     .where("artisans.postcode LIKE '75%'")
+                                     .count
+        next if paris_count >= 5
+      end
       ArtisanCategory.find_or_create_by!(artisan_id: artisan_id, work_category: new_cat)
     end
   end
