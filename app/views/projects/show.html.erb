@@ -448,7 +448,14 @@ status_label, status_class = case @project.status
   <% end %>
 
   <%# ── Artisan bidding CTA ────────────────────────────────────────────── %>
-  <% if @project.bidding_round.nil? %>
+  <% if @project.bidding_round.nil? || @project.bidding_round.status == "draft" %>
+    <%
+      cta_path = if @project.bidding_round.nil?
+        new_project_bidding_round_path(@project, standing: @standing)
+      else
+        select_artisans_project_bidding_round_path(@project)
+      end
+    %>
     <div class="bidding-cta">
       <div>
         <div class="bidding-cta-title">Obtenir des devis artisans</div>
@@ -456,8 +463,7 @@ status_label, status_class = case @project.status
           Envoyez votre estimation à des artisans locaux et comparez leurs propositions.
         </div>
       </div>
-      <%= link_to "Demander des devis", new_project_bidding_round_path(@project, standing: @standing),
-            class: "btn-bidding-cta" %>
+      <%= link_to "Demander des devis", cta_path, class: "btn-bidding-cta" %>
     </div>
   <% else %>
     <%

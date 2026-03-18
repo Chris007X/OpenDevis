@@ -1,0 +1,54 @@
+<div data-controller="response-toast"
+     data-response-toast-artisan-value="<%= bidding_request.artisan.name %>"
+     data-response-toast-category-value="<%= bidding_request.work_category.name %>"
+     data-response-toast-price-value="<%= bidding_request.price_total.to_i %>"
+     style="
+       position: fixed;
+       top: 64px;
+       right: 20px;
+       z-index: 9999;
+       background: #fff;
+       border: 1.5px solid #C8C4BC;
+       border-radius: 14px;
+       padding: 14px 18px;
+       box-shadow: 0 8px 32px rgba(44,42,37,0.14);
+       display: flex;
+       align-items: flex-start;
+       gap: 12px;
+       max-width: 320px;
+       font-family: 'Plus Jakarta Sans', sans-serif;
+       transform-origin: top right;
+       opacity: 0;
+       transform: scale(0.4);
+     ">
+
+  <%# Bell icon — visually anchors the toast to the navbar badge %>
+  <div style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+              background: #D4EDDA; display: flex; align-items: center; justify-content: center;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#2D6A4F" viewBox="0 0 16 16">
+      <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+    </svg>
+  </div>
+
+  <div style="flex: 1; min-width: 0;">
+    <div style="font-weight: 700; font-size: 0.85rem; color: #1C1A16; margin-bottom: 2px;">
+      Devis reçu !
+    </div>
+    <div style="font-size: 0.8rem; color: #4A4640; line-height: 1.4;">
+      <strong style="color: #2C2A25;"><%= bidding_request.artisan.name %></strong>
+      a répondu pour
+      <strong style="color: #2C2A25;"><%= bidding_request.work_category.name %></strong>
+      <% if bidding_request.price_total.present? %>
+        ·
+        <span style="color: #2D6A4F; font-weight: 700;">
+          <%= number_to_currency(bidding_request.price_total, unit: "€", format: "%n %u", precision: 0) %> HT
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <button data-action="click->response-toast#dismiss"
+          style="flex-shrink: 0; background: none; border: none; padding: 0; cursor: pointer;
+                 color: #9B9588; line-height: 1; font-size: 1rem;"
+          aria-label="Fermer">✕</button>
+</div>

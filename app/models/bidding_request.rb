@@ -54,6 +54,14 @@ class BiddingRequest < ApplicationRecord
       partial: "bidding_rounds/progress_bar",
       locals: { bidding_round: bidding_round }
     )
+    if status == "responded"
+      broadcast_append_to(
+        "bidding_round_#{bidding_round_id}_requests",
+        target: "bidding_toast_container",
+        partial: "bidding_rounds/response_toast",
+        locals: { bidding_request: self }
+      )
+    end
   rescue StandardError => e
     Rails.logger.error("BiddingRequest#broadcast_status_change failed: #{e.message}")
   end

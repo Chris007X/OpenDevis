@@ -126,6 +126,7 @@
 %>
 
 <%= turbo_stream_from "bidding_round_#{@bidding_round.id}_requests" %>
+<div id="bidding_toast_container"></div>
 
 <div class="container py-4 br-scope" style="max-width: 1000px;">
   <%= link_to "← Retour au projet", project_path(@project), class: "back-link" %>
