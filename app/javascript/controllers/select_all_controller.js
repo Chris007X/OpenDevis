@@ -12,7 +12,10 @@ export default class extends Controller {
 
   toggleAll() {
     const checked = this.toggleTarget.checked
-    this.itemTargets.forEach(cb => { cb.checked = checked })
+    this.itemTargets.forEach(cb => {
+      cb.checked = checked
+      cb.dispatchEvent(new Event("change", { bubbles: true }))
+    })
   }
 
   updateToggle() {

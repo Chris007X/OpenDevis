@@ -18,7 +18,9 @@ h1, h2, h3 { font-family: 'DM Serif Display', serif; color: #1C1A16; }
   transform: translateY(-2px); box-shadow: 0 4px 14px rgba(38,99,235,0.30);
 }
 .btn-dark-od:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(38,99,235,0.2); }
-.btn-dark-od:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-dark-od:disabled, .btn-dark-od.btn-disabled-od { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-dark-od.btn-disabled-od:hover { opacity: 0.5; transform: none; box-shadow: none; background-color: #2663EB; border-color: #2663EB; }
+.wizard-hint { color: #9B9588; font-size: 0.82rem; font-family: 'Plus Jakarta Sans', sans-serif; }
 
 .btn-ghost-od {
   background: transparent; border: 1.5px solid #C8C4BC; color: #4A4640;

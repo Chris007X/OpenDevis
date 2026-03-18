@@ -273,29 +273,21 @@
                       title="Supprimer ce projet"
                       data-action="click->delete-confirm#show"
                       data-delete-path="<%= project_path(project) %>"
-                      data-delete-name="<%= project.location_zip.presence || "Sans localisation" %>">
+                      data-delete-name="<%= project.name.presence || "Sans titre" %>">
                 &times;
               </button>
               <%= link_to project, class: "project-card h-100" do %>
                 <%# Photo banner — image or placeholder %>
-                <% if project.photo_url.present? %>
-                  <img src="<%= project.photo_url %>"
-                       alt="<%= project.name.presence || project.location_zip %>"
-                       class="project-card-photo" />
-                <% else %>
-                  <div class="project-card-photo-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
-                      <path d="M24 6L4 22h5v20h12V30h6v12h12V22h5L24 6z" stroke="#C8C4BC" stroke-width="2" stroke-linejoin="round" fill="none"/>
-                      <rect x="19" y="30" width="10" height="12" rx="1" stroke="#C8C4BC" stroke-width="2" fill="none"/>
-                    </svg>
-                  </div>
-                <% end %>
+                <% photo_src = project.photo_url.presence || asset_path(project.project_type == "construction" ? "default_construction.png" : "default_renovation.png") %>
+                <img src="<%= photo_src %>"
+                     alt="<%= project.name.presence || "Projet" %>"
+                     class="project-card-photo" />
 
                 <div class="card-body-inner">
                   <%# Title + badges %>
                   <div class="mb-2">
                     <div class="card-name">
-                      <%= project.location_zip.presence || "Sans localisation" %>
+                      <%= project.name.presence || "Sans titre" %>
                     </div>
                     <span class="badge <%= status_class %> fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
                       <%= status_label %>
@@ -372,26 +364,18 @@
                         title="Supprimer ce projet"
                         data-action="click->delete-confirm#show"
                         data-delete-path="<%= project_path(project) %>"
-                        data-delete-name="<%= project.location_zip.presence || "Sans localisation" %>">
+                        data-delete-name="<%= project.name.presence || "Sans titre" %>">
                   &times;
                 </button>
                 <%= link_to project, class: "project-card h-100" do %>
-                  <% if project.photo_url.present? %>
-                    <img src="<%= project.photo_url %>"
-                         alt="<%= project.location_zip %>"
-                         class="project-card-photo" style="filter: grayscale(40%);" />
-                  <% else %>
-                    <div class="project-card-photo-placeholder">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 48 48">
-                        <path d="M24 6L4 22h5v20h12V30h6v12h12V22h5L24 6z" stroke="#C8C4BC" stroke-width="2" stroke-linejoin="round" fill="none"/>
-                        <rect x="19" y="30" width="10" height="12" rx="1" stroke="#C8C4BC" stroke-width="2" fill="none"/>
-                      </svg>
-                    </div>
-                  <% end %>
+                  <% photo_src = project.photo_url.presence || asset_path(project.project_type == "construction" ? "default_construction.png" : "default_renovation.png") %>
+                  <img src="<%= photo_src %>"
+                       alt="<%= project.name.presence || "Projet" %>"
+                       class="project-card-photo" style="filter: grayscale(40%);" />
                   <div class="card-body-inner">
                     <div class="mb-2">
                       <div class="card-name">
-                        <%= project.location_zip.presence || "Sans localisation" %>
+                        <%= project.name.presence || "Sans titre" %>
                       </div>
                       <span class="badge badge-refuse fw-normal" style="font-size: 0.78rem; padding: 0.3em 0.75em; border-radius: 20px;">
                         Archivé

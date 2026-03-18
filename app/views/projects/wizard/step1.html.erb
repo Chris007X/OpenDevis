@@ -685,7 +685,7 @@
 
   <%# ── Form ── %>
   <%= form_with model: @project, url: wizard_step1_path, method: :post,
-      data: { controller: "wizard-form", action: "submit->wizard-form#showErrors input->wizard-form#validate input->wizard-form#clearError change->wizard-form#validate change->wizard-form#clearError" } do |f| %>
+      data: { controller: "wizard-form", action: "submit->wizard-form#showErrors submit->wizard-form#preventSubmit input->wizard-form#validate input->wizard-form#clearError change->wizard-form#validate change->wizard-form#clearError" } do |f| %>
 
     <div class="s1-card s1-section">
       <div class="s1-eyebrow" style="margin-bottom: 1.25rem;">Informations du bien</div>
@@ -818,10 +818,13 @@
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Retour
       <% end %>
-      <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
-        Suivant
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      <div class="d-flex align-items-center gap-3">
+        <span class="wizard-hint" data-wizard-form-target="hint" hidden>Veuillez remplir les champs obligatoires</span>
+        <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
+          Suivant
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
   <% end %>
 </div>

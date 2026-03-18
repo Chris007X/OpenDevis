@@ -4,9 +4,10 @@ import { Controller } from "@hotwired/stimulus"
 // Shows inline error messages on submit attempt when fields are invalid.
 // Adds a blue border (#2663EB) to filled fields.
 export default class extends Controller {
-  static targets = ["submit"]
+  static targets = ["submit", "hint"]
 
   connect() {
+    this._valid = false
     this.validate()
     this.updateFilledStates()
   }
@@ -30,8 +31,38 @@ export default class extends Controller {
       return field.value.trim() !== ""
     })
 
-    this.submitTarget.disabled = !allFilled
+    // Check that at least one checkbox is checked in each [data-checkbox-required] group
+    const checkboxGroups = this.element.querySelectorAll("[data-checkbox-required]")
+    const checkboxesFilled = Array.from(checkboxGroups).every(group =>
+      group.querySelector("input[type='checkbox'][name]:checked") !== null
+    )
+
+    this._valid = allFilled && checkboxesFilled
+    this.submitTarget.classList.toggle("btn-disabled-od", !this._valid)
+    this.submitTarget.setAttribute("aria-disabled", !this._valid)
+
+    if (this._valid) this.hideHint()
     this.updateFilledStates()
+  }
+
+  // Intercept form submission when invalid — show hint message
+  preventSubmit(event) {
+    if (!this._valid) {
+      event.preventDefault()
+      this.showHint()
+    }
+  }
+
+  showHint() {
+    if (this.hasHintTarget) {
+      this.hintTarget.hidden = false
+    }
+  }
+
+  hideHint() {
+    if (this.hasHintTarget) {
+      this.hintTarget.hidden = true
+    }
   }
 
   // Add blue border to filled fields
@@ -61,6 +92,12 @@ export default class extends Controller {
 
   // Show validation errors on submit attempt
   showErrors(event) {
+    // Also block submission if form is invalid
+    if (!this._valid) {
+      event.preventDefault()
+      this.showHint()
+    }
+
     const requiredFields = this.element.querySelectorAll("[data-required]")
     let hasError = false
 
