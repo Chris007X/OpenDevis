@@ -184,7 +184,7 @@
 
   <% elsif is_par_piece %>
     <%# Per-room category selection with tabs %>
-    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "room-tabs", turbo: false } do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "room-tabs wizard-form", action: "submit->wizard-form#preventSubmit", turbo: false } do |f| %>
       <div class="d-flex gap-2 flex-wrap mb-3">
         <% rooms_data.each_with_index do |room, idx| %>
           <% room_name = room["name"] %>
@@ -198,6 +198,7 @@
       </div>
 
       <%# Category panels per room — filtered by ROOM_ALLOWED_CATEGORIES using base name %>
+      <div data-checkbox-required>
       <% rooms_data.each_with_index do |room, idx| %>
         <% room_name = room["name"] %>
         <% room_base = room["base"] || room_name %>
@@ -220,7 +221,7 @@
                 <div class="col-4 col-md-3">
                   <label class="category-card w-100">
                     <input type="checkbox" name="room_categories[<%= room_name %>][]" value="<%= slug %>"
-                           data-select-all-target="item" data-action="change->select-all#updateToggle"
+                           data-select-all-target="item" data-action="change->select-all#updateToggle change->wizard-form#validate"
                            <%= "checked" if saved_cats.include?(slug) %>>
                     <div class="cat-icon"><%= cat[:icon] %></div>
                     <div><%= cat[:label] %></div>
@@ -234,6 +235,7 @@
           <% end %>
         </div>
       <% end %>
+      </div>
 
       <%# Also store flat list of all unique categories for generation %>
       <%# This hidden field will be populated by JS or we compute server-side %>
@@ -246,25 +248,29 @@
                   style="border-color: #DDD9D1; border-radius: 10px;"><%= session[:wizard_custom_needs] %></textarea>
       </div>
 
-      <div class="d-flex justify-content-between mt-4">
+      <div class="d-flex justify-content-between align-items-center mt-4">
         <%= link_to wizard_step2_path, class: "btn btn-ghost-od" do %>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Retour
         <% end %>
-        <button type="submit" class="btn btn-dark-od">
-          Suivant
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <div class="d-flex align-items-center gap-3">
+          <span class="wizard-hint" data-wizard-form-target="hint" hidden>Sélectionnez au moins un type de travaux</span>
+          <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
+            Suivant
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
     <% end %>
 
   <% else %>
     <%# Standard category grid (renovation_complete / energetique) %>
-    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "select-all", turbo: false } do |f| %>
+    <%= form_with url: wizard_step3_path, method: :post, data: { controller: "select-all wizard-form", action: "submit->wizard-form#preventSubmit", turbo: false } do |f| %>
       <label class="select-all-toggle">
         <input type="checkbox" data-select-all-target="toggle" data-action="change->select-all#toggleAll">
         Tout sélectionner
       </label>
+      <div data-checkbox-required>
       <% @category_groups.each do |group| %>
         <% next if group[:slugs].empty? %>
         <div class="group-title"><%= group[:name] %></div>
@@ -274,7 +280,7 @@
             <div class="col-4 col-md-3">
               <label class="category-card w-100">
                 <input type="checkbox" name="categories[]" value="<%= slug %>"
-                       data-select-all-target="item" data-action="change->select-all#updateToggle"
+                       data-select-all-target="item" data-action="change->select-all#updateToggle change->wizard-form#validate"
                        <%= "checked" if @selected_categories.include?(slug) %>>
                 <div class="cat-icon"><%= cat[:icon] %></div>
                 <div><%= cat[:label] %></div>
@@ -286,6 +292,7 @@
           <% end %>
         </div>
       <% end %>
+      </div>
 
       <%# Custom needs %>
       <div class="custom-needs-section">
@@ -295,15 +302,18 @@
                   style="border-color: #DDD9D1; border-radius: 10px;"><%= session[:wizard_custom_needs] %></textarea>
       </div>
 
-      <div class="d-flex justify-content-between mt-4">
+      <div class="d-flex justify-content-between align-items-center mt-4">
         <%= link_to wizard_step2_path, class: "btn btn-ghost-od" do %>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Retour
         <% end %>
-        <button type="submit" class="btn btn-dark-od">
-          Suivant
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <div class="d-flex align-items-center gap-3">
+          <span class="wizard-hint" data-wizard-form-target="hint" hidden>Sélectionnez au moins un type de travaux</span>
+          <button type="submit" class="btn btn-dark-od" data-wizard-form-target="submit">
+            Suivant
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
     <% end %>
   <% end %>

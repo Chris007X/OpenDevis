@@ -97,6 +97,18 @@ module Projects
         return
       end
 
+      # Default name if user left the field blank
+      if @project.name.blank?
+        surface = @project.total_surface_sqm.to_i
+        zip = @project.location_zip
+        if session[:wizard_project_type] == "construction"
+          @project.name = "Construction #{surface}m² #{zip}"
+        else
+          type_label = property_url.to_s.capitalize.presence || "Rénovation"
+          @project.name = "#{type_label} #{surface}m² #{zip}"
+        end
+      end
+
       if @project.save
         session[:wizard_project_id] = @project.id
         if session[:wizard_project_type] == "construction"

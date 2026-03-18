@@ -113,13 +113,14 @@ export default class extends Controller {
     }
 
     this.resultsTarget.innerHTML = uniqueItems.map(item =>
-      `<button type="button" class="autocomplete-item" data-action="click->city-autocomplete#select" data-value="${item.value}">${item.label}</button>`
+      `<button type="button" class="autocomplete-item" data-action="mousedown->city-autocomplete#select" data-value="${item.value}">${item.label}</button>`
     ).join("")
 
     this.resultsTarget.hidden = false
   }
 
   select(event) {
+    event.preventDefault() // Prevent blur from firing before selection completes
     const value = event.currentTarget.dataset.value
     this.justSelected = true
     this.inputTarget.value = value
