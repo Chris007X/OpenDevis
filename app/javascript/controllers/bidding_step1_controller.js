@@ -31,6 +31,11 @@ export default class extends Controller {
   }
 
   updateButton() {
+    this.catCardTargets.forEach(card => {
+      const cb = card.querySelector('input[type="checkbox"]')
+      card.classList.toggle("selected", cb?.checked ?? false)
+    })
+
     const anyChecked = this.catCardTargets.some(card => {
       return card.querySelector('input[type="checkbox"]')?.checked
     })
@@ -43,15 +48,5 @@ export default class extends Controller {
     this.syncSelectAllToggle()
   }
 
-  // Visual toggle for card selection state
-  catCardTargets_changed() {
-    this.catCardTargets.forEach(card => {
-      const cb = card.querySelector('input[type="checkbox"]')
-      if (cb?.checked) {
-        card.classList.add("selected")
-      } else {
-        card.classList.remove("selected")
-      }
-    })
-  }
 }
+

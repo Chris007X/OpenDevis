@@ -62,7 +62,10 @@
               class: "od-nav-link #{"active" if request.path.start_with?("/projects")}" %>
       </div>
 
-      <%# Right side: notifications + new project + avatar %>
+      <%= turbo_stream_from "user_#{current_user.id}_toast" %>
+      <div id="global_toast_container"></div>
+
+    <%# Right side: notifications + new project + avatar %>
       <div class="d-flex align-items-center gap-3">
         <% unread_count = current_user.notifications.unread.count %>
         <div data-controller="notification-badge">

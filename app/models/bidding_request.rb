@@ -56,8 +56,8 @@ class BiddingRequest < ApplicationRecord
     )
     if status == "responded"
       broadcast_append_to(
-        "bidding_round_#{bidding_round_id}_requests",
-        target: "bidding_toast_container",
+        "user_#{project.user_id}_toast",
+        target: "global_toast_container",
         partial: "bidding_rounds/response_toast",
         locals: { bidding_request: self }
       )
