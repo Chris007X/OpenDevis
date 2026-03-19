@@ -1,7 +1,7 @@
 class BiddingRound < ApplicationRecord
   belongs_to :project
-  has_many :bidding_requests, dependent: :destroy
   has_many :final_selections, dependent: :destroy
+  has_many :bidding_requests, dependent: :destroy
 
   STATUSES = %w[draft sent in_progress completed cancelled].freeze
   STANDING_LABELS = { 1 => "Éco", 2 => "Standard", 3 => "Premium" }.freeze
